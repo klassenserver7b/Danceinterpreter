@@ -10,8 +10,8 @@ import java.net.URL;
 
 public class SongWindow {
 	private GraphicsDevice fullscreenDevice;
-	private JFrame mainframe;
-	private JPanel mainpanel;
+	public JFrame mainframe;
+	public JPanel mainpanel;
 	private Rectangle rect;
 	private JLabel imglabel = new JLabel();
 	private JTextArea text = new JTextArea();

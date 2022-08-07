@@ -36,13 +36,11 @@ public class Main {
 
 		Properties prop = new Properties();
 		FileInputStream in;
-
 		try {
 
 			in = new FileInputStream("resources/config.properties");
 			prop.load(in);
 			in.close();
-
 			spotify = new SpotifyInteractions(prop);
 
 		} catch (IOException e) {
@@ -65,6 +63,7 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		System.setProperty("java.net.useSystemProxies", "true");
 		main = new Main();
 
 	}
@@ -77,9 +76,9 @@ public class Main {
 					Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
 
 			Properties devprops = new Properties();
-			devprops.setProperty("client_id", "63bd45efbbac4e7a936ee5b9d28d78e3");
-			devprops.setProperty("client_secret", "a6d1300e18dd454ebafdf8c28dfa136f");
-			devprops.setProperty("redirect_uri", "https://github.com/klassenserver7b");
+			devprops.setProperty("client_id", "");
+			devprops.setProperty("client_secret", "");
+			devprops.setProperty("redirect_uri", "");
 
 			Properties authprops = new Properties();
 			authprops.setProperty("authorization_token", "");

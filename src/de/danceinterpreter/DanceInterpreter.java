@@ -1,9 +1,12 @@
 package de.danceinterpreter;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 import org.apache.hc.core5.http.ParseException;
 
@@ -65,6 +68,13 @@ public class DanceInterpreter {
 						}
 					}
 				}
+			}else {
+				this.window.mainpanel.removeAll();
+				this.window.mainpanel.setEnabled(false);
+				this.window.mainframe.dispose();
+				this.window.mainframe.setVisible(false);
+				this.window.mainpanel=null;
+				this.window.mainframe=null;
 			}
 
 		});
@@ -97,6 +107,24 @@ public class DanceInterpreter {
 
 			String authors = authbuild.toString().trim();
 			String dance = getDance(cutrack.getUri());
+			
+			if(dance == null) {
+				JsonObject obj = new JsonObject();
+				obj.addProperty("songname", cutrack.getName());
+				obj.add("dance", null);
+				dancelist.add(cutrack.getUri(), obj);
+				
+				try {
+					BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/dancelist.json"),
+							Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
+					stream.write(dancelist.toString());
+					stream.flush();
+					stream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			}
 
 			Songdata ret = new Songdata(cutrack.getName(), authors, dance, (long) (cutrack.getDurationMs() / 1000),
 					imgurl);
@@ -155,7 +183,13 @@ public class DanceInterpreter {
 		JsonElement dancelem = dancelist.get(spotifyuri);
 
 		if (dancelem != null) {
-			return dancelem.getAsString().replaceAll("\"", "");
+			JsonElement stringelem = dancelem.getAsJsonObject().get("dance");
+			
+			if(stringelem!=null && !stringelem.toString().equalsIgnoreCase("")) {
+				return stringelem.toString().replaceAll("\"", "");
+			}else {
+				return "unknown";
+			}
 		} else {
 			return null;
 		}
