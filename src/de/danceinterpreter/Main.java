@@ -15,6 +15,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 
+import javax.swing.JOptionPane;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,23 +27,30 @@ import se.michaelthelin.spotify.SpotifyApi;
  *
  */
 public class Main {
-	public static Main main;
-	public static SpotifyInteractions spotify;
-	public static DanceInterpreter danceinterpreter;
+	public static Main Instance;
+	public static boolean exit;
+	public SpotifyInteractions spotify;
+	public DanceInterpreter danceinterpreter;
 	private Thread shutdownT;
-	public static final Logger log = LoggerFactory.getLogger("Main");
+	private final Logger log = LoggerFactory.getLogger("Main");
 	public static boolean errordetected;
 
 	public Main() {
 
 		Properties prop = new Properties();
 		FileInputStream in;
+
+		String appMode = checkAppMode();
+		
+		if(appMode==null) {
+			return;
+		}
+
 		try {
 
 			in = new FileInputStream("resources/config.properties");
 			prop.load(in);
 			in.close();
-			spotify = new SpotifyInteractions(prop);
 
 		} catch (IOException e) {
 			log.error("No valid config File found! generating a new one");
@@ -49,14 +58,26 @@ public class Main {
 			if (!f.exists()) {
 				createConfigFile(f);
 			}
-		}
-		
-		danceinterpreter = new DanceInterpreter();
 
-		if (!errordetected) {
-			startShutdownT();
-			danceinterpreter.startSongCheck();
+			return;
+
 		}
+
+		startShutdownT(appMode);
+
+		switch (appMode) {
+		case "local .mp3 files": {
+			loadLocal();
+			break;
+		}
+		case "Spotify": {
+			loadSpotify(prop);
+			break;
+		}
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + appMode);
+		}
+
 	}
 
 	/**
@@ -64,10 +85,44 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		System.setProperty("java.net.useSystemProxies", "true");
-		main = new Main();
+		Instance = new Main();
 
 	}
 
+	private void loadLocal() {
+		danceinterpreter = new DanceInterpreter();
+
+		if (!errordetected) {
+			danceinterpreter.startLocalSongCheck();
+		}
+	}
+
+	private void loadSpotify(Properties prop) {
+
+		spotify = new SpotifyInteractions(prop);
+		danceinterpreter = new DanceInterpreter();
+
+		if (!errordetected) {
+			danceinterpreter.startSpotifySongCheck();
+		}
+
+	}
+
+	public String checkAppMode() {
+
+		String[] optionsToChoose = { "Spotify", "local .mp3 files" };
+
+		String appMode = (String) JOptionPane.showInputDialog(null, "Which AppMode do you want to use?", "Choose Mode",
+				JOptionPane.QUESTION_MESSAGE, null, optionsToChoose, optionsToChoose[1]);
+
+		return appMode;
+
+	}
+
+	/**
+	 * 
+	 * @param f
+	 */
 	private void createConfigFile(File f) {
 		try {
 			f.createNewFile();
@@ -97,7 +152,10 @@ public class Main {
 		}
 	}
 
-	private void startShutdownT() {
+	/**
+	 * 
+	 */
+	private void startShutdownT(String appMode) {
 		this.shutdownT = new Thread(() -> {
 			String line;
 
@@ -106,9 +164,9 @@ public class Main {
 			try {
 				while ((line = reader.readLine()) != null) {
 					if (line.equalsIgnoreCase("exit")) {
-						spotify.exit = true;
+						Main.exit = true;
 
-						onShutdown();
+						onShutdown(appMode);
 						reader.close();
 						break;
 					}
@@ -122,12 +180,32 @@ public class Main {
 		this.shutdownT.start();
 	}
 
-	public void onShutdown() {
+	/**
+	 * 
+	 */
+	public void onShutdown(String appMode) {
 
-		spotify.fetchthread.interrupt();
-		danceinterpreter.songcheckT.interrupt();
+		this.log.info("Shutdown started");
+		
+		danceinterpreter.shutdown();
+		this.log.debug("Danceinterpreter deactivated");
 
+		if (appMode.equalsIgnoreCase("Spotify")) {
+			spotify.fetchthread.interrupt();
+			this.log.debug("Spotify deactivated");
+		}
+		this.log.info("Shutdown complete");
 		this.shutdownT.interrupt();
+		
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public SpotifyApi getSpotifyAPI() {
+
+		return this.spotify.spotifyApi;
 
 	}
 
@@ -135,19 +213,9 @@ public class Main {
 	 * 
 	 * @return
 	 */
-	public static SpotifyApi getSpotifyAPI() {
+	public DanceInterpreter getDaceInterpreter() {
 
-		return Main.spotify.spotifyApi;
-
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static DanceInterpreter getDaceInterpreter() {
-
-		return Main.danceinterpreter;
+		return this.danceinterpreter;
 
 	}
 

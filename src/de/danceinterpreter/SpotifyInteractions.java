@@ -34,7 +34,6 @@ public class SpotifyInteractions {
 	public SpotifyApi spotifyApi;
 	public Thread fetchthread;
 	public long expires;
-	public boolean exit = false;
 	private boolean usingrefreshtoken;
 
 	public SpotifyInteractions(Properties prop) {
@@ -109,13 +108,13 @@ public class SpotifyInteractions {
 
 		this.fetchthread = new Thread(() -> {
 
-			while (!exit) {
+			while (Main.exit) {
 				if (!(this.expires >= new Date().getTime() - 5000)) {
 					refreshToken();
 					spotifylog.debug("authcode_refresh");
 				}
 			}
-			if(exit) {
+			if(Main.exit) {
 				return;
 			}
 

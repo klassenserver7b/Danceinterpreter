@@ -1,7 +1,12 @@
 package de.danceinterpreter;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Objects;
 
+import javax.imageio.ImageIO;
 
 /**
  * 
@@ -14,15 +19,32 @@ public class Songdata {
 	private String author;
 	private String dance;
 	private Long duration;
-	private String img;
+	private BufferedImage img;
 
-	public Songdata(String tit, String author, String dance, Long dur, String img) {
+	public Songdata(String tit, String author, String dance, Long dur, BufferedImage img) {
 
 		this.title = tit;
 		this.author = author;
 		this.dance = dance;
 		this.duration = dur;
 		this.img = img;
+
+	}
+
+	public Songdata(String tit, String author, String dance, Long dur, String imgurl)
+			throws MalformedURLException, IOException {
+
+		this.title = tit;
+		this.author = author;
+		this.dance = dance;
+		this.duration = dur;
+
+		BufferedImage buffimg = ImageIO.read(new URL(imgurl));
+		this.img = buffimg;
+	}
+
+	public Songdata() {
+
 	}
 
 	public String getTitle() {
@@ -40,8 +62,8 @@ public class Songdata {
 	public Long getDuration() {
 		return this.duration;
 	}
-	
-	public String getImageURL() {
+
+	public BufferedImage getImageURL() {
 		return this.img;
 	}
 
@@ -59,6 +81,15 @@ public class Songdata {
 
 	public void setDuration(Long dur) {
 		this.duration = dur;
+	}
+
+	public void setImg(BufferedImage img) {
+		this.img = img;
+	}
+
+	public void setImg(String imgurl) throws MalformedURLException, IOException {
+		BufferedImage buffimg = ImageIO.read(new URL(imgurl));
+		this.img = buffimg;
 	}
 
 	@Override

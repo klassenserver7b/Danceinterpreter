@@ -1,18 +1,35 @@
 package de.danceinterpreter;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileLock;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import org.apache.hc.core5.http.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.UnsupportedTagException;
 
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
@@ -34,13 +51,15 @@ public class DanceInterpreter {
 	public Thread songcheckT;
 	public int datahash = 0;
 	public SongWindow window;
+	public final List<File> data = new ArrayList<>();
+	private final Logger log = LoggerFactory.getLogger("Interpreter");
 
-	/**
-	 * 
-	 */
-	public void startSongCheck() {
+	public void startLocalSongCheck() {
 
-		if (initialize()) {
+		if (!initialize()) {
+			return;
+		}
+		if (!loadWorkingDirectory()) {
 			return;
 		}
 
@@ -49,11 +68,11 @@ public class DanceInterpreter {
 			if (!this.songcheckT.isInterrupted()) {
 				long time = System.currentTimeMillis();
 
-				while (!Main.spotify.exit) {
+				while (!Main.exit) {
 					if (System.currentTimeMillis() >= time + 5000) {
 						time = System.currentTimeMillis();
 
-						Songdata data = provideSongData();
+						Songdata data = provideLocalSongData();
 
 						if (data != null) {
 							System.out.println(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", "
@@ -68,13 +87,48 @@ public class DanceInterpreter {
 						}
 					}
 				}
-			}else {
-				this.window.mainpanel.removeAll();
-				this.window.mainpanel.setEnabled(false);
-				this.window.mainframe.dispose();
-				this.window.mainframe.setVisible(false);
-				this.window.mainpanel=null;
-				this.window.mainframe=null;
+			}
+
+		});
+		songcheckT.setName("SongCheck");
+		songcheckT.start();
+	}
+
+	/**
+	 * 
+	 */
+	public void startSpotifySongCheck() {
+
+		if (!initialize()) {
+			return;
+		}
+
+		songcheckT = new Thread(() -> {
+
+			if (!this.songcheckT.isInterrupted()) {
+				long time = System.currentTimeMillis();
+
+				while (!Main.exit) {
+					if (System.currentTimeMillis() >= time + 5000) {
+						time = System.currentTimeMillis();
+
+						Songdata data = provideSpotifySongData();
+
+						if (data != null) {
+							System.out.println(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", "
+									+ data.getDuration());
+							if (this.window == null) {
+								this.window = new SongWindow(data.getTitle(), data.getAuthor(), data.getDance(),
+										data.getImageURL());
+							} else {
+								this.window.UpdateWindow(data.getTitle(), data.getAuthor(), data.getDance(),
+										data.getImageURL());
+							}
+						} else {
+							System.out.println("datanull");
+						}
+					}
+				}
 			}
 
 		});
@@ -83,13 +137,179 @@ public class DanceInterpreter {
 
 	}
 
+	private boolean loadWorkingDirectory() {
+
+		Path workingDirectory = Path.of(getWorkingDirectory(), "");
+
+		if (workingDirectory != null) {
+			this.log.info("Working in: " + workingDirectory);
+			File f = workingDirectory.toFile();
+			File[] files = f.listFiles();
+
+			if (files != null) {
+				findAllFilesInFolder(f);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private void findAllFilesInFolder(File f) {
+
+		for (File file : f.listFiles()) {
+			if (!file.isDirectory() && file.getName().endsWith(".mp3")) {
+				data.add(file);
+			} else {
+				findAllFilesInFolder(file);
+			}
+		}
+
+	}
+
+	public void shutdown() {
+
+		if (this.songcheckT != null) {
+			this.songcheckT.interrupt();
+		}
+
+		if (this.window != null) {
+			if (this.window.mainframe != null) {
+				this.window.mainframe.dispose();
+				this.window.mainframe.setVisible(false);
+				this.window.mainframe = null;
+			}
+			if (this.window.mainpanel != null) {
+				this.window.mainpanel.removeAll();
+				this.window.mainpanel.setEnabled(false);
+				this.window.mainpanel = null;
+			}
+		}
+	}
+
 	/**
 	 * 
 	 * @return
 	 */
 
-	private Songdata provideSongData() {
-		Track cutrack = getCurrentSong();
+	private String getWorkingDirectory() {
+
+		JFileChooser f = new JFileChooser();
+		f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		f.setDialogTitle("Ordner auswählen");
+		f.setApproveButtonText("Auswählen");
+		f.setMultiSelectionEnabled(false);
+		f.showSaveDialog(null);
+
+		if (f.getSelectedFile() != null) {
+			return f.getSelectedFile().getAbsolutePath();
+		}
+		return null;
+	}
+
+	private Songdata provideLocalSongData() {
+
+		File f = getLocalSong();
+
+		Songdata ret = null;
+
+		Mp3File mp3file;
+		if (f != null) {
+			try {
+				mp3file = new Mp3File(f);
+
+				if (mp3file.hasId3v2Tag()) {
+
+					ID3v2 tags = mp3file.getId3v2Tag();
+					String title = tags.getTitle();
+					String author = tags.getArtist();
+
+					byte[] imageData = tags.getAlbumImage();
+
+					BufferedImage img = new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB);
+
+					// converting the bytes to an image
+					if (imageData != null) {
+						try {
+							img = ImageIO.read(new ByteArrayInputStream(imageData));
+						} catch (IOException e) {
+							this.log.error("Couldn't parse ID3 Cover");
+							e.printStackTrace();
+						}
+					} else {
+						this.log.info("Song doesn't have a Cover");
+					}
+
+					Integer length = tags.getLength();
+
+					ret = new Songdata(title, author, getDance(title, author), length.longValue(), img);
+
+				} else {
+					ret = new Songdata("Unknown", "Unknown", "null", 0L,
+							new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB));
+				}
+
+			} catch (UnsupportedTagException | InvalidDataException | IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+
+		return ret;
+	}
+
+	private File getLocalSong() {
+
+		List<File> blocked = new ArrayList<>();
+
+		this.data.forEach(file -> {
+
+			try (RandomAccessFile randomAccessFile = new RandomAccessFile(file.getName(), "rw");
+					FileLock lock = randomAccessFile.getChannel().lock()) {
+				if (lock == null) {
+					this.log.debug("Locked - f: " + file.getName());
+					blocked.add(file);
+				} else {
+					if (lock.isShared()) {
+						System.out.println(file.getName());
+					}
+				}
+			} catch (IOException ex) {
+			}
+
+			/*
+			 * try { RandomAccessFile randomAccessFile = new
+			 * RandomAccessFile(file.getName(), "rw"); FileLock lock =
+			 * randomAccessFile.getChannel().lock(); if (lock == null) {
+			 * this.log.debug("Locked - f: " + file.getName()); blocked.add(file); } else {
+			 * System.out.println(lock.isShared()); lock.release(); } } catch (IOException
+			 * e) { e.printStackTrace(); }
+			 */
+
+		});
+
+		if (!blocked.isEmpty()) {
+			if (blocked.size() == 1) {
+				return blocked.get(0);
+			}
+
+			ConcurrentHashMap<String, File> fileoptions = new ConcurrentHashMap<>();
+
+			for (File f : blocked) {
+				fileoptions.put(f.getName(), f);
+			}
+
+			String filename = (String) JOptionPane.showInputDialog(null, "Which is the current Song?", "Song select",
+					JOptionPane.QUESTION_MESSAGE, null, fileoptions.keySet().toArray(new String[0]), null);
+
+			if (filename != null) {
+				return fileoptions.get(filename);
+			}
+		}
+
+		return null;
+	}
+
+	private Songdata provideSpotifySongData() {
+		Track cutrack = getCurrentSpotifySong();
 
 		if (cutrack != null) {
 
@@ -107,13 +327,13 @@ public class DanceInterpreter {
 
 			String authors = authbuild.toString().trim();
 			String dance = getDance(cutrack.getUri());
-			
-			if(dance == null) {
+
+			if (dance == null) {
 				JsonObject obj = new JsonObject();
 				obj.addProperty("songname", cutrack.getName());
 				obj.add("dance", null);
 				dancelist.add(cutrack.getUri(), obj);
-				
+
 				try {
 					BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/dancelist.json"),
 							Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
@@ -123,15 +343,18 @@ public class DanceInterpreter {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				
+
 			}
 
-			Songdata ret = new Songdata(cutrack.getName(), authors, dance, (long) (cutrack.getDurationMs() / 1000),
-					imgurl);
-
-			if (datahash != ret.hashCode()) {
-				datahash = ret.hashCode();
-				return ret;
+			Songdata ret;
+			try {
+				ret = new Songdata(cutrack.getName(), authors, dance, (long) (cutrack.getDurationMs() / 1000), imgurl);
+				if (datahash != ret.hashCode()) {
+					datahash = ret.hashCode();
+					return ret;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 
@@ -142,9 +365,9 @@ public class DanceInterpreter {
 	 * 
 	 * @return
 	 */
-	private Track getCurrentSong() {
+	private Track getCurrentSpotifySong() {
 
-		SpotifyApi spotifyapi = Main.getSpotifyAPI();
+		SpotifyApi spotifyapi = Main.Instance.getSpotifyAPI();
 
 		GetUsersCurrentlyPlayingTrackRequest currenttrackrequest = spotifyapi.getUsersCurrentlyPlayingTrack().build();
 		try {
@@ -184,10 +407,27 @@ public class DanceInterpreter {
 
 		if (dancelem != null) {
 			JsonElement stringelem = dancelem.getAsJsonObject().get("dance");
-			
-			if(stringelem!=null && !stringelem.toString().equalsIgnoreCase("")) {
+
+			if (stringelem != null && !stringelem.toString().equalsIgnoreCase("")) {
 				return stringelem.toString().replaceAll("\"", "");
-			}else {
+			} else {
+				return "unknown";
+			}
+		} else {
+			return null;
+		}
+	}
+
+	private String getDance(String title, String author) {
+
+		JsonElement dancelem = dancelist.get(author + " - " + title);
+
+		if (dancelem != null) {
+			JsonElement stringelem = dancelem.getAsJsonObject().get("dance");
+
+			if (stringelem != null && !stringelem.toString().equalsIgnoreCase("")) {
+				return stringelem.toString().replaceAll("\"", "");
+			} else {
 				return "unknown";
 			}
 		} else {
@@ -208,19 +448,19 @@ public class DanceInterpreter {
 				JsonElement json = JsonParser.parseString(jsonstring);
 				dancelist = json.getAsJsonObject();
 
-				return false;
+				return true;
 
 			} catch (IOException e1) {
 
 				e1.printStackTrace();
 
-				return true;
+				return false;
 
 			}
 
 		}
 
-		return true;
+		return false;
 
 	}
 }
