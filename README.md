@@ -14,12 +14,12 @@ It's meant to be used on e.g. a Prom or other Dance events
 
 - [ ] Download Danceinterpreter.jar and logback.xml
 - [ ] Save them to the Directory you want the Software to run in
-- [ ] See [Spotify](README.md#Spotify) / [Local mp3 Files](README.md#Local mp3 Files)
+- [ ] See [Spotify](README.md#spotify) / [Local mp3 Files](README.md#local-mp3-Files)
 
 
 ## Spotify
 
-_IF YOU ALREADY HAVE A VALID CONFIG FILE YOU CAN GO TO_ [**`Usage`**](README.md#_Usage_)
+_IF YOU ALREADY HAVE A VALID CONFIG FILE YOU CAN GO TO_ [**`Usage`**](README.md#usage)
 
 ### _First Startup_
 1. Run `Danceinterpreter.jar`
