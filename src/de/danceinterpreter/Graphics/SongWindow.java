@@ -1,11 +1,21 @@
-package de.danceinterpreter;
+package de.danceinterpreter.Graphics;
 
 import java.awt.*;
+
 import javax.swing.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.image.*;
 
+/**
+ * 
+ * @author Felix
+ *
+ */
 public class SongWindow {
-	private GraphicsDevice fullscreenDevice;
+	public final Logger log = LoggerFactory.getLogger("Window");
 	public JFrame mainframe;
 	public JPanel mainpanel;
 	private Rectangle rect;
@@ -14,12 +24,26 @@ public class SongWindow {
 
 	/**
 	 * 
+	 * @param songname
+	 * @param artist
+	 * @param dance
+	 * @param img
 	 */
-
 	public SongWindow(String songname, String artist, String dance, BufferedImage img) {
 
 		mainframe = new JFrame();
+		mainframe.setUndecorated(true);
+		JRootPane root = mainframe.getRootPane();
+		root.setWindowDecorationStyle(JRootPane.FRAME);
+		root.setBorder(BorderFactory.createEmptyBorder());
+		
+
+		mainframe.setBounds(100, 100, 500, 500);
+
 		mainpanel = new JPanel();
+		
+		mainpanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F5"), "asynchronUpdate");
+		mainpanel.getActionMap().put("asynchronUpdate", new AsynchronousProvideListener());
 
 		mainframe.add(mainpanel);
 
@@ -50,14 +74,20 @@ public class SongWindow {
 		UpdateWindow(songname, artist, dance, img);
 	}
 
+	/**
+	 * 
+	 * @param songname
+	 * @param artist
+	 * @param dance
+	 * @param img
+	 */
 	public void UpdateWindow(String songname, String artist, String dance, BufferedImage img) {
 
 		this.rect = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
 				.getBounds();
-		System.out.println(rect.height);
-		System.out.println(rect.width);
+		log.info("width: "+rect.width+" height: " + rect.height);
 
-		Image scaledimg = img.getScaledInstance(rect.height / 3, rect.height / 3, 0);
+		Image scaledimg = img.getScaledInstance(rect.width / 3, rect.height / 3, 0);
 		ImageIcon imageIcon = new ImageIcon(scaledimg);
 
 		imglabel.setIcon(imageIcon);
@@ -69,8 +99,7 @@ public class SongWindow {
 
 		mainpanel.paintComponents(mainpanel.getGraphics());
 
-		fullscreenDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-		fullscreenDevice.setFullScreenWindow(mainframe);
+		mainframe.setVisible(true);
 	}
 
 }

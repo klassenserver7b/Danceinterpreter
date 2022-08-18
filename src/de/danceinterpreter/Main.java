@@ -20,6 +20,8 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.danceinterpreter.Connections.SpotifyInteractions;
+import de.danceinterpreter.Songprocessing.DanceInterpreter;
 import se.michaelthelin.spotify.SpotifyApi;
 
 /**
@@ -213,7 +215,7 @@ public class Main {
 	 * 
 	 * @return
 	 */
-	public DanceInterpreter getDaceInterpreter() {
+	public DanceInterpreter getDanceInterpreter() {
 
 		return this.danceinterpreter;
 

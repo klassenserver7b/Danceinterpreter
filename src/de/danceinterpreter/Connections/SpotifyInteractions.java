@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.danceinterpreter;
+package de.danceinterpreter.Connections;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -17,6 +17,7 @@ import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.danceinterpreter.Main;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;

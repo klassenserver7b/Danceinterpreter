@@ -1,12 +1,13 @@
-package de.danceinterpreter;
+package de.danceinterpreter.Songprocessing;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.nio.channels.NonWritableChannelException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +15,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.prefs.Preferences;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -30,7 +32,10 @@ import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
+import com.sun.nio.file.ExtendedOpenOption;
 
+import de.danceinterpreter.Main;
+import de.danceinterpreter.Graphics.SongWindow;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.IPlaylistItem;
@@ -53,7 +58,11 @@ public class DanceInterpreter {
 	public SongWindow window;
 	public final List<File> data = new ArrayList<>();
 	private final Logger log = LoggerFactory.getLogger("Interpreter");
+	private int hash = 0;
 
+	/**
+	 * 
+	 */
 	public void startLocalSongCheck() {
 
 		if (!initialize()) {
@@ -69,14 +78,14 @@ public class DanceInterpreter {
 				long time = System.currentTimeMillis();
 
 				while (!Main.exit) {
-					if (System.currentTimeMillis() >= time + 5000) {
+					if (System.currentTimeMillis() >= time + 10000) {
 						time = System.currentTimeMillis();
 
-						Songdata data = provideLocalSongData();
+						Songdata data = provideLocalSongData(true);
 
 						if (data != null) {
-							System.out.println(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", "
-									+ data.getDuration());
+							log.info("Songchange detected: " + data.getTitle() + ", " + data.getAuthor() + ", "
+									+ data.getDance() + ", " + data.getDuration());
 							if (this.window == null) {
 								this.window = new SongWindow(data.getTitle(), data.getAuthor(), data.getDance(),
 										data.getImageURL());
@@ -115,7 +124,7 @@ public class DanceInterpreter {
 						Songdata data = provideSpotifySongData();
 
 						if (data != null) {
-							System.out.println(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", "
+							log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", "
 									+ data.getDuration());
 							if (this.window == null) {
 								this.window = new SongWindow(data.getTitle(), data.getAuthor(), data.getDance(),
@@ -124,8 +133,6 @@ public class DanceInterpreter {
 								this.window.UpdateWindow(data.getTitle(), data.getAuthor(), data.getDance(),
 										data.getImageURL());
 							}
-						} else {
-							System.out.println("datanull");
 						}
 					}
 				}
@@ -137,11 +144,32 @@ public class DanceInterpreter {
 
 	}
 
+	/**
+	 * 
+	 */
+	public void provideAsynchronous() {
+		Songdata data = provideLocalSongData(false);
+
+		if (data != null) {
+			log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
+			if (this.window == null) {
+				this.window = new SongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImageURL());
+			} else {
+				this.window.UpdateWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImageURL());
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	private boolean loadWorkingDirectory() {
 
-		Path workingDirectory = Path.of(getWorkingDirectory(), "");
+		String workingDirectorystr = getWorkingDirectory();
 
-		if (workingDirectory != null) {
+		if (workingDirectorystr != null) {
+			Path workingDirectory = Path.of(workingDirectorystr, "");
 			this.log.info("Working in: " + workingDirectory);
 			File f = workingDirectory.toFile();
 			File[] files = f.listFiles();
@@ -154,6 +182,10 @@ public class DanceInterpreter {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param f
+	 */
 	private void findAllFilesInFolder(File f) {
 
 		for (File file : f.listFiles()) {
@@ -166,6 +198,9 @@ public class DanceInterpreter {
 
 	}
 
+	/**
+	 * 
+	 */
 	public void shutdown() {
 
 		if (this.songcheckT != null) {
@@ -193,22 +228,39 @@ public class DanceInterpreter {
 
 	private String getWorkingDirectory() {
 
+		Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
+		
+		String dir = prefs.get("Last-Path", "");
+		
+		if(dir==null || dir.equalsIgnoreCase("") || (new File(dir)) ==null) {
+			
+			dir = System.getenv("HOMEDRIVE") + System.getenv("HOMEPATH");
+			
+		}
+		
 		JFileChooser f = new JFileChooser();
 		f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		f.setCurrentDirectory(new File(dir));
 		f.setDialogTitle("Ordner auswählen");
 		f.setApproveButtonText("Auswählen");
 		f.setMultiSelectionEnabled(false);
 		f.showSaveDialog(null);
 
 		if (f.getSelectedFile() != null) {
+			prefs.put("Last-Path", f.getSelectedFile().getAbsolutePath());
 			return f.getSelectedFile().getAbsolutePath();
 		}
 		return null;
 	}
 
-	private Songdata provideLocalSongData() {
+	/**
+	 * 
+	 * @param checkcurrent
+	 * @return
+	 */
+	private Songdata provideLocalSongData(boolean checkcurrent) {
 
-		File f = getLocalSong();
+		File f = getLocalSong(checkcurrent);
 
 		Songdata ret = null;
 
@@ -253,40 +305,78 @@ public class DanceInterpreter {
 			}
 		}
 
-		return ret;
+		if (ret != null && datahash != ret.hashCode()) {
+			datahash = ret.hashCode();
+			return ret;
+		}
+		return null;
 	}
 
-	private File getLocalSong() {
+	/**
+	 * 
+	 * @param checkcurrent
+	 * @return
+	 */
+	private File getLocalSong(boolean checkcurrent) {
 
 		List<File> blocked = new ArrayList<>();
 
 		this.data.forEach(file -> {
+			FileChannel chan = null;
+			FileLock lock = null;
 
-			try (RandomAccessFile randomAccessFile = new RandomAccessFile(file.getName(), "rw");
-					FileLock lock = randomAccessFile.getChannel().lock()) {
-				if (lock == null) {
-					this.log.debug("Locked - f: " + file.getName());
-					blocked.add(file);
-				} else {
-					if (lock.isShared()) {
-						System.out.println(file.getName());
+			try {
+
+				chan = FileChannel.open(file.toPath(), ExtendedOpenOption.NOSHARE_READ);
+				lock = chan.tryLock();
+
+			} catch (NonWritableChannelException e) {
+
+				if (chan != null) {
+					try {
+						chan.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
 					}
+					chan = null;
 				}
-			} catch (IOException ex) {
-			}
 
-			/*
-			 * try { RandomAccessFile randomAccessFile = new
-			 * RandomAccessFile(file.getName(), "rw"); FileLock lock =
-			 * randomAccessFile.getChannel().lock(); if (lock == null) {
-			 * this.log.debug("Locked - f: " + file.getName()); blocked.add(file); } else {
-			 * System.out.println(lock.isShared()); lock.release(); } } catch (IOException
-			 * e) { e.printStackTrace(); }
-			 */
+				if (lock != null) {
+					try {
+						lock.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					lock = null;
+				}
+
+			} catch (IOException ex) {
+				this.log.debug("Locked - f: " + file.getName());
+				blocked.add(file);
+
+				if (chan != null) {
+					try {
+						chan.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					chan = null;
+				}
+			}
 
 		});
 
-		if (!blocked.isEmpty()) {
+		boolean checked = checkcurrent;
+
+		if (checkcurrent) {
+			checked = (blocked.hashCode() != hash);
+		} else {
+			checked = true;
+		}
+
+		if (!blocked.isEmpty() && checked) {
+
+			this.hash = blocked.hashCode();
 			if (blocked.size() == 1) {
 				return blocked.get(0);
 			}
@@ -308,6 +398,10 @@ public class DanceInterpreter {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	private Songdata provideSpotifySongData() {
 		Track cutrack = getCurrentSpotifySong();
 
@@ -418,6 +512,12 @@ public class DanceInterpreter {
 		}
 	}
 
+	/**
+	 * 
+	 * @param title
+	 * @param author
+	 * @return
+	 */
 	private String getDance(String title, String author) {
 
 		JsonElement dancelem = dancelist.get(author + " - " + title);
@@ -435,6 +535,10 @@ public class DanceInterpreter {
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	private boolean initialize() {
 
 		File file = new File("resources/dancelist.json");
@@ -462,5 +566,13 @@ public class DanceInterpreter {
 
 		return false;
 
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public SongWindow getWindow() {
+		return this.window;
 	}
 }
