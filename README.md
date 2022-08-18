@@ -44,5 +44,3 @@ _IF YOU ALREADY HAVE A VALID CONFIG FILE YOU CAN GO TO_ [**`Usage`**](README.md#
 5. Select `local .mp3 files` in the drop-down
 6. Select the Directory the App should check for playing .mp3 files
 7. Finished!
-
-**Full Changelog**: https://github.com/klassenserver7b/Danceinterpreter/compare/V1.0.0...V2.0.0
