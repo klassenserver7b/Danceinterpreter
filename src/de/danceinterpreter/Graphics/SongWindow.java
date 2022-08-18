@@ -87,7 +87,7 @@ public class SongWindow {
 				.getBounds();
 		log.info("width: "+rect.width+" height: " + rect.height);
 
-		Image scaledimg = img.getScaledInstance(rect.width / 3, rect.height / 3, 0);
+		Image scaledimg = scaleImage(img, rect);
 		ImageIcon imageIcon = new ImageIcon(scaledimg);
 
 		imglabel.setIcon(imageIcon);
@@ -100,6 +100,26 @@ public class SongWindow {
 		mainpanel.paintComponents(mainpanel.getGraphics());
 
 		mainframe.setVisible(true);
+	}
+	
+	public Image scaleImage(BufferedImage img, Rectangle rect) {
+		Image scaledimg = img.getScaledInstance(-1, -1, 0);
+		
+		if(img.getHeight() >= rect.height*0.50 || img.getWidth() >= rect.width*0.75) {
+			double heightscale = (rect.getHeight()*0.50)/img.getHeight();
+			double widthscale = (rect.getWidth()*0.75)/img.getWidth();
+			
+			double scale;
+			if(heightscale<=widthscale) {
+				scale = heightscale;
+			}else {
+				scale = widthscale;
+			}
+			
+			scaledimg = img.getScaledInstance((int) (img.getWidth()*scale), (int) (img.getHeight()*scale), 0);
+		}
+		
+		return scaledimg;
 	}
 
 }

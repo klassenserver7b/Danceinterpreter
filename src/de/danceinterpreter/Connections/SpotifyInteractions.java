@@ -193,7 +193,7 @@ public class SpotifyInteractions {
 			spotifylog.debug("AUTHORIZED -> expires:" + this.expires + ", token:" + spotifyApi.getAccessToken());
 
 		} catch (ParseException | SpotifyWebApiException | IOException e) {
-			e.printStackTrace();
+			spotifylog.error(e.getMessage(), e);
 			spotifylog.error("invalid usr_auth_code");
 			final AuthorizationCodeUriRequest authorizationCodeUriRequest = spotifyApi.authorizationCodeUri()
 					.scope("app-remote-control,streaming,user-read-playback-position,user-modify-playback-state,user-read-playback-state,user-read-currently-playing").build();

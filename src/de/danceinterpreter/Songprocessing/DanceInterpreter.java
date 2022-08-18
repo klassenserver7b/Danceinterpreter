@@ -57,7 +57,7 @@ public class DanceInterpreter {
 	public int datahash = 0;
 	public SongWindow window;
 	public final List<File> data = new ArrayList<>();
-	private final Logger log = LoggerFactory.getLogger("Interpreter");
+	private final Logger log = LoggerFactory.getLogger("Danceinterpreter");
 	private int hash = 0;
 
 	/**
@@ -285,15 +285,15 @@ public class DanceInterpreter {
 							img = ImageIO.read(new ByteArrayInputStream(imageData));
 						} catch (IOException e) {
 							this.log.error("Couldn't parse ID3 Cover");
-							e.printStackTrace();
+							log.error(e.getMessage(), e);
 						}
 					} else {
 						this.log.info("Song doesn't have a Cover");
 					}
 
-					Integer length = tags.getLength();
+					Long length = mp3file.getLength();
 
-					ret = new Songdata(title, author, getDance(title, author), length.longValue(), img);
+					ret = new Songdata(title, author, getDance(title, author), length, img);
 
 				} else {
 					ret = new Songdata("Unknown", "Unknown", "null", 0L,
@@ -301,7 +301,7 @@ public class DanceInterpreter {
 				}
 
 			} catch (UnsupportedTagException | InvalidDataException | IOException e1) {
-				e1.printStackTrace();
+				log.error(e1.getMessage(), e1);
 			}
 		}
 
@@ -336,7 +336,7 @@ public class DanceInterpreter {
 					try {
 						chan.close();
 					} catch (IOException e1) {
-						e1.printStackTrace();
+						log.error(e1.getMessage(), e1);
 					}
 					chan = null;
 				}
@@ -345,7 +345,7 @@ public class DanceInterpreter {
 					try {
 						lock.close();
 					} catch (IOException e1) {
-						e1.printStackTrace();
+						log.error(e1.getMessage(), e1);
 					}
 					lock = null;
 				}
@@ -358,7 +358,7 @@ public class DanceInterpreter {
 					try {
 						chan.close();
 					} catch (IOException e1) {
-						e1.printStackTrace();
+						log.error(e1.getMessage(), e1);
 					}
 					chan = null;
 				}
@@ -435,7 +435,7 @@ public class DanceInterpreter {
 					stream.flush();
 					stream.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					log.error(e.getMessage(), e);
 				}
 
 			}
@@ -448,7 +448,7 @@ public class DanceInterpreter {
 					return ret;
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.error(e.getMessage(), e);
 			}
 		}
 
@@ -483,8 +483,8 @@ public class DanceInterpreter {
 				return null;
 			}
 
-		} catch (ParseException | SpotifyWebApiException | IOException e) {
-			e.printStackTrace();
+		} catch (ParseException | SpotifyWebApiException | IOException e1) {
+			log.error(e1.getMessage(), e1);
 			return null;
 		}
 
@@ -551,13 +551,10 @@ public class DanceInterpreter {
 
 				JsonElement json = JsonParser.parseString(jsonstring);
 				dancelist = json.getAsJsonObject();
-
 				return true;
 
 			} catch (IOException e1) {
-
-				e1.printStackTrace();
-
+				log.error(e1.getMessage(), e1);
 				return false;
 
 			}

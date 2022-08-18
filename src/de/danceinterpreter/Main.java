@@ -150,7 +150,7 @@ public class Main {
 			stream.close();
 
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			log.error(e1.getMessage(), e1);
 		}
 	}
 
@@ -175,7 +175,7 @@ public class Main {
 					System.out.println("Use Exit to Shutdown");
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.error(e.getMessage(), e);
 			}
 		});
 		this.shutdownT.setName("Shutdown");
