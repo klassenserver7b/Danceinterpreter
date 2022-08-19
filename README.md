@@ -1,6 +1,6 @@
+# Danceinterpreter
 [![CodeFactor](https://www.codefactor.io/repository/github/klassenserver7b/danceinterpreter/badge)](https://www.codefactor.io/repository/github/klassenserver7b/danceinterpreter)
 
-# Danceinterpreter
 
 This tool provides information about a currently playing song and displays them.
 -> These information are "Title", "Author", "Cover" and "Dance"
