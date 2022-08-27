@@ -33,18 +33,20 @@ public class Main {
 	public static boolean exit;
 	public SpotifyInteractions spotify;
 	public DanceInterpreter danceinterpreter;
+	public String appMode;
 	private Thread shutdownT;
 	private final Logger log = LoggerFactory.getLogger("Main");
 	public static boolean errordetected;
 
 	public Main() {
+		Instance = this;
 
 		Properties prop = new Properties();
 		FileInputStream in;
 
-		String appMode = checkAppMode();
-		
-		if(appMode==null) {
+		this.appMode = checkappMode();
+
+		if (this.appMode == null) {
 			return;
 		}
 
@@ -65,9 +67,9 @@ public class Main {
 
 		}
 
-		startShutdownT(appMode);
+		startShutdownT(this.appMode);
 
-		switch (appMode) {
+		switch (this.appMode) {
 		case "local .mp3 files": {
 			loadLocal();
 			break;
@@ -77,7 +79,7 @@ public class Main {
 			break;
 		}
 		default:
-			throw new IllegalArgumentException("Unexpected value: " + appMode);
+			throw new IllegalArgumentException("Unexpected value: " + this.appMode);
 		}
 
 	}
@@ -110,14 +112,14 @@ public class Main {
 
 	}
 
-	public String checkAppMode() {
+	public String checkappMode() {
 
 		String[] optionsToChoose = { "Spotify", "local .mp3 files" };
 
-		String appMode = (String) JOptionPane.showInputDialog(null, "Which AppMode do you want to use?", "Choose Mode",
-				JOptionPane.QUESTION_MESSAGE, null, optionsToChoose, optionsToChoose[1]);
+		String localappMode = (String) JOptionPane.showInputDialog(null, "Which this.appMode do you want to use?",
+				"Choose Mode", JOptionPane.QUESTION_MESSAGE, null, optionsToChoose, optionsToChoose[1]);
 
-		return appMode;
+		return localappMode;
 
 	}
 
@@ -188,7 +190,7 @@ public class Main {
 	public void onShutdown(String appMode) {
 
 		this.log.info("Shutdown started");
-		
+
 		danceinterpreter.shutdown();
 		this.log.debug("Danceinterpreter deactivated");
 
@@ -198,7 +200,7 @@ public class Main {
 		}
 		this.log.info("Shutdown complete");
 		this.shutdownT.interrupt();
-		
+
 	}
 
 	/**

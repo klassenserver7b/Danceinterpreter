@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.prefs.Preferences;
 
@@ -25,6 +26,7 @@ import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -52,7 +54,7 @@ import se.michaelthelin.spotify.requests.data.tracks.GetTrackRequest;
  */
 public class DanceInterpreter {
 
-	public JsonObject dancelist;
+	public TreeMap<String, JsonObject> dancelist = new TreeMap<>();
 	public Thread songcheckT;
 	public int datahash = 0;
 	public SongWindow window;
@@ -229,15 +231,15 @@ public class DanceInterpreter {
 	private String getWorkingDirectory() {
 
 		Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
-		
+
 		String dir = prefs.get("Last-Path", "");
-		
-		if(dir==null || dir.equalsIgnoreCase("") || (new File(dir)) ==null) {
-			
+
+		if (dir == null || dir.equalsIgnoreCase("") || (new File(dir)) == null) {
+
 			dir = System.getenv("HOMEDRIVE") + System.getenv("HOMEPATH");
-			
+
 		}
-		
+
 		JFileChooser f = new JFileChooser();
 		f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		f.setCurrentDirectory(new File(dir));
@@ -292,8 +294,13 @@ public class DanceInterpreter {
 					}
 
 					Long length = mp3file.getLength();
+					String dance = getDance(title, author);
 
-					ret = new Songdata(title, author, getDance(title, author), length, img);
+					ret = new Songdata(title, author, dance, length, img);
+
+					if (dance == null) {
+						addSongtoJSON(ret, "LOCAL");
+					}
 
 				} else {
 					ret = new Songdata("Unknown", "Unknown", "null", 0L,
@@ -423,19 +430,12 @@ public class DanceInterpreter {
 			String dance = getDance(cutrack.getUri());
 
 			if (dance == null) {
-				JsonObject obj = new JsonObject();
-				obj.addProperty("songname", cutrack.getName());
-				obj.add("dance", null);
-				dancelist.add(cutrack.getUri(), obj);
 
 				try {
-					BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/dancelist.json"),
-							Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
-					stream.write(dancelist.toString());
-					stream.flush();
-					stream.close();
-				} catch (IOException e) {
-					log.error(e.getMessage(), e);
+					addSongtoJSON(new Songdata(cutrack.getName(), authors, dance,
+							(long) (cutrack.getDurationMs() / 1000), imgurl), cutrack.getUri());
+				} catch (IOException e1) {
+					e1.printStackTrace();
 				}
 
 			}
@@ -497,13 +497,14 @@ public class DanceInterpreter {
 	 */
 	private String getDance(String spotifyuri) {
 
-		JsonElement dancelem = dancelist.get(spotifyuri);
+		JsonObject danceobj = dancelist.get(spotifyuri);
 
-		if (dancelem != null) {
-			JsonElement stringelem = dancelem.getAsJsonObject().get("dance");
+		if (danceobj != null) {
 
-			if (stringelem != null && !stringelem.toString().equalsIgnoreCase("")) {
-				return stringelem.toString().replaceAll("\"", "");
+			String dance;
+			JsonElement elem = danceobj.get("dance");
+			if (elem != null && !elem.isJsonNull() && !(dance = elem.getAsString()).equalsIgnoreCase("")) {
+				return dance;
 			} else {
 				return "unknown";
 			}
@@ -520,13 +521,14 @@ public class DanceInterpreter {
 	 */
 	private String getDance(String title, String author) {
 
-		JsonElement dancelem = dancelist.get(author + " - " + title);
+		JsonObject danceobj = dancelist.get(author + " - " + title);
 
-		if (dancelem != null) {
-			JsonElement stringelem = dancelem.getAsJsonObject().get("dance");
+		if (danceobj != null) {
 
-			if (stringelem != null && !stringelem.toString().equalsIgnoreCase("")) {
-				return stringelem.toString().replaceAll("\"", "");
+			String dance;
+			JsonElement elem = danceobj.get("dance");
+			if (elem != null && !elem.isJsonNull() && !(dance = elem.getAsString()).equalsIgnoreCase("")) {
+				return dance;
 			} else {
 				return "unknown";
 			}
@@ -550,7 +552,38 @@ public class DanceInterpreter {
 				String jsonstring = Files.readString(Path.of(file.getPath()));
 
 				JsonElement json = JsonParser.parseString(jsonstring);
-				dancelist = json.getAsJsonObject();
+
+				if (json != null) {
+					JsonArray arr = json.getAsJsonObject().get("Songs").getAsJsonArray();
+
+					switch (Main.Instance.appMode) {
+					case "Spotify": {
+
+						for (JsonElement e : arr) {
+
+							JsonObject obj = e.getAsJsonObject();
+							dancelist.put(obj.get("SpotifyURL").getAsString(), obj);
+
+						}
+						break;
+
+					}
+					case "local .mp3 files": {
+
+						for (JsonElement e : arr) {
+
+							JsonObject obj = e.getAsJsonObject();
+							String title = obj.get("title").getAsString();
+							String artist = obj.get("artist").getAsString();
+
+							dancelist.put(artist + " - " + title, e.getAsJsonObject());
+
+						}
+						break;
+					}
+					}
+				}
+
 				return true;
 
 			} catch (IOException e1) {
@@ -563,6 +596,37 @@ public class DanceInterpreter {
 
 		return false;
 
+	}
+
+	public void addSongtoJSON(Songdata songdata, String SpotifyUri) {
+
+		JsonObject obj = new JsonObject();
+		obj.addProperty("title", songdata.getTitle());
+		obj.addProperty("artist", songdata.getAuthor());
+		obj.addProperty("dance", songdata.getDance());
+		obj.addProperty("SpotifyURL", SpotifyUri);
+		
+		JsonArray arr = new JsonArray();
+		JsonObject finaldata = new JsonObject();
+		
+		dancelist.values().forEach(val ->{
+			
+			arr.add(val);
+			
+		});
+		arr.add(obj);
+		
+		finaldata.add("Songs", arr);
+		
+		try {
+			BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/dancelist.json"),
+					Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
+			stream.write(finaldata.toString());
+			stream.flush();
+			stream.close();
+		} catch (IOException e) {
+			log.error(e.getMessage(), e);
+		}
 	}
 
 	/**
