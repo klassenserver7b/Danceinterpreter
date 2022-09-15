@@ -36,12 +36,12 @@ public class SongWindow {
 		JRootPane root = mainframe.getRootPane();
 		root.setWindowDecorationStyle(JRootPane.FRAME);
 		root.setBorder(BorderFactory.createEmptyBorder());
-		
 
-		mainframe.setBounds(100, 100, 500, 500);
+		mainframe.setBounds(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+				.getDefaultConfiguration().getBounds());
 
 		mainpanel = new JPanel();
-		
+
 		mainpanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F5"), "asynchronUpdate");
 		mainpanel.getActionMap().put("asynchronUpdate", new AsynchronousProvideListener());
 
@@ -51,7 +51,7 @@ public class SongWindow {
 				.getBounds();
 
 		mainpanel.setBackground(Color.BLACK);
-		mainpanel.setLayout(new FlowLayout(FlowLayout.CENTER, rect.width / 3, rect.height / 20));
+		mainpanel.setLayout(new FlowLayout(FlowLayout.CENTER, rect.width, rect.height / 20));
 		mainpanel.setBackground(Color.BLACK);
 		mainpanel.setBounds(0, 0, rect.width, rect.height);
 		mainframe.setTitle("DanceList");
@@ -61,14 +61,10 @@ public class SongWindow {
 		mainpanel.setVisible(true);
 
 		imglabel.setBackground(Color.BLACK);
-		imglabel.setAlignmentY(0);
-		imglabel.setAlignmentX(0);
 
 		text.setBackground(Color.BLACK);
 		text.setEditable(false);
 		text.setForeground(Color.WHITE);
-		text.setAlignmentY(1);
-		text.setAlignmentX(0);
 		text.setFont(new Font("Monospaced", Font.PLAIN, 36));
 
 		UpdateWindow(songname, artist, dance, img);
@@ -85,40 +81,48 @@ public class SongWindow {
 
 		this.rect = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
 				.getBounds();
-		log.info("width: "+rect.width+" height: " + rect.height);
+		log.info("width: " + rect.width + " height: " + rect.height);
 
 		Image scaledimg = scaleImage(img, rect);
 		ImageIcon imageIcon = new ImageIcon(scaledimg);
 
 		imglabel.setIcon(imageIcon);
-		imglabel.setBounds((rect.width / 2) - (imageIcon.getIconWidth() / 2), (rect.height / 10), rect.width, 640);
+		imglabel.setBounds((rect.width / 2) - (imageIcon.getIconWidth() / 2), (rect.height / 10),
+				imageIcon.getIconWidth() + rect.width / 3, imageIcon.getIconHeight() + 64);
+		System.out.println("IMG: "+imglabel.getBounds());
 
 		text.setText("\nSongname: " + songname + "\n\nArtist: " + artist + "\n\nTanz: " + dance);
-		text.setBounds((rect.width / 2) - (text.getWidth() / 2), (rect.height / 10) + 700, text.getWidth(),
-				rect.height / 5);
+		text.setBounds((rect.width / 2) - (text.getWidth() / 2), rect.height / 5 + imglabel.getHeight(), rect.width,
+				rect.height - imglabel.getHeight());
+		
+		System.out.println("TEXT: "+text.getBounds());
 
+		mainpanel.removeAll();
+		mainpanel.add(imglabel);
+		mainpanel.add(text);
+		
 		mainpanel.paintComponents(mainpanel.getGraphics());
 
 		mainframe.setVisible(true);
 	}
-	
+
 	public Image scaleImage(BufferedImage img, Rectangle rect) {
 		Image scaledimg = img.getScaledInstance(-1, -1, 0);
-		
-		if(img.getHeight() >= rect.height*0.50 || img.getWidth() >= rect.width*0.75) {
-			double heightscale = (rect.getHeight()*0.50)/img.getHeight();
-			double widthscale = (rect.getWidth()*0.75)/img.getWidth();
-			
+
+		if (img.getHeight() >= rect.height * 0.50 || img.getWidth() >= rect.width * 0.75) {
+			double heightscale = (rect.getHeight() * 0.50) / img.getHeight();
+			double widthscale = (rect.getWidth() * 0.75) / img.getWidth();
+
 			double scale;
-			if(heightscale<=widthscale) {
+			if (heightscale <= widthscale) {
 				scale = heightscale;
-			}else {
+			} else {
 				scale = widthscale;
 			}
-			
-			scaledimg = img.getScaledInstance((int) (img.getWidth()*scale), (int) (img.getHeight()*scale), 0);
+
+			scaledimg = img.getScaledInstance((int) (img.getWidth() * scale), (int) (img.getHeight() * scale), 0);
 		}
-		
+
 		return scaledimg;
 	}
 

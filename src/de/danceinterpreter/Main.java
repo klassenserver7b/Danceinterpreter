@@ -116,7 +116,7 @@ public class Main {
 
 		String[] optionsToChoose = { "Spotify", "local .mp3 files" };
 
-		String localappMode = (String) JOptionPane.showInputDialog(null, "Which this.appMode do you want to use?",
+		String localappMode = (String) JOptionPane.showInputDialog(null, "Which AppMode do you want to use?",
 				"Choose Mode", JOptionPane.QUESTION_MESSAGE, null, optionsToChoose, optionsToChoose[1]);
 
 		return localappMode;

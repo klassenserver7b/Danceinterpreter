@@ -1,0 +1,34 @@
+{
+	"Songs": [
+		{
+			"title": "Someone to You",
+			"artist": "BANNERS",
+			"SpotifyURL": "spotify:track:2f0pn9DkEJwAzXApnFh5cr",
+			"dance": "Jive"
+		},
+		{
+			"title": "Photograph",
+			"artist": "Ed Sheeran",
+			"SpotifyURL": "spotify:track:1HNkqx9Ahdgi1Ixy2xkKkL",
+			"dance": "Wiener Walzer"
+		},
+		{
+			"title": "BAMENINHONG",
+			"artist": "NoooN",
+			"dance": null,
+			"SpotifyURL": "spotify:track:6DBNe3qAY2sFe5OosQeX1w"
+		},
+		{
+			"title": "SALI BONANI",
+			"artist": "NoooN, Trommel Rosy",
+			"dance": null,
+			"SpotifyURL": "spotify:track:5mr07aDifUG01AEDQcvx0j"
+		},
+		{
+			"title": "Komm wieder",
+			"artist": "Julia Beautx vs. Zac White",
+			"dance": null,
+			"SpotifyURL": "LOCAL"
+		}
+	]
+}

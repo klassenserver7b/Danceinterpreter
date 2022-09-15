@@ -166,7 +166,7 @@ public class SpotifyInteractions {
 			spotifylog.debug("new DATA -> expires:" + this.expires + ", token:" + spotifyApi.getAccessToken());
 
 		} catch (IOException | SpotifyWebApiException | ParseException e) {
-			spotifylog.error("Error: " + e.getMessage());
+			spotifylog.error(e.getMessage(), e);
 		}
 	}
 
