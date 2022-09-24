@@ -2,12 +2,15 @@ package de.danceinterpreter.Graphics;
 
 import java.awt.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.image.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * 
@@ -32,6 +35,14 @@ public class SongWindow {
 	public SongWindow(String songname, String artist, String dance, BufferedImage img) {
 
 		mainframe = new JFrame();
+		
+		File file = new File("./icon.png");
+        try {
+			BufferedImage bufferedImage = ImageIO.read(file);
+			mainframe.setIconImage(bufferedImage);
+		} catch (IOException e) {
+			log.error("No Icon Found!");
+		}
 
 		mainframe.setBounds(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
 				.getDefaultConfiguration().getBounds());

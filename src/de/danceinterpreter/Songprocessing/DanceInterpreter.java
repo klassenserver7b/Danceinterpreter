@@ -105,7 +105,7 @@ public class DanceInterpreter {
 		});
 		songcheckT.setName("SongCheck");
 		songcheckT.start();
-		
+
 		return true;
 	}
 
@@ -194,6 +194,9 @@ public class DanceInterpreter {
 	 */
 	private void findAllFilesInFolder(File f) {
 
+		if (!f.isDirectory()) {
+			return;
+		}
 		for (File file : f.listFiles()) {
 			if (!file.isDirectory() && file.getName().endsWith(".mp3")) {
 				data.add(file);
