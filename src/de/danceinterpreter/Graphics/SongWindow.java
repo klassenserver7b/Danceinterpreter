@@ -89,18 +89,18 @@ public class SongWindow {
 		imglabel.setIcon(imageIcon);
 		imglabel.setBounds((rect.width / 2) - (imageIcon.getIconWidth() / 2), (rect.height / 10),
 				imageIcon.getIconWidth() + rect.width / 3, imageIcon.getIconHeight() + 64);
-		System.out.println("IMG: "+imglabel.getBounds());
+		System.out.println("IMG: " + imglabel.getBounds());
 
 		text.setText("\nSongname: " + songname + "\n\nArtist: " + artist + "\n\nTanz: " + dance);
 		text.setBounds((rect.width / 2) - (text.getWidth() / 2), rect.height / 5 + imglabel.getHeight(), rect.width,
 				rect.height - imglabel.getHeight());
-		
-		System.out.println("TEXT: "+text.getBounds());
+
+		System.out.println("TEXT: " + text.getBounds());
 
 		mainpanel.removeAll();
 		mainpanel.add(imglabel);
 		mainpanel.add(text);
-		
+
 		mainpanel.paintComponents(mainpanel.getGraphics());
 
 		mainframe.setVisible(true);

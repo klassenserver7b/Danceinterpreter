@@ -16,6 +16,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,9 @@ public class Main {
 		Properties prop = new Properties();
 		FileInputStream in;
 
-		this.appMode = checkappMode();
+		initalizeUILayout();
+		this.appMode = getappMode();
+		
 
 		if (this.appMode == null) {
 			return;
@@ -93,6 +96,9 @@ public class Main {
 
 	}
 
+	/**
+	 *
+	 */
 	private void loadLocal() {
 		danceinterpreter = new DanceInterpreter();
 
@@ -101,6 +107,10 @@ public class Main {
 		}
 	}
 
+	/**
+	 * 
+	 * @param prop
+	 */
 	private void loadSpotify(Properties prop) {
 
 		spotify = new SpotifyInteractions(prop);
@@ -112,7 +122,11 @@ public class Main {
 
 	}
 
-	public String checkappMode() {
+	/**
+	 * 
+	 * @return
+	 */
+	public String getappMode() {
 
 		String[] optionsToChoose = { "Spotify", "local .mp3 files" };
 
@@ -121,6 +135,18 @@ public class Main {
 
 		return localappMode;
 
+	}
+	
+	/**
+	 * 
+	 */
+	private void initalizeUILayout() {
+
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+		}
 	}
 
 	/**
