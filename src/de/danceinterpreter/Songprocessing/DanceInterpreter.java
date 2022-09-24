@@ -20,7 +20,9 @@ import java.util.prefs.Preferences;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
@@ -65,13 +67,13 @@ public class DanceInterpreter {
 	/**
 	 * 
 	 */
-	public void startLocalSongCheck() {
+	public boolean startLocalSongCheck() {
 
 		if (!initialize()) {
-			return;
+			return false;
 		}
 		if (!loadWorkingDirectory()) {
-			return;
+			return false;
 		}
 
 		songcheckT = new Thread(() -> {
@@ -103,15 +105,17 @@ public class DanceInterpreter {
 		});
 		songcheckT.setName("SongCheck");
 		songcheckT.start();
+		
+		return true;
 	}
 
 	/**
 	 * 
 	 */
-	public void startSpotifySongCheck() {
+	public boolean startSpotifySongCheck() {
 
 		if (!initialize()) {
-			return;
+			return false;
 		}
 
 		songcheckT = new Thread(() -> {
@@ -143,7 +147,7 @@ public class DanceInterpreter {
 		});
 		songcheckT.setName("SongCheck");
 		songcheckT.start();
-
+		return true;
 	}
 
 	/**
@@ -210,15 +214,17 @@ public class DanceInterpreter {
 		}
 
 		if (this.window != null) {
-			if (this.window.mainframe != null) {
-				this.window.mainframe.dispose();
-				this.window.mainframe.setVisible(false);
-				this.window.mainframe = null;
+			JFrame mainframe = this.getWindow().getMainFrame();
+			if (mainframe != null) {
+				mainframe.dispose();
+				mainframe.setVisible(false);
+				mainframe = null;
 			}
-			if (this.window.mainpanel != null) {
-				this.window.mainpanel.removeAll();
-				this.window.mainpanel.setEnabled(false);
-				this.window.mainpanel = null;
+			JPanel mainpanel = this.getWindow().getMainPanel();
+			if (mainpanel != null) {
+				mainpanel.removeAll();
+				mainpanel.setEnabled(false);
+				mainpanel = null;
 			}
 		}
 	}
@@ -243,10 +249,10 @@ public class DanceInterpreter {
 		JFileChooser f = new JFileChooser();
 		f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		f.setCurrentDirectory(new File(dir));
-		f.setDialogTitle("Ordner auswählen");
-		f.setApproveButtonText("Auswählen");
+		f.setDialogTitle("Select Directory");
+		f.setApproveButtonText("Select");
 		f.setMultiSelectionEnabled(false);
-		f.showSaveDialog(null);
+		f.showOpenDialog(null);
 
 		if (f.getSelectedFile() != null) {
 			prefs.put("Last-Path", f.getSelectedFile().getAbsolutePath());
@@ -394,8 +400,9 @@ public class DanceInterpreter {
 				fileoptions.put(f.getName(), f);
 			}
 
-			String filename = (String) JOptionPane.showInputDialog(null, "Which is the current Song?", "Song select",
-					JOptionPane.QUESTION_MESSAGE, null, fileoptions.keySet().toArray(new String[0]), null);
+			String filename = (String) JOptionPane.showInputDialog(null, "Which is the current Song?",
+					"Please select current song!", JOptionPane.QUESTION_MESSAGE, null,
+					fileoptions.keySet().toArray(new String[0]), null);
 
 			if (filename != null) {
 				return fileoptions.get(filename);
@@ -605,19 +612,19 @@ public class DanceInterpreter {
 		obj.addProperty("artist", songdata.getAuthor());
 		obj.addProperty("dance", songdata.getDance());
 		obj.addProperty("SpotifyURL", SpotifyUri);
-		
+
 		JsonArray arr = new JsonArray();
 		JsonObject finaldata = new JsonObject();
-		
-		dancelist.values().forEach(val ->{
-			
+
+		dancelist.values().forEach(val -> {
+
 			arr.add(val);
-			
+
 		});
 		arr.add(obj);
-		
+
 		finaldata.add("Songs", arr);
-		
+
 		try {
 			BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/dancelist.json"),
 					Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);

@@ -16,8 +16,8 @@ import java.awt.image.*;
  */
 public class SongWindow {
 	public final Logger log = LoggerFactory.getLogger("Window");
-	public JFrame mainframe;
-	public JPanel mainpanel;
+	private JFrame mainframe;
+	private JPanel mainpanel;
 	private Rectangle rect;
 	private JLabel imglabel = new JLabel();
 	private JTextArea text = new JTextArea();
@@ -32,10 +32,6 @@ public class SongWindow {
 	public SongWindow(String songname, String artist, String dance, BufferedImage img) {
 
 		mainframe = new JFrame();
-		mainframe.setUndecorated(true);
-		JRootPane root = mainframe.getRootPane();
-		root.setWindowDecorationStyle(JRootPane.FRAME);
-		root.setBorder(BorderFactory.createEmptyBorder());
 
 		mainframe.setBounds(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
 				.getDefaultConfiguration().getBounds());
@@ -43,7 +39,10 @@ public class SongWindow {
 		mainpanel = new JPanel();
 
 		mainpanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F5"), "asynchronUpdate");
-		mainpanel.getActionMap().put("asynchronUpdate", new AsynchronousProvideListener());
+		mainpanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F11"), "decorationChange");
+
+		mainpanel.getActionMap().put("asynchronUpdate", new RefreshListenerListener());
+		mainpanel.getActionMap().put("decorationChange", new FullscreenListener());
 
 		mainframe.add(mainpanel);
 
@@ -124,6 +123,14 @@ public class SongWindow {
 		}
 
 		return scaledimg;
+	}
+
+	public JFrame getMainFrame() {
+		return this.mainframe;
+	}
+
+	public JPanel getMainPanel() {
+		return this.mainpanel;
 	}
 
 }

@@ -46,8 +46,7 @@ public class Main {
 		FileInputStream in;
 
 		initalizeUILayout();
-		this.appMode = getappMode();
-		
+		this.appMode = getAppMode();
 
 		if (this.appMode == null) {
 			return;
@@ -70,20 +69,24 @@ public class Main {
 
 		}
 
-		startShutdownT(this.appMode);
-
 		switch (this.appMode) {
 		case "local .mp3 files": {
-			loadLocal();
+			if (!loadLocal()) {
+				return;
+			}
 			break;
 		}
 		case "Spotify": {
-			loadSpotify(prop);
+			if (!loadSpotify(prop)) {
+				return;
+			}
 			break;
 		}
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + this.appMode);
 		}
+
+		startShutdownT(this.appMode);
 
 	}
 
@@ -99,26 +102,28 @@ public class Main {
 	/**
 	 *
 	 */
-	private void loadLocal() {
+	private boolean loadLocal() {
 		danceinterpreter = new DanceInterpreter();
 
 		if (!errordetected) {
-			danceinterpreter.startLocalSongCheck();
+			return danceinterpreter.startLocalSongCheck();
 		}
+		return false;
 	}
 
 	/**
 	 * 
 	 * @param prop
 	 */
-	private void loadSpotify(Properties prop) {
+	private boolean loadSpotify(Properties prop) {
 
 		spotify = new SpotifyInteractions(prop);
 		danceinterpreter = new DanceInterpreter();
 
 		if (!errordetected) {
-			danceinterpreter.startSpotifySongCheck();
+			return danceinterpreter.startSpotifySongCheck();
 		}
+		return false;
 
 	}
 
@@ -126,7 +131,7 @@ public class Main {
 	 * 
 	 * @return
 	 */
-	public String getappMode() {
+	public String getAppMode() {
 
 		String[] optionsToChoose = { "Spotify", "local .mp3 files" };
 
@@ -136,7 +141,7 @@ public class Main {
 		return localappMode;
 
 	}
-	
+
 	/**
 	 * 
 	 */
