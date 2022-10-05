@@ -1,7 +1,13 @@
 {
 	"Songs": [
 		{
-			"title": "Someone to You",
+			"title": "He's a Pirate (Tango)",
+			"artist": "(From Pirate 0f the Caribbean)",
+			"dance": "Tango",
+			"SpotifyURL": "LOCAL"
+		},
+		{
+			"title": "Someone To You",
 			"artist": "BANNERS",
 			"SpotifyURL": "spotify:track:2f0pn9DkEJwAzXApnFh5cr",
 			"dance": "Jive"
@@ -11,6 +17,42 @@
 			"artist": "Ed Sheeran",
 			"SpotifyURL": "spotify:track:1HNkqx9Ahdgi1Ixy2xkKkL",
 			"dance": "Wiener Walzer"
+		},
+		{
+			"title": "Mars (Duett)",
+			"artist": "Georg Stengel, Julia Beautx",
+			"dance": null,
+			"SpotifyURL": "LOCAL"
+		},
+		{
+			"title": "Schneller als der Blitz",
+			"artist": "HeyMoritz",
+			"dance": null,
+			"SpotifyURL": "spotify:track:25T9xdD5cN5rCM8BVfQX1V"
+		},
+		{
+			"title": "Glücklicher allein",
+			"artist": "Julia Beautx",
+			"dance": null,
+			"SpotifyURL": "LOCAL"
+		},
+		{
+			"title": "Komm wieder",
+			"artist": "Julia Beautx",
+			"dance": null,
+			"SpotifyURL": "LOCAL"
+		},
+		{
+			"title": "Komm wieder (Remix)",
+			"artist": "Julia Beautx",
+			"dance": null,
+			"SpotifyURL": "LOCAL"
+		},
+		{
+			"title": "Komm wieder",
+			"artist": "Julia Beautx vs. Zac White",
+			"dance": null,
+			"SpotifyURL": "LOCAL"
 		},
 		{
 			"title": "BAMENINHONG",
@@ -23,12 +65,6 @@
 			"artist": "NoooN, Trommel Rosy",
 			"dance": null,
 			"SpotifyURL": "spotify:track:5mr07aDifUG01AEDQcvx0j"
-		},
-		{
-			"title": "Komm wieder",
-			"artist": "Julia Beautx vs. Zac White",
-			"dance": null,
-			"SpotifyURL": "LOCAL"
 		}
 	]
 }
