@@ -3,7 +3,9 @@
  */
 package de.danceinterpreter.Connections;
 
+import java.awt.Desktop;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -30,6 +32,10 @@ import se.michaelthelin.spotify.requests.authorization.authorization_code.Author
  *
  */
 public class SpotifyInteractions {
+
+	private static final String CLISEC = "982cae885d54429bb830a8a48f3a03c9";
+	private static final String CLIID = "63bd45efbbac4e7a936ee5b9d28d78e3";
+	private static final String REDURI = "https://github.com/klassenserver7b";
 	private Logger spotifylog = LoggerFactory.getLogger("spotifylog");
 	private static String code = "";
 	public SpotifyApi spotifyApi;
@@ -40,12 +46,12 @@ public class SpotifyInteractions {
 	public SpotifyInteractions(Properties prop) {
 
 		if (initialize(prop)) {
-			Main.errordetected=true;
+			Main.errordetected = true;
 			return;
 		}
 		if (!usingrefreshtoken) {
 			if (authorize(prop)) {
-				Main.errordetected=true;
+				Main.errordetected = true;
 				return;
 			}
 		} else {
@@ -62,21 +68,16 @@ public class SpotifyInteractions {
 	 */
 	public boolean initialize(Properties prop) {
 
-		String clisec = String.valueOf(prop.get("client_secret"));
-		String cliid = String.valueOf(prop.get("client_id"));
-		String reduri = String.valueOf(prop.get("redirect_uri"));
-		String usr_auth_code = String.valueOf(prop.get("authorization_token"));
-		String ref_token = String.valueOf(prop.get("refresh_token"));
+		this.spotifyApi = new SpotifyApi.Builder().setClientId(CLIID).setClientSecret(CLISEC)
+				.setRedirectUri(URI.create(REDURI)).build();
 
-		if (clisec.isBlank() || cliid.isBlank() || reduri.isBlank()) {
-			spotifylog.error("blank required fields");
-			spotifylog.info("Invalid configfile - ask the developer for the required data");
+		if (prop == null) {
+			sendTokenRequest();
 			return true;
-
 		}
 
-		this.spotifyApi = new SpotifyApi.Builder().setClientId(cliid).setClientSecret(clisec)
-				.setRedirectUri(URI.create(reduri)).build();
+		String usr_auth_code = String.valueOf(prop.get("authorization_token"));
+		String ref_token = String.valueOf(prop.get("refresh_token"));
 
 		if (!ref_token.isEmpty()) {
 			spotifyApi.setRefreshToken(ref_token);
@@ -84,22 +85,36 @@ public class SpotifyInteractions {
 			return false;
 		}
 
-		if (usr_auth_code==null ||usr_auth_code.isBlank()) {
-
-			spotifylog.error("no usr_auth_code");
-			final AuthorizationCodeUriRequest authorizationCodeUriRequest = spotifyApi.authorizationCodeUri()
-					.scope("app-remote-control,streaming,user-read-playback-position,user-modify-playback-state,user-read-playback-state,user-read-currently-playing").build();
-
-			spotifylog.info(
-					"Please insert your authcode into the configfile\nThis can be optained in the redirect url after accepting:\n"
-							+ authorizationCodeUriRequest.execute());
-
+		if (usr_auth_code == null || usr_auth_code.isBlank()) {
+			sendTokenRequest();
 			return true;
 		}
 
 		code = usr_auth_code;
 
 		return false;
+	}
+
+	public void sendTokenRequest() {
+
+		spotifylog.error("no usr_auth_code");
+		final AuthorizationCodeUriRequest authorizationCodeUriRequest = spotifyApi.authorizationCodeUri().scope(
+				"app-remote-control,streaming,user-read-playback-position,user-modify-playback-state,user-read-playback-state,user-read-currently-playing")
+				.build();
+
+		URI requestUri = authorizationCodeUriRequest.execute();
+
+		try {
+			spotifylog.info(
+					"Please insert your authcode into the configfile\nThis can be optained in the redirect url after accepting:\n"
+							+ requestUri);
+			Desktop.getDesktop().browse(requestUri);
+			Desktop.getDesktop().open(new File("./resources/config.properties"));
+
+		} catch (IOException e) {
+			spotifylog.error(e.getMessage(), e);
+		}
+
 	}
 
 	/**
@@ -115,7 +130,7 @@ public class SpotifyInteractions {
 					spotifylog.debug("authcode_refresh");
 				}
 			}
-			if(Main.exit) {
+			if (Main.exit) {
 				return;
 			}
 
@@ -126,25 +141,19 @@ public class SpotifyInteractions {
 	}
 
 	public void updateConfig(Properties prop) throws IOException {
-		
-		BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/config.properties"), Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
-		
-		Properties devprops = new Properties();
-		devprops.setProperty("client_id", prop.getProperty("client_id"));
-		devprops.setProperty("client_secret", prop.getProperty("client_secret"));
-		devprops.setProperty("redirect_uri", prop.getProperty("redirect_uri"));
-		
+
+		BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/config.properties"),
+				Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
+
 		Properties authprops = new Properties();
 		authprops.setProperty("authorization_token", "");
-		
+
 		Properties refreshprops = new Properties();
 		refreshprops.setProperty("refresh_token", prop.getProperty("refresh_token"));
-		
-		devprops.store(stream, "Spotify-Api\r\n\nThis data is providet by the AppCreator");
+
 		authprops.store(stream, "\nGet this after authorizing the Application");
 		refreshprops.store(stream, "\nDO NOT CHANGE THIS");
-		
-		
+
 		stream.close();
 
 	}
@@ -195,8 +204,9 @@ public class SpotifyInteractions {
 		} catch (ParseException | SpotifyWebApiException | IOException e) {
 			spotifylog.error(e.getMessage(), e);
 			spotifylog.error("invalid usr_auth_code");
-			final AuthorizationCodeUriRequest authorizationCodeUriRequest = spotifyApi.authorizationCodeUri()
-					.scope("app-remote-control,streaming,user-read-playback-position,user-modify-playback-state,user-read-playback-state,user-read-currently-playing").build();
+			final AuthorizationCodeUriRequest authorizationCodeUriRequest = spotifyApi.authorizationCodeUri().scope(
+					"app-remote-control,streaming,user-read-playback-position,user-modify-playback-state,user-read-playback-state,user-read-currently-playing")
+					.build();
 
 			spotifylog.info(
 					"Please insert your VALID authcode into the configfile\nThis can be optained in the redirect url after accepting:\n"

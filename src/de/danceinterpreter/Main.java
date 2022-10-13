@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 
@@ -59,11 +58,12 @@ public class Main {
 			in.close();
 
 		} catch (IOException e) {
+
 			log.error("No valid config File found! generating a new one");
 			File f = new File("resources/config.properties");
-			if (!f.exists()) {
-				createConfigFile(f);
-			}
+
+			createConfigFile(f);
+			new SpotifyInteractions(null);
 
 			return;
 
@@ -160,15 +160,13 @@ public class Main {
 	 */
 	private void createConfigFile(File f) {
 		try {
-			f.createNewFile();
 
-			BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/config.properties"),
-					Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
+			if (!f.exists()) {
+				f.createNewFile();
+			}
 
-			Properties devprops = new Properties();
-			devprops.setProperty("client_id", "");
-			devprops.setProperty("client_secret", "");
-			devprops.setProperty("redirect_uri", "");
+			BufferedWriter stream = Files.newBufferedWriter(f.toPath(), Charset.forName("UTF-8"),
+					StandardOpenOption.TRUNCATE_EXISTING);
 
 			Properties authprops = new Properties();
 			authprops.setProperty("authorization_token", "");
@@ -176,8 +174,7 @@ public class Main {
 			Properties refreshprops = new Properties();
 			refreshprops.setProperty("refresh_token", "");
 
-			devprops.store(stream, "Spotify-Api\r\n\nThis data is providet by the AppCreator");
-			authprops.store(stream, "\nGet this after authorizing the Application");
+			authprops.store(stream, "Spotify-API\n\nGet this after authorizing the Application");
 			refreshprops.store(stream, "\nDO NOT CHANGE THIS");
 
 			stream.close();
