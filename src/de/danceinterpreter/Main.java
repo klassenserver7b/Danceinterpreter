@@ -4,10 +4,8 @@
 package de.danceinterpreter;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Properties;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -36,29 +34,12 @@ public class Main {
 	public Main() {
 		Instance = this;
 
-		Properties prop = new Properties();
-		FileInputStream in;
 
 		initalizeUILayout();
 		this.appMode = getAppMode();
 
 		if (this.appMode == null) {
 			return;
-		}
-
-		try {
-
-			in = new FileInputStream("resources/config.properties");
-			prop.load(in);
-			in.close();
-
-		} catch (IOException e) {
-
-			log.error("No valid config File found! generating a new one");
-			new SpotifyInteractions();
-
-			return;
-
 		}
 
 		switch (this.appMode) {

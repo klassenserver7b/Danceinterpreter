@@ -4,6 +4,7 @@
 package de.danceinterpreter.Connections;
 
 import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
@@ -32,7 +33,7 @@ public class SpotifyInteractions {
 	// private static final String REDURI = "https://github.com/klassenserver7b";
 	private static final String REDURI = "http://localhost:8187/submitcode";
 	private Logger spotifylog = LoggerFactory.getLogger("spotifylog");
-	Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
+	Preferences prefs = Preferences.userRoot().node(new File("").getParent()+"_"+new File("").getName()+"_" + this.getClass().getName());
 	private String rtk;
 	public SpotifyApi spotifyApi;
 	public Thread fetchthread;
@@ -163,8 +164,6 @@ public class SpotifyInteractions {
 			this.expires = new Date().getTime() + (creds.getExpiresIn() * 1000);
 
 			prefs.put("DanceInterpreterRTK", creds.getRefreshToken());
-			
-			System.out.println(creds.getRefreshToken());
 
 			spotifylog.debug("AUTHORIZED -> expires:" + this.expires + ", token:" + spotifyApi.getAccessToken());
 			
