@@ -4,14 +4,9 @@
 package de.danceinterpreter;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
@@ -60,10 +55,7 @@ public class Main {
 		} catch (IOException e) {
 
 			log.error("No valid config File found! generating a new one");
-			File f = new File("resources/config.properties");
-
-			createConfigFile(f);
-			new SpotifyInteractions(null);
+			new SpotifyInteractions();
 
 			return;
 
@@ -77,7 +69,7 @@ public class Main {
 			break;
 		}
 		case "Spotify": {
-			if (!loadSpotify(prop)) {
+			if (!loadSpotify()) {
 				return;
 			}
 			break;
@@ -115,9 +107,9 @@ public class Main {
 	 * 
 	 * @param prop
 	 */
-	private boolean loadSpotify(Properties prop) {
+	private boolean loadSpotify() {
 
-		spotify = new SpotifyInteractions(prop);
+		spotify = new SpotifyInteractions();
 		danceinterpreter = new DanceInterpreter();
 
 		if (!errordetected) {
@@ -151,36 +143,6 @@ public class Main {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
-		}
-	}
-
-	/**
-	 * 
-	 * @param f
-	 */
-	private void createConfigFile(File f) {
-		try {
-
-			if (!f.exists()) {
-				f.createNewFile();
-			}
-
-			BufferedWriter stream = Files.newBufferedWriter(f.toPath(), Charset.forName("UTF-8"),
-					StandardOpenOption.TRUNCATE_EXISTING);
-
-			Properties authprops = new Properties();
-			authprops.setProperty("authorization_token", "");
-
-			Properties refreshprops = new Properties();
-			refreshprops.setProperty("refresh_token", "");
-
-			authprops.store(stream, "Spotify-API\n\nGet this after authorizing the Application");
-			refreshprops.store(stream, "\nDO NOT CHANGE THIS");
-
-			stream.close();
-
-		} catch (IOException e1) {
-			log.error(e1.getMessage(), e1);
 		}
 	}
 

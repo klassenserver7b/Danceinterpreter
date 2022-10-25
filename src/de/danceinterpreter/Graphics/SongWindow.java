@@ -35,9 +35,9 @@ public class SongWindow {
 	public SongWindow(String songname, String artist, String dance, BufferedImage img) {
 
 		mainframe = new JFrame();
-		
+
 		File file = new File("./icon.png");
-        try {
+		try {
 			BufferedImage bufferedImage = ImageIO.read(file);
 			mainframe.setIconImage(bufferedImage);
 		} catch (IOException e) {
@@ -117,8 +117,7 @@ public class SongWindow {
 	}
 
 	public Image scaleImage(BufferedImage img, Rectangle rect) {
-		Image scaledimg = img.getScaledInstance(-1, -1, 0);
-
+		
 		if (img.getHeight() >= rect.height * 0.50 || img.getWidth() >= rect.width * 0.75) {
 			double heightscale = (rect.getHeight() * 0.50) / img.getHeight();
 			double widthscale = (rect.getWidth() * 0.75) / img.getWidth();
@@ -130,10 +129,11 @@ public class SongWindow {
 				scale = widthscale;
 			}
 
-			scaledimg = img.getScaledInstance((int) (img.getWidth() * scale), (int) (img.getHeight() * scale), 0);
+			return img.getScaledInstance((int) (img.getWidth() * scale), (int) (img.getHeight() * scale), 0);
 		}
 
-		return scaledimg;
+		return img.getScaledInstance(-1, -1, 0);
+
 	}
 
 	public JFrame getMainFrame() {

@@ -45,6 +45,7 @@ import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.IPlaylistItem;
 import se.michaelthelin.spotify.model_objects.miscellaneous.CurrentlyPlaying;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
+import se.michaelthelin.spotify.model_objects.specification.Image;
 import se.michaelthelin.spotify.model_objects.specification.Track;
 import se.michaelthelin.spotify.requests.data.player.GetUsersCurrentlyPlayingTrackRequest;
 import se.michaelthelin.spotify.requests.data.tracks.GetTrackRequest;
@@ -425,7 +426,9 @@ public class DanceInterpreter {
 		if (cutrack != null) {
 
 			StringBuilder authbuild = new StringBuilder();
-			String imgurl = cutrack.getAlbum().getImages()[0].getUrl();
+			Image[] images = cutrack.getAlbum().getImages();
+			String imgurl = images[images.length-1].getUrl();
+			
 
 			ArtistSimplified[] artists = cutrack.getArtists();
 

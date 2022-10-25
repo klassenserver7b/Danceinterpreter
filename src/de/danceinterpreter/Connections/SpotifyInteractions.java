@@ -4,16 +4,10 @@
 package de.danceinterpreter.Connections;
 
 import java.awt.Desktop;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.Date;
-import java.util.Properties;
+import java.util.prefs.Preferences;
 
 import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
@@ -35,28 +29,24 @@ public class SpotifyInteractions {
 
 	private static final String CLISEC = "982cae885d54429bb830a8a48f3a03c9";
 	private static final String CLIID = "63bd45efbbac4e7a936ee5b9d28d78e3";
-	private static final String REDURI = "https://github.com/klassenserver7b";
+	// private static final String REDURI = "https://github.com/klassenserver7b";
+	private static final String REDURI = "http://localhost:8187/submitcode";
 	private Logger spotifylog = LoggerFactory.getLogger("spotifylog");
-	private static String code = "";
+	Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
+	private String rtk;
 	public SpotifyApi spotifyApi;
 	public Thread fetchthread;
 	public long expires;
-	private boolean usingrefreshtoken;
 
-	public SpotifyInteractions(Properties prop) {
+	public SpotifyInteractions() {
 
-		if (initialize(prop)) {
+		if (!initialize()) {
 			Main.errordetected = true;
 			return;
 		}
-		if (!usingrefreshtoken) {
-			if (authorize(prop)) {
-				Main.errordetected = true;
-				return;
-			}
-		} else {
-			refreshToken();
-		}
+
+		refreshToken();
+
 		startfetchcycle();
 
 	}
@@ -66,38 +56,33 @@ public class SpotifyInteractions {
 	 * @param prop
 	 * @return
 	 */
-	public boolean initialize(Properties prop) {
+	public boolean initialize() {
 
 		this.spotifyApi = new SpotifyApi.Builder().setClientId(CLIID).setClientSecret(CLISEC)
 				.setRedirectUri(URI.create(REDURI)).build();
 
-		if (prop == null) {
-			sendTokenRequest();
+		System.out.println(prefs.get("DanceInterpreterRTK", ""));
+		rtk = prefs.get("DanceInterpreterRTK", "");
+
+		if (rtk == null || rtk.isBlank()) {
+			
+			sendTokenRequest(this);
+			
 			return true;
 		}
 
-		String usr_auth_code = String.valueOf(prop.get("authorization_token"));
-		String ref_token = String.valueOf(prop.get("refresh_token"));
-
-		if (!ref_token.isEmpty()) {
-			spotifyApi.setRefreshToken(ref_token);
-			usingrefreshtoken = true;
-			return false;
-		}
-
-		if (usr_auth_code == null || usr_auth_code.isBlank()) {
-			sendTokenRequest();
+		if (rtk != null && !rtk.isBlank()) {
+			spotifyApi.setRefreshToken(rtk);
 			return true;
 		}
-
-		code = usr_auth_code;
 
 		return false;
 	}
 
-	public void sendTokenRequest() {
+	public void sendTokenRequest(SpotifyInteractions interaction) {
 
 		spotifylog.error("no usr_auth_code");
+
 		final AuthorizationCodeUriRequest authorizationCodeUriRequest = spotifyApi.authorizationCodeUri().scope(
 				"app-remote-control,streaming,user-read-playback-position,user-modify-playback-state,user-read-playback-state,user-read-currently-playing")
 				.build();
@@ -105,11 +90,10 @@ public class SpotifyInteractions {
 		URI requestUri = authorizationCodeUriRequest.execute();
 
 		try {
-			spotifylog.info(
-					"Please insert your authcode into the configfile\nThis can be optained in the redirect url after accepting:\n"
-							+ requestUri);
+
+			new CodeHttpServer(interaction);
+
 			Desktop.getDesktop().browse(requestUri);
-			Desktop.getDesktop().open(new File("./resources/config.properties"));
 
 		} catch (IOException e) {
 			spotifylog.error(e.getMessage(), e);
@@ -140,24 +124,6 @@ public class SpotifyInteractions {
 
 	}
 
-	public void updateConfig(Properties prop) throws IOException {
-
-		BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/config.properties"),
-				Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
-
-		Properties authprops = new Properties();
-		authprops.setProperty("authorization_token", "");
-
-		Properties refreshprops = new Properties();
-		refreshprops.setProperty("refresh_token", prop.getProperty("refresh_token"));
-
-		authprops.store(stream, "\nGet this after authorizing the Application");
-		refreshprops.store(stream, "\nDO NOT CHANGE THIS");
-
-		stream.close();
-
-	}
-
 	/**
 	 * 
 	 */
@@ -183,7 +149,7 @@ public class SpotifyInteractions {
 	 * 
 	 * @return
 	 */
-	public boolean authorize(Properties prop) {
+	public void authorize(String code) {
 
 		spotifylog.debug("authorization started");
 		final AuthorizationCodeRequest authorizationCodeRequest = spotifyApi.authorizationCode(code).build();
@@ -196,10 +162,14 @@ public class SpotifyInteractions {
 			spotifyApi.setRefreshToken(creds.getRefreshToken());
 			this.expires = new Date().getTime() + (creds.getExpiresIn() * 1000);
 
-			prop.setProperty("refresh_token", creds.getRefreshToken());
-			updateConfig(prop);
+			prefs.put("DanceInterpreterRTK", creds.getRefreshToken());
+			
+			System.out.println(creds.getRefreshToken());
 
 			spotifylog.debug("AUTHORIZED -> expires:" + this.expires + ", token:" + spotifyApi.getAccessToken());
+			
+			refreshToken();
+			return;
 
 		} catch (ParseException | SpotifyWebApiException | IOException e) {
 			spotifylog.error(e.getMessage(), e);
@@ -211,10 +181,8 @@ public class SpotifyInteractions {
 			spotifylog.info(
 					"Please insert your VALID authcode into the configfile\nThis can be optained in the redirect url after accepting:\n"
 							+ authorizationCodeUriRequest.execute());
-			return true;
+			return;
 		}
-
-		return false;
 
 	}
 
