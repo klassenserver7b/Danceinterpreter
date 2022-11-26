@@ -9,7 +9,7 @@ package de.danceinterpreter.songprocessing;
  */
 public interface SongDataProvider {
 	
-	public Songdata provideSongData();
+	public SongData provideSongData();
 	
 	public void provideAsynchronous();
 

@@ -1,11 +1,10 @@
 /**
  * 
  */
-package de.danceinterpreter.graphics;
+package de.danceinterpreter.graphics.listener;
 
-import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
-import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 
 import de.danceinterpreter.Main;
@@ -15,16 +14,15 @@ import de.danceinterpreter.songprocessing.DanceInterpreter;
  * @author Felix
  *
  */
-public class FullscreenListener extends AbstractAction{
+public class FullscreenListener extends CKeyListener {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		
+	public void performAction(int keycode) {
+
+		if (keycode != KeyEvent.VK_F11) {
+			return;
+		}
+
 		DanceInterpreter interpreter = Main.Instance.getDanceInterpreter();
 
 		JFrame frame = interpreter.getWindow().getMainFrame();
@@ -39,7 +37,7 @@ public class FullscreenListener extends AbstractAction{
 
 		frame.setVisible(true);
 		frame.repaint();
-		
+
 	}
 
 }

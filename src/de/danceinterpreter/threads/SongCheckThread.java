@@ -5,9 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import de.danceinterpreter.AppModes;
 import de.danceinterpreter.Main;
-import de.danceinterpreter.graphics.SongWindow;
 import de.danceinterpreter.songprocessing.DanceInterpreter;
-import de.danceinterpreter.songprocessing.Songdata;
+import de.danceinterpreter.songprocessing.SongData;
 
 public class SongCheckThread implements Runnable {
 
@@ -31,7 +30,7 @@ public class SongCheckThread implements Runnable {
 				if (System.currentTimeMillis() >= time + 5000) {
 					time = System.currentTimeMillis();
 
-					Songdata data = appmode.getDataProvider().provideSongData();
+					SongData data = appmode.getDataProvider().provideSongData();
 
 					if (data != null) {
 						log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", "
@@ -39,12 +38,8 @@ public class SongCheckThread implements Runnable {
 
 						DanceInterpreter di = Main.Instance.getDanceInterpreter();
 
-						if (di.getWindow() == null) {
-							di.setSongWindow(new SongWindow(data.getTitle(), data.getAuthor(), data.getDance(),
-									data.getImageURL()));
-						} else {
-							di.updateSongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImageURL());
-						}
+						di.updateSongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImage());
+
 					}
 				}
 			}

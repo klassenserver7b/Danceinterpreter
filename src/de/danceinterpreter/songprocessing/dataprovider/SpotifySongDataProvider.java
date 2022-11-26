@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import de.danceinterpreter.Main;
 import de.danceinterpreter.songprocessing.SongDataProvider;
-import de.danceinterpreter.songprocessing.Songdata;
+import de.danceinterpreter.songprocessing.SongData;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.IPlaylistItem;
@@ -40,7 +40,7 @@ public class SpotifySongDataProvider implements SongDataProvider {
 	}
 
 	@Override
-	public Songdata provideSongData() {
+	public SongData provideSongData() {
 		Track cutrack = getCurrentSpotifySong();
 
 		if (cutrack != null) {
@@ -73,7 +73,7 @@ public class SpotifySongDataProvider implements SongDataProvider {
 			if (dance == null) {
 
 				try {
-					Main.Instance.getDanceInterpreter().addSongtoJSON(new Songdata(cutrack.getName(), authors, dance,
+					Main.Instance.getDanceInterpreter().addSongtoJSON(new SongData(cutrack.getName(), authors, dance,
 							(long) (cutrack.getDurationMs() / 1000), imgurl), cutrack.getUri());
 				} catch (IOException e1) {
 					log.error(e1.getMessage(), e1);
@@ -81,9 +81,9 @@ public class SpotifySongDataProvider implements SongDataProvider {
 
 			}
 
-			Songdata ret;
+			SongData ret;
 			try {
-				ret = new Songdata(cutrack.getName(), authors, dance, (long) (cutrack.getDurationMs() / 1000), imgurl);
+				ret = new SongData(cutrack.getName(), authors, dance, (long) (cutrack.getDurationMs() / 1000), imgurl);
 				if (datahash != ret.hashCode()) {
 					datahash = ret.hashCode();
 					return ret;

@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.prefs.Preferences;
@@ -28,6 +29,7 @@ import com.google.gson.JsonParser;
 import de.danceinterpreter.AppModes;
 import de.danceinterpreter.Main;
 import de.danceinterpreter.graphics.SongWindow;
+import de.danceinterpreter.loader.PlaylistLoader;
 import de.danceinterpreter.threads.SongCheckThread;
 
 /**
@@ -40,8 +42,17 @@ public class DanceInterpreter {
 	private TreeMap<String, JsonObject> dancelist = new TreeMap<>();
 	private SongCheckThread songcheckT;
 	private SongWindow window;
-	private final List<File> data = new ArrayList<>();
-	private final Logger log = LoggerFactory.getLogger("Danceinterpreter");
+
+	private LinkedHashMap<File, SongData> songs;
+
+	private final List<File> data;
+
+	private final Logger log;
+
+	public DanceInterpreter() {
+		this.data = new ArrayList<>();
+		this.log = LoggerFactory.getLogger("Danceinterpreter");
+	}
 
 	/**
 	 * 
@@ -54,6 +65,17 @@ public class DanceInterpreter {
 
 		if (appmode == AppModes.LocalMP3) {
 			if (!loadWorkingDirectory()) {
+				return false;
+			}
+		}
+
+		if (appmode == AppModes.Playlist) {
+
+			File playlist;
+			if ((playlist = new PlaylistLoader().loadPlaylistFile()) == null) {
+				return false;
+			}
+			if ((songs = new PlaylistLoader().loadSongs(playlist)) == null) {
 				return false;
 			}
 		}
@@ -287,7 +309,7 @@ public class DanceInterpreter {
 	 * @param songdata
 	 * @param SpotifyUri
 	 */
-	public void addSongtoJSON(Songdata songdata, String SpotifyUri) {
+	public void addSongtoJSON(SongData songdata, String SpotifyUri) {
 
 		JsonObject obj = new JsonObject();
 		obj.addProperty("title", songdata.getTitle());
@@ -326,15 +348,13 @@ public class DanceInterpreter {
 	 * @param img
 	 */
 	public void updateSongWindow(String songname, String artist, String dance, BufferedImage img) {
-		this.window.UpdateWindow(songname, artist, dance, img);
-	}
 
-	/**
-	 * 
-	 * @param swindow
-	 */
-	public void setSongWindow(SongWindow swindow) {
-		this.window = swindow;
+		if (this.window == null) {
+			this.window = new SongWindow(songname, artist, dance, img);
+			return;
+		}
+
+		this.window.UpdateWindow(songname, artist, dance, img);
 	}
 
 	/**
@@ -359,5 +379,29 @@ public class DanceInterpreter {
 	 */
 	public List<File> getFiles() {
 		return this.data;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public LinkedHashMap<File, SongData> getPlaylistSongs() {
+		return this.songs;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public List<File> getSongs() {
+		return data;
+	}
+
+	/**
+	 * 
+	 * @param swindow
+	 */
+	public void setSongWindow(SongWindow swindow) {
+		this.window = swindow;
 	}
 }

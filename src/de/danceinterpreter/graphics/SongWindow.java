@@ -1,12 +1,18 @@
 package de.danceinterpreter.graphics;
 
 import java.awt.*;
+import java.awt.event.FocusEvent.Cause;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.danceinterpreter.graphics.listener.ArrowKeyListener;
+import de.danceinterpreter.graphics.listener.CustomKeyListener;
+import de.danceinterpreter.graphics.listener.FullscreenListener;
+import de.danceinterpreter.graphics.listener.RefreshListener;
 
 import java.awt.image.*;
 import java.io.File;
@@ -49,12 +55,6 @@ public class SongWindow {
 
 		mainpanel = new JPanel();
 
-		mainpanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F5"), "asynchronUpdate");
-		mainpanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F11"), "decorationChange");
-
-		mainpanel.getActionMap().put("asynchronUpdate", new RefreshListenerListener());
-		mainpanel.getActionMap().put("decorationChange", new FullscreenListener());
-
 		mainframe.add(mainpanel);
 
 		rect = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
@@ -76,6 +76,14 @@ public class SongWindow {
 		text.setEditable(false);
 		text.setForeground(Color.WHITE);
 		text.setFont(new Font("Monospaced", Font.PLAIN, 36));
+
+		CustomKeyListener keylis = new CustomKeyListener();
+
+		keylis.registerKeyListeners(new RefreshListener(), new FullscreenListener(), new ArrowKeyListener());
+
+		text.addKeyListener(keylis);
+		mainpanel.addKeyListener(keylis);
+		mainframe.addKeyListener(keylis);
 
 		UpdateWindow(songname, artist, dance, img);
 	}
@@ -114,10 +122,11 @@ public class SongWindow {
 		mainpanel.paintComponents(mainpanel.getGraphics());
 
 		mainframe.setVisible(true);
+		mainframe.requestFocus(Cause.ACTIVATION);
 	}
 
 	public Image scaleImage(BufferedImage img, Rectangle rect) {
-		
+
 		if (img.getHeight() >= rect.height * 0.50 || img.getWidth() >= rect.width * 0.75) {
 			double heightscale = (rect.getHeight() * 0.50) / img.getHeight();
 			double widthscale = (rect.getWidth() * 0.75) / img.getWidth();

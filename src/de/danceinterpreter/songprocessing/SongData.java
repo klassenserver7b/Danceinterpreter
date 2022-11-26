@@ -13,7 +13,7 @@ import javax.imageio.ImageIO;
  * @author felix
  *
  */
-public class Songdata {
+public class SongData {
 
 	private String title;
 	private String author;
@@ -21,7 +21,7 @@ public class Songdata {
 	private Long duration;
 	private BufferedImage img;
 
-	public Songdata(String tit, String author, String dance, Long dur, BufferedImage img) {
+	public SongData(String tit, String author, String dance, Long dur, BufferedImage img) {
 
 		this.title = tit;
 		this.author = author;
@@ -31,7 +31,7 @@ public class Songdata {
 
 	}
 
-	public Songdata(String tit, String author, String dance, Long dur, String imgurl)
+	public SongData(String tit, String author, String dance, Long dur, String imgurl)
 			throws MalformedURLException, IOException {
 
 		this.title = tit;
@@ -43,7 +43,7 @@ public class Songdata {
 		this.img = buffimg;
 	}
 
-	public Songdata() {
+	public SongData() {
 
 	}
 
@@ -63,7 +63,7 @@ public class Songdata {
 		return this.duration;
 	}
 
-	public BufferedImage getImageURL() {
+	public BufferedImage getImage() {
 		return this.img;
 	}
 
@@ -105,7 +105,7 @@ public class Songdata {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Songdata other = (Songdata) obj;
+		SongData other = (SongData) obj;
 		return Objects.equals(author, other.author) && Objects.equals(dance, other.dance)
 				&& Objects.equals(duration, other.duration) && Objects.equals(title, other.title);
 	}

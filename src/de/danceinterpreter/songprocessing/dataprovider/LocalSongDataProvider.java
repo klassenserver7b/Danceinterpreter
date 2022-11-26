@@ -27,10 +27,9 @@ import com.mpatric.mp3agic.UnsupportedTagException;
 import com.sun.nio.file.ExtendedOpenOption;
 
 import de.danceinterpreter.Main;
-import de.danceinterpreter.graphics.SongWindow;
 import de.danceinterpreter.songprocessing.DanceInterpreter;
 import de.danceinterpreter.songprocessing.SongDataProvider;
-import de.danceinterpreter.songprocessing.Songdata;
+import de.danceinterpreter.songprocessing.SongData;
 
 /**
  * @author Felix
@@ -55,14 +54,14 @@ public class LocalSongDataProvider implements SongDataProvider {
 	 * 
 	 */
 	@Override
-	public Songdata provideSongData() {
+	public SongData provideSongData() {
 		return provideParameterizedData(true);
 	}
 
-	private Songdata provideParameterizedData(boolean checkcurrent) {
+	private SongData provideParameterizedData(boolean checkcurrent) {
 		File f = getLocalSong(checkcurrent);
 
-		Songdata ret = null;
+		SongData ret = null;
 		DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
 
 		Mp3File mp3file;
@@ -95,14 +94,14 @@ public class LocalSongDataProvider implements SongDataProvider {
 					Long length = mp3file.getLength();
 					String dance = danceI.getDance(title, author);
 
-					ret = new Songdata(title, author, dance, length, img);
+					ret = new SongData(title, author, dance, length, img);
 
 					if (dance == null) {
 						danceI.addSongtoJSON(ret, "LOCAL");
 					}
 
 				} else {
-					ret = new Songdata("Unknown", "Unknown", "null", 0L,
+					ret = new SongData("Unknown", "Unknown", "null", 0L,
 							new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB));
 				}
 
@@ -211,19 +210,15 @@ public class LocalSongDataProvider implements SongDataProvider {
 	 * 
 	 */
 	public void provideAsynchronous() {
-		Songdata data = provideParameterizedData(false);
+		SongData data = provideParameterizedData(false);
 
 		if (data != null) {
 			log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
 
 			DanceInterpreter di = Main.Instance.getDanceInterpreter();
 
-			if (di.getWindow() == null) {
-				di.setSongWindow(
-						new SongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImageURL()));
-			} else {
-				di.updateSongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImageURL());
-			}
+			di.updateSongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImage());
+
 		}
 	}
 

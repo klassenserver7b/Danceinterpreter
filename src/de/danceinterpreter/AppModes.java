@@ -14,7 +14,7 @@ public enum AppModes {
 
 	LocalMP3(1, new LocalSongDataProvider()),
 
-	Playlist(2, new LocalSongDataProvider());
+	Playlist(2, new PlaylistSongDataProvider());
 
 	private final int id;
 	private final SongDataProvider provider;
