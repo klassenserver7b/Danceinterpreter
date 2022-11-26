@@ -1,4 +1,4 @@
-package de.danceinterpreter.Songprocessing;
+package de.danceinterpreter.songprocessing;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

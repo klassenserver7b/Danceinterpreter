@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.danceinterpreter.Connections;
+package de.danceinterpreter.connections;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -32,14 +32,21 @@ public class SpotifyInteractions {
 	private static final String CLIID = "63bd45efbbac4e7a936ee5b9d28d78e3";
 	// private static final String REDURI = "https://github.com/klassenserver7b";
 	private static final String REDURI = "http://localhost:8187/submitcode";
-	private Logger spotifylog = LoggerFactory.getLogger("spotifylog");
-	Preferences prefs = Preferences.userRoot().node(new File("").getParent()+"_"+new File("").getName()+"_" + this.getClass().getName());
+	private Logger spotifylog;
+	Preferences prefs;
+	private final String rtkpath;
 	private String rtk;
 	public SpotifyApi spotifyApi;
 	public Thread fetchthread;
 	public long expires;
 
 	public SpotifyInteractions() {
+
+		spotifylog = LoggerFactory.getLogger("spotifylog");
+
+		rtkpath = new File("").getParent() + "_" + new File("").getName() + "_" + "DIRTK";
+		prefs = Preferences.userRoot()
+				.node(new File("").getParent() + "_" + new File("").getName() + "_" + this.getClass().getName());
 
 		if (!initialize()) {
 			Main.errordetected = true;
@@ -62,13 +69,13 @@ public class SpotifyInteractions {
 		this.spotifyApi = new SpotifyApi.Builder().setClientId(CLIID).setClientSecret(CLISEC)
 				.setRedirectUri(URI.create(REDURI)).build();
 
-		System.out.println(prefs.get("DanceInterpreterRTK", ""));
-		rtk = prefs.get("DanceInterpreterRTK", "");
+		System.out.println(prefs.get(rtkpath, ""));
+		rtk = prefs.get(rtkpath, "");
 
 		if (rtk == null || rtk.isBlank()) {
-			
+
 			sendTokenRequest(this);
-			
+
 			return true;
 		}
 
@@ -163,10 +170,10 @@ public class SpotifyInteractions {
 			spotifyApi.setRefreshToken(creds.getRefreshToken());
 			this.expires = new Date().getTime() + (creds.getExpiresIn() * 1000);
 
-			prefs.put("DanceInterpreterRTK", creds.getRefreshToken());
+			prefs.put(rtkpath, creds.getRefreshToken());
 
 			spotifylog.debug("AUTHORIZED -> expires:" + this.expires + ", token:" + spotifyApi.getAccessToken());
-			
+
 			refreshToken();
 			return;
 

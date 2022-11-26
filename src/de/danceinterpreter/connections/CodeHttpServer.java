@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.danceinterpreter.Connections;
+package de.danceinterpreter.connections;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -48,7 +48,7 @@ class CodeHandler implements HttpHandler {
 		this.server = server;
 		this.interact = interaction;
 
-		log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+		log = LoggerFactory.getLogger(this.getClass());
 
 		response = "<!DOCTYPE html>\r\n" + "<html>\r\n" + "   <head>\r\n" + "      <title>HTML Meta Tag</title>\r\n"
 				+ "      <meta http-equiv = \"refresh\" content = \"1; url = https://github.com/klassenserver7b/Danceinterpreter \" />\r\n"

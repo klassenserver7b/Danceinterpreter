@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.danceinterpreter.Graphics;
+package de.danceinterpreter.graphics;
 
 import java.awt.event.ActionEvent;
 
@@ -9,7 +9,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 
 import de.danceinterpreter.Main;
-import de.danceinterpreter.Songprocessing.DanceInterpreter;
+import de.danceinterpreter.songprocessing.DanceInterpreter;
 
 /**
  * @author Felix

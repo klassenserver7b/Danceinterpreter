@@ -1,4 +1,4 @@
-package de.danceinterpreter.Graphics;
+package de.danceinterpreter.graphics;
 
 import java.awt.*;
 
@@ -64,7 +64,7 @@ public class SongWindow {
 		mainpanel.setLayout(new FlowLayout(FlowLayout.CENTER, rect.width, rect.height / 20));
 		mainpanel.setBackground(Color.BLACK);
 		mainpanel.setBounds(0, 0, rect.width, rect.height);
-		mainframe.setTitle("DanceList");
+		mainframe.setTitle("DanceInterpreter");
 		mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainpanel.add(imglabel);
 		mainpanel.add(text);

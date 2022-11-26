@@ -1,14 +1,14 @@
 /**
  * 
  */
-package de.danceinterpreter.Graphics;
+package de.danceinterpreter.graphics;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
 import de.danceinterpreter.Main;
-import de.danceinterpreter.Songprocessing.DanceInterpreter;
+import de.danceinterpreter.songprocessing.DanceInterpreter;
 
 /**
  * @author Felix
@@ -26,7 +26,7 @@ public class RefreshListenerListener extends AbstractAction {
 
 		DanceInterpreter interpreter = Main.Instance.getDanceInterpreter();
 		interpreter.getWindow().log.debug("KEY_PRESSED: REFRESH");
-		interpreter.provideAsynchronous();
+		Main.Instance.getAppMode().getDataProvider().provideAsynchronous();
 
 	}
 }

@@ -6,6 +6,7 @@ package de.danceinterpreter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -13,8 +14,8 @@ import javax.swing.UIManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.danceinterpreter.Connections.SpotifyInteractions;
-import de.danceinterpreter.Songprocessing.DanceInterpreter;
+import de.danceinterpreter.connections.SpotifyInteractions;
+import de.danceinterpreter.songprocessing.DanceInterpreter;
 import se.michaelthelin.spotify.SpotifyApi;
 
 /**
@@ -24,39 +25,26 @@ import se.michaelthelin.spotify.SpotifyApi;
 public class Main {
 	public static Main Instance;
 	public static boolean exit;
-	public SpotifyInteractions spotify;
-	public DanceInterpreter danceinterpreter;
-	public String appMode;
+	public static boolean errordetected;
+
+	private SpotifyInteractions spotify;
+	private DanceInterpreter danceinterpreter;
+	private AppModes appMode;
 	private Thread shutdownT;
 	private final Logger log = LoggerFactory.getLogger("Main");
-	public static boolean errordetected;
 
 	public Main() {
 		Instance = this;
 
-
 		initalizeUILayout();
-		this.appMode = getAppMode();
+		this.appMode = askForAppMode();
 
 		if (this.appMode == null) {
 			return;
 		}
 
-		switch (this.appMode) {
-		case "local .mp3 files": {
-			if (!loadLocal()) {
-				return;
-			}
-			break;
-		}
-		case "Spotify": {
-			if (!loadSpotify()) {
-				return;
-			}
-			break;
-		}
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + this.appMode);
+		if (!load()) {
+			return;
 		}
 
 		startShutdownT(this.appMode);
@@ -75,43 +63,38 @@ public class Main {
 	/**
 	 *
 	 */
-	private boolean loadLocal() {
-		danceinterpreter = new DanceInterpreter();
+	private boolean load() {
+		this.danceinterpreter = new DanceInterpreter();
+
+		if (appMode == AppModes.Spotify) {
+			this.spotify = new SpotifyInteractions();
+		}
 
 		if (!errordetected) {
-			return danceinterpreter.startLocalSongCheck();
+			return danceinterpreter.startSongCheck(appMode);
 		}
+
 		return false;
-	}
-
-	/**
-	 * 
-	 * @param prop
-	 */
-	private boolean loadSpotify() {
-
-		spotify = new SpotifyInteractions();
-		danceinterpreter = new DanceInterpreter();
-
-		if (!errordetected) {
-			return danceinterpreter.startSpotifySongCheck();
-		}
-		return false;
-
 	}
 
 	/**
 	 * 
 	 * @return
 	 */
-	public String getAppMode() {
+	public AppModes askForAppMode() {
 
-		String[] optionsToChoose = { "Spotify", "local .mp3 files" };
+		ArrayList<String> optionsToChoose = new ArrayList<>();
+
+		for (AppModes m : AppModes.values()) {
+			optionsToChoose.add(m.toString());
+		}
 
 		String localappMode = (String) JOptionPane.showInputDialog(null, "Which AppMode do you want to use?",
-				"Choose Mode", JOptionPane.QUESTION_MESSAGE, null, optionsToChoose, optionsToChoose[1]);
+				"Choose Mode", JOptionPane.QUESTION_MESSAGE, null, optionsToChoose.toArray(), optionsToChoose.get(0));
 
-		return localappMode;
+		AppModes appMode = AppModes.valueOf(localappMode);
+
+		return appMode;
 
 	}
 
@@ -130,7 +113,7 @@ public class Main {
 	/**
 	 * 
 	 */
-	private void startShutdownT(String appMode) {
+	private void startShutdownT(AppModes appMode) {
 		this.shutdownT = new Thread(() -> {
 			String line;
 
@@ -158,20 +141,28 @@ public class Main {
 	/**
 	 * 
 	 */
-	public void onShutdown(String appMode) {
+	public void onShutdown(AppModes appMode) {
 
 		this.log.info("Shutdown started");
 
 		danceinterpreter.shutdown();
 		this.log.debug("Danceinterpreter deactivated");
 
-		if (appMode.equalsIgnoreCase("Spotify")) {
+		if (appMode == AppModes.Spotify) {
 			spotify.fetchthread.interrupt();
 			this.log.debug("Spotify deactivated");
 		}
 		this.log.info("Shutdown complete");
 		this.shutdownT.interrupt();
 
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public AppModes getAppMode() {
+		return this.appMode;
 	}
 
 	/**
