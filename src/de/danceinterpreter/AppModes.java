@@ -1,6 +1,5 @@
 package de.danceinterpreter;
 
-import de.danceinterpreter.songprocessing.SongDataProvider;
 import de.danceinterpreter.songprocessing.dataprovider.*;
 
 /**

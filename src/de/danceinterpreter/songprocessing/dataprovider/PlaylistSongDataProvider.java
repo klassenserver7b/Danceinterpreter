@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.danceinterpreter.Main;
-import de.danceinterpreter.songprocessing.SongDataProvider;
 import de.danceinterpreter.songprocessing.DanceInterpreter;
 import de.danceinterpreter.songprocessing.SongData;
 
@@ -22,7 +21,7 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 
 	private final Logger log;
 	private Integer current;
-	private boolean forward = true;
+	private int forward = 1;
 
 	/**
 	 * 
@@ -37,7 +36,7 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 
 		LinkedHashMap<File, SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
 
-		if (current == null) {
+		if (current == null && !songs.isEmpty()) {
 			current = 0;
 			log.info("Loaded first Song");
 			return songs.entrySet().parallelStream().toList().get(current).getValue();
@@ -52,38 +51,50 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 
 		LinkedHashMap<File, SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
 
-		if (forward) {
+		switch (forward) {
 
-			if (current < songs.size() - 1) {
+		case 1 -> {
+			current++;
+			log.debug("forward");
+		}
 
-				log.debug("forward");
-				current++;
-				SongData data = songs.entrySet().parallelStream().toList().get(current).getValue();
+		case -1 -> {
+			current--;
+			log.debug("back");
+		}
+		case 0 -> {
+			log.debug("same");
+		}
 
-				DanceInterpreter di = Main.Instance.getDanceInterpreter();
+		}
 
-				di.updateSongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImage());
-			}
+		if (current < songs.size() - 1 && current >= 0) {
 
-		} else {
+			SongData data = songs.entrySet().parallelStream().toList().get(current).getValue();
 
-			if (current > 0) {
+			DanceInterpreter di = Main.Instance.getDanceInterpreter();
 
-				log.debug("back");
-				current--;
-				SongData data = songs.entrySet().parallelStream().toList().get(current).getValue();
-
-				DanceInterpreter di = Main.Instance.getDanceInterpreter();
-
-				di.updateSongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImage());
-
-			}
-
+			di.updateSongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImage());
 		}
 
 	}
 
-	public void setDirection(boolean forward) {
+	public boolean setPosition(int pos) {
+
+		int maxsize = Main.Instance.getDanceInterpreter().getPlaylistSongs().size();
+
+		if (pos < 1 || pos >= maxsize) {
+			return false;
+		}
+
+		current = pos - 1;
+		forward = 0;
+
+		return true;
+
+	}
+
+	public void setDirection(int forward) {
 		this.forward = forward;
 	}
 

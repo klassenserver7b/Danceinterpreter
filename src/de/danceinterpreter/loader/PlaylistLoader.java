@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -16,9 +19,17 @@ import java.util.prefs.Preferences;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
@@ -139,11 +150,81 @@ public class PlaylistLoader {
 
 	}
 
-	private LinkedHashMap<File, SongData> loadXSPF(File f) {
+	private LinkedHashMap<File, SongData> loadXSPF(File file) {
 		LinkedHashMap<File, SongData> songs = new LinkedHashMap<>();
+
+		Document doc = getXMLDoc(file);
+
+		List<File> files = getFilesfromXML(doc);
+
+		if (files == null || files.isEmpty()) {
+			return null;
+		}
+
+		for (File f : files) {
+
+			SongData data = getDataFromFile(f);
+
+			songs.put(f, data);
+
+		}
 
 		return songs;
 
+	}
+
+	private List<File> getFilesfromXML(Document doc) {
+
+		if (doc == null || !doc.hasChildNodes()) {
+			return null;
+		}
+
+		NodeList tracks = doc.getElementsByTagName("track");
+
+		List<File> ret = new ArrayList<>();
+
+		for (int i = 0; i < tracks.getLength(); i++) {
+			Node track = tracks.item(i);
+
+			if (track.getNodeType() == Node.ELEMENT_NODE) {
+				Element e = (Element) track;
+
+				String encodedpath = e.getElementsByTagName("location").item(0).getTextContent();
+				encodedpath = encodedpath.replaceAll("file:///", "");
+
+				String path = URLDecoder.decode(encodedpath, StandardCharsets.UTF_8);
+
+				ret.add(new File(path));
+
+			}
+		}
+
+		return ret;
+
+	}
+
+	private Document getXMLDoc(File f) {
+
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
+
+		try {
+
+			String xmlstr = Files.readString(Path.of(f.toURI()));
+
+			if (xmlstr == null) {
+				return null;
+			}
+
+			DocumentBuilder docbuild = factory.newDocumentBuilder();
+			Document doc = docbuild.parse(new ByteArrayInputStream(xmlstr.getBytes(StandardCharsets.UTF_8)));
+
+			return doc;
+
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			log.error(e.getMessage(), e);
+		}
+
+		return null;
 	}
 
 	private SongData getDataFromFile(File f) {

@@ -1,7 +1,9 @@
 /**
  * 
  */
-package de.danceinterpreter.songprocessing;
+package de.danceinterpreter.songprocessing.dataprovider;
+
+import de.danceinterpreter.songprocessing.SongData;
 
 /**
  * @author Felix

@@ -28,7 +28,6 @@ import com.sun.nio.file.ExtendedOpenOption;
 
 import de.danceinterpreter.Main;
 import de.danceinterpreter.songprocessing.DanceInterpreter;
-import de.danceinterpreter.songprocessing.SongDataProvider;
 import de.danceinterpreter.songprocessing.SongData;
 
 /**

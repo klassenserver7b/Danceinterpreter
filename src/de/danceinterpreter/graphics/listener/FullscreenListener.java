@@ -17,7 +17,7 @@ import de.danceinterpreter.songprocessing.DanceInterpreter;
 public class FullscreenListener extends CKeyListener {
 
 	@Override
-	public void performAction(int keycode) {
+	public void performPressedAction(int keycode) {
 
 		if (keycode != KeyEvent.VK_F11) {
 			return;

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import de.danceinterpreter.graphics.listener.ArrowKeyListener;
 import de.danceinterpreter.graphics.listener.CustomKeyListener;
 import de.danceinterpreter.graphics.listener.FullscreenListener;
+import de.danceinterpreter.graphics.listener.NumberListener;
 import de.danceinterpreter.graphics.listener.RefreshListener;
 
 import java.awt.image.*;
@@ -79,7 +80,8 @@ public class SongWindow {
 
 		CustomKeyListener keylis = new CustomKeyListener();
 
-		keylis.registerKeyListeners(new RefreshListener(), new FullscreenListener(), new ArrowKeyListener());
+		keylis.registerKeyListeners(new RefreshListener(), new FullscreenListener(), new ArrowKeyListener(),
+				new NumberListener());
 
 		text.addKeyListener(keylis);
 		mainpanel.addKeyListener(keylis);

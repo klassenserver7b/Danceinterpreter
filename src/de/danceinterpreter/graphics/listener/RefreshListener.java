@@ -16,7 +16,7 @@ import de.danceinterpreter.songprocessing.DanceInterpreter;
 public class RefreshListener extends CKeyListener {
 
 	@Override
-	public void performAction(int keycode) {
+	public void performPressedAction(int keycode) {
 
 		if (keycode != KeyEvent.VK_F5) {
 			return;

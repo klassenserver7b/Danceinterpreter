@@ -25,14 +25,16 @@ public class CustomKeyListener implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 
 		for (CKeyListener listener : listeners) {
-			listener.performAction(e.getKeyCode());
+			listener.performPressedAction(e.getKeyCode(), e.getKeyLocation());
 		}
 
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// unused
+		for (CKeyListener listener : listeners) {
+			listener.performReleasedAction(e.getKeyCode());
+		}
 	}
 
 	public void registerKeyListener(CKeyListener listener) {
