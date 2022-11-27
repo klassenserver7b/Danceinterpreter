@@ -55,15 +55,25 @@ public class SongWindow {
 			log.error("No Icon Found!");
 		}
 
-		mainframe.setBounds(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-				.getDefaultConfiguration().getBounds());
+		GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+
+		if (devices.length > 1) {
+
+			Rectangle b = devices[1].getDefaultConfiguration().getBounds();
+
+			mainframe.setBounds(b);
+			rect = b;
+
+		} else {
+			Rectangle b = devices[0].getDefaultConfiguration().getBounds();
+
+			mainframe.setBounds(b);
+			rect = b;
+		}
 
 		mainpanel = new JPanel();
 
 		mainframe.add(mainpanel);
-
-		rect = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
-				.getBounds();
 
 		mainpanel.setBackground(Color.BLACK);
 		mainpanel.setLayout(new FlowLayout(FlowLayout.CENTER, rect.width, rect.height / 20));
@@ -105,8 +115,14 @@ public class SongWindow {
 	 */
 	public void UpdateWindow(String songname, String artist, String dance, BufferedImage img) {
 
-		this.rect = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
-				.getBounds();
+		GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+
+		if (devices.length > 1) {
+			rect = devices[1].getDefaultConfiguration().getBounds();
+		} else {
+			rect = devices[0].getDefaultConfiguration().getBounds();
+		}
+
 		log.info("width: " + rect.width + " height: " + rect.height);
 
 		Image scaledimg = scaleImage(img, rect);

@@ -11,6 +11,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,6 +29,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.danceinterpreter.AppModes;
 import de.danceinterpreter.Main;
@@ -48,6 +52,7 @@ public class ConfigWindow {
 	private boolean playlistview;
 	private boolean imgenabled;
 	private String imgpath;
+	private final Logger log;
 
 	/**
 	 * 
@@ -61,8 +66,18 @@ public class ConfigWindow {
 		mainpanel = new JPanel();
 		playlistview = false;
 		imgenabled = true;
+		log = LoggerFactory.getLogger(this.getClass());
 
 		mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		File file = new File("./icon.png");
+
+		try {
+			BufferedImage bufferedImage = ImageIO.read(file);
+			mainframe.setIconImage(bufferedImage);
+		} catch (IOException e) {
+			log.error("No Icon Found!");
+		}
+		mainframe.setTitle("DanceInterpreter - Config");
 
 		mainframe.setBounds(10, 10, 500, 281);
 
