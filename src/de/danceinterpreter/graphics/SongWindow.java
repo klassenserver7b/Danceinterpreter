@@ -29,8 +29,9 @@ public class SongWindow {
 	private JFrame mainframe;
 	private JPanel mainpanel;
 	private Rectangle rect;
-	private JLabel imglabel = new JLabel();
-	private JTextArea text = new JTextArea();
+	private JLabel imglabel;
+	private JTextArea text;
+	private boolean imageenabled;
 
 	/**
 	 * 
@@ -42,6 +43,9 @@ public class SongWindow {
 	public SongWindow(String songname, String artist, String dance, BufferedImage img) {
 
 		mainframe = new JFrame();
+		imglabel = new JLabel();
+		text = new JTextArea();
+		imageenabled = true;
 
 		File file = new File("./icon.png");
 		try {
@@ -65,8 +69,10 @@ public class SongWindow {
 		mainpanel.setLayout(new FlowLayout(FlowLayout.CENTER, rect.width, rect.height / 20));
 		mainpanel.setBackground(Color.BLACK);
 		mainpanel.setBounds(0, 0, rect.width, rect.height);
+
 		mainframe.setTitle("DanceInterpreter");
 		mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 		mainpanel.add(imglabel);
 		mainpanel.add(text);
 		mainpanel.setVisible(true);
@@ -106,19 +112,39 @@ public class SongWindow {
 		Image scaledimg = scaleImage(img, rect);
 		ImageIcon imageIcon = new ImageIcon(scaledimg);
 
+		mainpanel.removeAll();
+		mainpanel.paintImmediately(0, 0, rect.width, rect.height);
+
 		imglabel.setIcon(imageIcon);
 		imglabel.setBounds((rect.width / 2) - (imageIcon.getIconWidth() / 2), (rect.height / 10),
 				imageIcon.getIconWidth() + rect.width / 3, imageIcon.getIconHeight() + 64);
+
 		System.out.println("IMG: " + imglabel.getBounds());
 
 		text.setText("\nSongname: " + songname + "\n\nArtist: " + artist + "\n\nTanz: " + dance);
-		text.setBounds((rect.width / 2) - (text.getWidth() / 2), rect.height / 5 + imglabel.getHeight(), rect.width,
-				rect.height - imglabel.getHeight());
+
+		mainpanel.setBounds(0, 0, mainframe.getWidth(), mainframe.getHeight());
+
+		if (imageenabled) {
+
+			mainpanel.setLayout(new FlowLayout(FlowLayout.CENTER, rect.width, rect.height / 20));
+			mainpanel.add(imglabel);
+
+		} else {
+
+			mainpanel.setLayout(null);
+
+			System.out.println(text.getBounds());
+
+			int x = (mainpanel.getWidth() / 2) - text.getWidth() / 2;
+			int y = (mainpanel.getHeight() / 2) - text.getHeight() / 2;
+
+			text.setBounds(x, y, text.getWidth(), text.getHeight());
+
+		}
 
 		System.out.println("TEXT: " + text.getBounds());
 
-		mainpanel.removeAll();
-		mainpanel.add(imglabel);
 		mainpanel.add(text);
 
 		mainpanel.paintComponents(mainpanel.getGraphics());
@@ -153,6 +179,14 @@ public class SongWindow {
 
 	public JPanel getMainPanel() {
 		return this.mainpanel;
+	}
+
+	public boolean isImageenabled() {
+		return imageenabled;
+	}
+
+	public void setImageenabled(boolean imageenabled) {
+		this.imageenabled = imageenabled;
 	}
 
 }

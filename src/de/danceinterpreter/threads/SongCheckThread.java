@@ -27,7 +27,7 @@ public class SongCheckThread implements Runnable {
 			long time = System.currentTimeMillis();
 
 			while (!Main.exit) {
-				if (System.currentTimeMillis() >= time + 5000) {
+				if (System.currentTimeMillis() >= time + 2500) {
 					time = System.currentTimeMillis();
 
 					SongData data = appmode.getDataProvider().provideSongData();

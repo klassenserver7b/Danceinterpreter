@@ -54,12 +54,18 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 		switch (forward) {
 
 		case 1 -> {
-			current++;
+
+			if (current < songs.size() - 1) {
+				current++;
+			}
 			log.debug("forward");
 		}
 
 		case -1 -> {
-			current--;
+
+			if (current > 0) {
+				current--;
+			}
 			log.debug("back");
 		}
 		case 0 -> {
@@ -68,7 +74,7 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 
 		}
 
-		if (current < songs.size() - 1 && current >= 0) {
+		if (current < songs.size() && current >= 0) {
 
 			SongData data = songs.entrySet().parallelStream().toList().get(current).getValue();
 

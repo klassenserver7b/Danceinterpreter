@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.danceinterpreter.Main;
+import de.danceinterpreter.songprocessing.DanceInterpreter;
 import de.danceinterpreter.songprocessing.SongData;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
@@ -44,52 +45,12 @@ public class SpotifySongDataProvider implements SongDataProvider {
 
 		if (cutrack != null) {
 
-			StringBuilder authbuild = new StringBuilder();
-			Image[] images = cutrack.getAlbum().getImages();
-
-			Image img = images[0];
-
-			for (Image imgs : images) {
-				if (imgs.getHeight() > img.getHeight()) {
-					img = imgs;
-				}
+			SongData ret = getDatafromTrack(cutrack);
+			if (ret != null && datahash != ret.hashCode()) {
+				datahash = ret.hashCode();
+				return ret;
 			}
 
-			String imgurl = img.getUrl();
-
-			ArtistSimplified[] artists = cutrack.getArtists();
-
-			for (int i = 0; i < artists.length; i++) {
-				authbuild.append(artists[i].getName());
-				if (i != artists.length - 1) {
-					authbuild.append(", ");
-				}
-			}
-
-			String authors = authbuild.toString().trim();
-			String dance = Main.Instance.getDanceInterpreter().getDance(cutrack.getUri());
-
-			if (dance == null) {
-
-				try {
-					Main.Instance.getDanceInterpreter().addSongtoJSON(new SongData(cutrack.getName(), authors, dance,
-							(long) (cutrack.getDurationMs() / 1000), imgurl), cutrack.getUri());
-				} catch (IOException e1) {
-					log.error(e1.getMessage(), e1);
-				}
-
-			}
-
-			SongData ret;
-			try {
-				ret = new SongData(cutrack.getName(), authors, dance, (long) (cutrack.getDurationMs() / 1000), imgurl);
-				if (datahash != ret.hashCode()) {
-					datahash = ret.hashCode();
-					return ret;
-				}
-			} catch (IOException e) {
-				log.error(e.getMessage(), e);
-			}
 		}
 
 		return null;
@@ -130,9 +91,72 @@ public class SpotifySongDataProvider implements SongDataProvider {
 
 	}
 
+	private SongData getDatafromTrack(Track cutrack) {
+
+		StringBuilder authbuild = new StringBuilder();
+		Image[] images = cutrack.getAlbum().getImages();
+
+		Image img = images[0];
+
+		for (Image imgs : images) {
+			if (imgs.getHeight() > img.getHeight()) {
+				img = imgs;
+			}
+		}
+
+		String imgurl = img.getUrl();
+
+		ArtistSimplified[] artists = cutrack.getArtists();
+
+		for (int i = 0; i < artists.length; i++) {
+			authbuild.append(artists[i].getName());
+			if (i != artists.length - 1) {
+				authbuild.append(", ");
+			}
+		}
+
+		String authors = authbuild.toString().trim();
+		String dance = Main.Instance.getDanceInterpreter().getDance(cutrack.getUri());
+
+		if (dance == null) {
+
+			try {
+				Main.Instance.getDanceInterpreter().addSongtoJSON(new SongData(cutrack.getName(), authors, dance,
+						(long) (cutrack.getDurationMs() / 1000), imgurl), cutrack.getUri());
+			} catch (IOException e1) {
+				log.error(e1.getMessage(), e1);
+			}
+
+		}
+
+		try {
+			return new SongData(cutrack.getName(), authors, dance, (long) (cutrack.getDurationMs() / 1000), imgurl);
+		} catch (IOException e) {
+			log.error(e.getMessage(), e);
+			return null;
+		}
+
+	}
+
 	@Override
 	public void provideAsynchronous() {
-		
+		Track t = getCurrentSpotifySong();
+
+		if (t == null) {
+			return;
+		}
+
+		SongData data = getDatafromTrack(t);
+
+		if (data == null) {
+			return;
+		}
+
+		log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
+
+		DanceInterpreter di = Main.Instance.getDanceInterpreter();
+
+		di.updateSongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImage());
 	}
 
 }

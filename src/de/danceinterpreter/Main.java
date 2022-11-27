@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.danceinterpreter.connections.SpotifyInteractions;
+import de.danceinterpreter.graphics.ConfigWindow;
 import de.danceinterpreter.songprocessing.DanceInterpreter;
 import se.michaelthelin.spotify.SpotifyApi;
 
@@ -29,6 +30,7 @@ public class Main {
 
 	private SpotifyInteractions spotify;
 	private DanceInterpreter danceinterpreter;
+	private ConfigWindow cfgwindow;
 	private AppModes appMode;
 	private Thread shutdownT;
 	private final Logger log = LoggerFactory.getLogger("Main");
@@ -37,13 +39,18 @@ public class Main {
 		Instance = this;
 
 		initalizeUILayout();
+
 		this.appMode = askForAppMode();
 
 		if (this.appMode == null) {
+			onShutdown(null);
 			return;
 		}
 
+		cfgwindow = new ConfigWindow();
+
 		if (!load()) {
+			onShutdown(appMode);
 			return;
 		}
 
@@ -91,6 +98,10 @@ public class Main {
 
 		String localappMode = (String) JOptionPane.showInputDialog(null, "Which AppMode do you want to use?",
 				"Choose Mode", JOptionPane.QUESTION_MESSAGE, null, optionsToChoose.toArray(), optionsToChoose.get(0));
+
+		if (localappMode == null) {
+			return null;
+		}
 
 		AppModes appMode = AppModes.valueOf(localappMode);
 
@@ -145,15 +156,24 @@ public class Main {
 
 		this.log.info("Shutdown started");
 
-		danceinterpreter.shutdown();
+		if (danceinterpreter != null) {
+			danceinterpreter.shutdown();
+		}
+
+		cfgwindow.close();
+
 		this.log.debug("Danceinterpreter deactivated");
 
 		if (appMode == AppModes.Spotify) {
 			spotify.fetchthread.interrupt();
 			this.log.debug("Spotify deactivated");
 		}
+
 		this.log.info("Shutdown complete");
-		this.shutdownT.interrupt();
+
+		if (this.shutdownT != null) {
+			this.shutdownT.interrupt();
+		}
 
 	}
 
@@ -183,6 +203,14 @@ public class Main {
 
 		return this.danceinterpreter;
 
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public ConfigWindow getConfigWindow() {
+		return this.cfgwindow;
 	}
 
 }
