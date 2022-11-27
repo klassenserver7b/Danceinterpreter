@@ -77,7 +77,7 @@ public class ConfigWindow {
 		} catch (IOException e) {
 			log.error("No Icon Found!");
 		}
-		mainframe.setTitle("DanceInterpreter - Config");
+		mainframe.setTitle("DI - Config");
 
 		mainframe.setBounds(10, 10, 500, 281);
 
