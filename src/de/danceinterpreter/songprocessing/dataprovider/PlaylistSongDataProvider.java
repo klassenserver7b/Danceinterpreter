@@ -74,6 +74,9 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 
 		}
 
+		log.debug("current: " + current);
+		log.debug("songs.size: " + songs.size());
+
 		if (current < songs.size() && current >= 0) {
 
 			SongData data = songs.entrySet().parallelStream().toList().get(current).getValue();
@@ -89,7 +92,7 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 
 		int maxsize = Main.Instance.getDanceInterpreter().getPlaylistSongs().size();
 
-		if (pos < 1 || pos >= maxsize) {
+		if (pos < 1 || pos > maxsize) {
 			return false;
 		}
 
