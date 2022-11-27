@@ -46,16 +46,21 @@ public class ConfigWindow {
 	private JPanel mainpanel;
 	private Long time;
 	private boolean playlistview;
+	private boolean imgenabled;
+	private String imgpath;
 
 	/**
 	 * 
 	 */
 	public ConfigWindow() {
 
+		imgpath = "./pics/tech_dance2.gif";
+
 		time = 0L;
 		mainframe = new JFrame();
 		mainpanel = new JPanel();
 		playlistview = false;
+		imgenabled = true;
 
 		mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -70,6 +75,7 @@ public class ConfigWindow {
 
 		JMenu editm = new JMenu("Edit");
 		editm.add(getPictureCheck());
+		editm.add(getConfigAnimationCheck());
 
 		if (Main.Instance.getAppMode() == AppModes.Playlist) {
 			editm.add(getPlaylistViewCheck());
@@ -83,16 +89,14 @@ public class ConfigWindow {
 
 		JLabel img = new JLabel();
 
-		Image image;
-		try {
-			image = ImageIO.read(new File("./pics/splash_small.jpg"));
-			ImageIcon icon = new ImageIcon(image.getScaledInstance(mainframe.getWidth(), mainframe.getHeight(), 0));
+		// Image image;
 
-			img.setIcon(icon);
+		// image = ImageIO.read(new File(imgpath));
+		// ImageIcon icon = new ImageIcon(image.getScaledInstance(mainframe.getWidth(),
+		// mainframe.getHeight(), 0));
+		img = new JLabel(new ImageIcon(imgpath));
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		// img.setIcon(icon);
 
 		mainpanel.add(img);
 		mainframe.addComponentListener(new ComponentAdapter() {
@@ -124,20 +128,17 @@ public class ConfigWindow {
 		mainpanel.removeAll();
 		mainpanel.paintImmediately(0, 0, mainframe.getWidth(), mainframe.getHeight());
 
-		if (!playlistview) {
+		if (!playlistview && imgenabled) {
 			JLabel img = new JLabel();
 
-			Image image;
+			// Image image;
 
-			try {
-				image = ImageIO.read(new File("./pics/splash_small.jpg"));
-				ImageIcon icon = new ImageIcon(image.getScaledInstance(mainframe.getWidth(), mainframe.getHeight(), 0));
+			// image = ImageIO.read(new File(imgpath));
+			// ImageIcon icon = new ImageIcon(image.getScaledInstance(mainframe.getWidth(),
+			// mainframe.getHeight(), 0));
+			img = new JLabel(new ImageIcon(imgpath));
 
-				img.setIcon(icon);
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			// img.setIcon(icon);
 
 			mainpanel.add(img);
 		}
@@ -271,6 +272,40 @@ public class ConfigWindow {
 		});
 
 		return pictureI;
+	}
+
+	private JCheckBoxMenuItem getConfigAnimationCheck() {
+
+		JCheckBoxMenuItem cbI = new JCheckBoxMenuItem();
+		cbI.setText("Show Picture in ConfigWindow");
+		cbI.setSelected(true);
+		cbI.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				imgenabled = cbI.getState();
+
+				switch (Main.Instance.getAppMode()) {
+				case Playlist -> {
+
+					if (playlistview) {
+						updateWindow(loadPlaylistView());
+					} else {
+						updateWindow();
+					}
+
+				}
+				default -> {
+
+					updateWindow();
+				}
+				}
+
+			}
+		});
+
+		return cbI;
 	}
 
 	private JCheckBoxMenuItem getPlaylistViewCheck() {
