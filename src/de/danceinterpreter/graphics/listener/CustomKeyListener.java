@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package de.danceinterpreter.graphics.listener;
 
 import java.awt.event.KeyEvent;
@@ -8,10 +6,6 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Felix
- *
- */
 public class CustomKeyListener implements KeyListener {
 
 	private List<CKeyListener> listeners = new ArrayList<>();

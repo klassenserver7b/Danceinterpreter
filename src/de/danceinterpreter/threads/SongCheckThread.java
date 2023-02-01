@@ -24,23 +24,24 @@ public class SongCheckThread implements Runnable {
 	@Override
 	public void run() {
 		if (!t.isInterrupted()) {
-			long time = System.currentTimeMillis();
 
 			while (!Main.exit) {
-				if (System.currentTimeMillis() >= time + 2500) {
-					time = System.currentTimeMillis();
 
-					SongData data = appmode.getDataProvider().provideSongData();
+				SongData data = appmode.getDataProvider().provideSongData();
 
-					if (data != null) {
-						log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", "
-								+ data.getDuration());
+				if (data != null) {
+					log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", "
+							+ data.getDuration());
 
-						DanceInterpreter di = Main.Instance.getDanceInterpreter();
+					DanceInterpreter di = Main.Instance.getDanceInterpreter();
 
-						di.updateSongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImage());
+					di.updateSongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImage());
 
-					}
+				}
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
 		}

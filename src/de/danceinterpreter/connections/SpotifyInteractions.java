@@ -1,16 +1,23 @@
 /**
  * 
  */
+
 package de.danceinterpreter.connections;
 
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.util.Date;
 import java.util.prefs.Preferences;
 
+import org.apache.hc.client5.http.HttpRoute;
+import org.apache.hc.client5.http.impl.routing.SystemDefaultRoutePlanner;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.protocol.BasicHttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +30,8 @@ import se.michaelthelin.spotify.requests.authorization.authorization_code.Author
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
 
 /**
- * @author felix
- *
- */
+**/
+
 public class SpotifyInteractions {
 
 	private static final String CLISEC = "982cae885d54429bb830a8a48f3a03c9";
@@ -36,7 +42,7 @@ public class SpotifyInteractions {
 	Preferences prefs;
 	private final String rtkpath;
 	private String rtk;
-	public SpotifyApi spotifyApi;
+	private SpotifyApi spotifyApi;
 	public Thread fetchthread;
 	public long expires;
 
@@ -63,11 +69,32 @@ public class SpotifyInteractions {
 	 * 
 	 * @param prop
 	 * @return
+	 * 
+	 * 
+	 * 
 	 */
 	public boolean initialize() {
 
-		this.spotifyApi = new SpotifyApi.Builder().setClientId(CLIID).setClientSecret(CLISEC)
-				.setRedirectUri(URI.create(REDURI)).build();
+		Integer proxyport = null;
+		String proxyurl = null;
+
+		try {
+			HttpRoute route = new SystemDefaultRoutePlanner(ProxySelector.getDefault())
+					.determineRoute(new HttpHost("https://api.spotify.com"), new BasicHttpContext());
+
+			HttpHost proxy = route.getProxyHost();
+
+			if (proxy != null) {
+				proxyurl = proxy.getHostName();
+				proxyport = proxy.getPort();
+			}
+
+		} catch (HttpException e) {
+			spotifylog.error(e.getMessage(), e);
+		}
+
+		this.spotifyApi = new SpotifyApi.Builder().setClientId(CLIID).setProxyUrl(proxyurl).setProxyPort(proxyport)
+				.setClientSecret(CLISEC).setRedirectUri(URI.create(REDURI)).build();
 
 		System.out.println(prefs.get(rtkpath, ""));
 		rtk = prefs.get(rtkpath, "");
@@ -111,7 +138,10 @@ public class SpotifyInteractions {
 
 	/**
 	 * 
-	 */
+	 
+	
+	
+	*/
 	public void startfetchcycle() {
 
 		this.fetchthread = new Thread(() -> {
@@ -120,6 +150,11 @@ public class SpotifyInteractions {
 				if (!(this.expires >= new Date().getTime() - 5000)) {
 					refreshToken();
 					spotifylog.debug("authcode_refresh");
+				}
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
 			if (Main.exit) {
@@ -134,7 +169,10 @@ public class SpotifyInteractions {
 
 	/**
 	 * 
-	 */
+	 
+	
+	
+	*/
 	public void refreshToken() {
 
 		final AuthorizationCodeRefreshRequest authorizationCodeRefreshRequest = spotifyApi.authorizationCodeRefresh()
@@ -156,6 +194,9 @@ public class SpotifyInteractions {
 	/**
 	 * 
 	 * @return
+	 * 
+	 * 
+	 * 
 	 */
 	public void authorize(String code) {
 
@@ -190,6 +231,10 @@ public class SpotifyInteractions {
 			return;
 		}
 
+	}
+
+	public SpotifyApi getSpotifyApi() {
+		return spotifyApi;
 	}
 
 }

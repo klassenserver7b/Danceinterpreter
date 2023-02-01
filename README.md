@@ -2,6 +2,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/klassenserver7b/danceinterpreter/badge)](https://www.codefactor.io/repository/github/klassenserver7b/danceinterpreter)
 [![License](https://img.shields.io/github/license/klassenserver7b/Danceinterpreter.svg)](https://github.com//klassenserver7b/Danceinterpreter/blob/master/LICENSE)
 [![Build Status](https://jitci.com/gh/klassenserver7b/Danceinterpreter/svg)](https://jitci.com/gh/klassenserver7b/Danceinterpreter)
+[![Latest Release](https://jitpack.io/v/Klassenserver7b/Danceinterpreter.svg)](https://jitpack.io/#Klassenserver7b/Danceinterpreter)
 
 
 This tool provides information about a currently playing song and displays them.

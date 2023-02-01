@@ -33,9 +33,11 @@ import de.danceinterpreter.loader.PlaylistLoader;
 import de.danceinterpreter.threads.SongCheckThread;
 
 /**
- * 
- * @author felix
+
+
  *
+ 
+ 
  */
 public class DanceInterpreter {
 
@@ -56,7 +58,10 @@ public class DanceInterpreter {
 
 	/**
 	 * 
-	 */
+	 
+	
+	
+	*/
 	public boolean startSongCheck(AppModes appmode) {
 
 		if (!initialize()) {
@@ -78,6 +83,7 @@ public class DanceInterpreter {
 			if ((songs = new PlaylistLoader().loadSongs(playlist)) == null) {
 				return false;
 			}
+			return true;
 		}
 
 		songcheckT = new SongCheckThread(appmode);
@@ -87,6 +93,9 @@ public class DanceInterpreter {
 	/**
 	 * 
 	 * @return
+	 * 
+	 * 
+	 * 
 	 */
 	private boolean loadWorkingDirectory() {
 
@@ -109,6 +118,9 @@ public class DanceInterpreter {
 	/**
 	 * 
 	 * @param f
+	 * 
+	 * 
+	 * 
 	 */
 	private void findAllFilesInFolder(File f) {
 
@@ -129,7 +141,10 @@ public class DanceInterpreter {
 
 	/**
 	 * 
-	 */
+	 
+	
+	
+	*/
 	public void shutdown() {
 
 		if (this.songcheckT != null) {
@@ -156,6 +171,9 @@ public class DanceInterpreter {
 	/**
 	 * 
 	 * @return
+	 * 
+	 * 
+	 * 
 	 */
 	private String getWorkingDirectory() {
 
@@ -188,6 +206,9 @@ public class DanceInterpreter {
 	 * 
 	 * @param searchquery
 	 * @return
+	 * 
+	 * 
+	 * 
 	 */
 	public String getDance(String spotifyuri) {
 
@@ -212,6 +233,9 @@ public class DanceInterpreter {
 	 * @param title
 	 * @param author
 	 * @return
+	 * 
+	 * 
+	 * 
 	 */
 	public String getDance(String title, String author) {
 
@@ -234,6 +258,9 @@ public class DanceInterpreter {
 	/**
 	 * 
 	 * @return
+	 * 
+	 * 
+	 * 
 	 */
 	private boolean initialize() {
 
@@ -308,6 +335,9 @@ public class DanceInterpreter {
 	 * 
 	 * @param songdata
 	 * @param SpotifyUri
+	 * 
+	 * 
+	 * 
 	 */
 	public void addSongtoJSON(SongData songdata, String SpotifyUri) {
 
@@ -346,6 +376,9 @@ public class DanceInterpreter {
 	 * @param artist
 	 * @param dance
 	 * @param img
+	 * 
+	 * 
+	 * 
 	 */
 	public void updateSongWindow(String songname, String artist, String dance, BufferedImage img) {
 
@@ -360,6 +393,9 @@ public class DanceInterpreter {
 	/**
 	 * 
 	 * @return
+	 * 
+	 * 
+	 * 
 	 */
 	public SongWindow getWindow() {
 		return this.window;
@@ -368,6 +404,9 @@ public class DanceInterpreter {
 	/**
 	 * 
 	 * @return
+	 * 
+	 * 
+	 * 
 	 */
 	public TreeMap<String, JsonObject> getDancelist() {
 		return this.dancelist;
@@ -376,6 +415,9 @@ public class DanceInterpreter {
 	/**
 	 * 
 	 * @return
+	 * 
+	 * 
+	 * 
 	 */
 	public List<File> getFiles() {
 		return this.data;
@@ -384,6 +426,9 @@ public class DanceInterpreter {
 	/**
 	 * 
 	 * @return
+	 * 
+	 * 
+	 * 
 	 */
 	public LinkedHashMap<File, SongData> getPlaylistSongs() {
 		return this.songs;
@@ -392,6 +437,9 @@ public class DanceInterpreter {
 	/**
 	 * 
 	 * @return
+	 * 
+	 * 
+	 * 
 	 */
 	public List<File> getSongs() {
 		return data;
@@ -400,6 +448,9 @@ public class DanceInterpreter {
 	/**
 	 * 
 	 * @param swindow
+	 * 
+	 * 
+	 * 
 	 */
 	public void setSongWindow(SongWindow swindow) {
 		this.window = swindow;

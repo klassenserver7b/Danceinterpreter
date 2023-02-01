@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package de.danceinterpreter.graphics.listener;
 
 import java.awt.event.KeyEvent;
@@ -11,9 +9,8 @@ import de.danceinterpreter.Main;
 import de.danceinterpreter.songprocessing.DanceInterpreter;
 
 /**
- * @author Felix
- *
- */
+**/
+ 
 public class FullscreenListener extends CKeyListener {
 
 	@Override

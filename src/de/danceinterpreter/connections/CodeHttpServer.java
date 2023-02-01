@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package de.danceinterpreter.connections;
 
 import java.io.IOException;
@@ -16,10 +14,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-/**
- * @author Felix
- *
- */
 public class CodeHttpServer {
 
 	private final HttpServer server;
@@ -79,7 +73,7 @@ class CodeHandler implements HttpHandler {
 
 		exchange.getResponseHeaders().add("Content-Type", "text/html; charset=utf-8");
 		exchange.sendResponseHeaders(200, response.toString().getBytes(StandardCharsets.UTF_8).length);
-		
+
 		os.write(response.toString().getBytes(StandardCharsets.UTF_8));
 		os.close();
 

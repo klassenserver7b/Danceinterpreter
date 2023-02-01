@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package de.danceinterpreter.songprocessing.dataprovider;
 
 import java.io.IOException;
@@ -23,9 +21,8 @@ import se.michaelthelin.spotify.requests.data.player.GetUsersCurrentlyPlayingTra
 import se.michaelthelin.spotify.requests.data.tracks.GetTrackRequest;
 
 /**
- * @author Felix
- *
- */
+**/
+ 
 public class SpotifySongDataProvider implements SongDataProvider {
 
 	private final Logger log;
@@ -33,8 +30,9 @@ public class SpotifySongDataProvider implements SongDataProvider {
 
 	/**
 	 *
-	 */
-	public SpotifySongDataProvider() {
+	 
+ 
+ */	public SpotifySongDataProvider() {
 		log = LoggerFactory.getLogger(this.getClass());
 		datahash = 0;
 	}
@@ -59,8 +57,10 @@ public class SpotifySongDataProvider implements SongDataProvider {
 	/**
 	 * 
 	 * @return
-	 */
-	private Track getCurrentSpotifySong() {
+	 
+ 
+ 
+ */	private Track getCurrentSpotifySong() {
 
 		SpotifyApi spotifyapi = Main.Instance.getSpotifyAPI();
 

@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package de.danceinterpreter.songprocessing.dataprovider;
 
 import java.io.File;
@@ -14,9 +12,8 @@ import de.danceinterpreter.songprocessing.DanceInterpreter;
 import de.danceinterpreter.songprocessing.SongData;
 
 /**
- * @author Felix
- *
- */
+**/
+ 
 public class PlaylistSongDataProvider implements SongDataProvider {
 
 	private final Logger log;
@@ -25,8 +22,10 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 
 	/**
 	 * 
-	 */
-	public PlaylistSongDataProvider() {
+	 
+ 
+ 
+ */	public PlaylistSongDataProvider() {
 		this.log = LoggerFactory.getLogger(this.getClass());
 		this.current = null;
 	}

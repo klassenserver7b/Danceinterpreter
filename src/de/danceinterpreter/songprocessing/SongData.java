@@ -9,11 +9,12 @@ import java.util.Objects;
 import javax.imageio.ImageIO;
 
 /**
- * 
- * @author felix
+
+
  *
- */
-public class SongData {
+ 
+ 
+ */public class SongData {
 
 	private String title;
 	private String author;

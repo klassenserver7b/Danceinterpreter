@@ -1,10 +1,9 @@
-/**
- * 
- */
+
 package de.danceinterpreter.graphics;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -18,6 +17,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -35,15 +36,15 @@ import org.slf4j.LoggerFactory;
 
 import de.danceinterpreter.AppModes;
 import de.danceinterpreter.Main;
+import de.danceinterpreter.connections.SpotifyInteractions;
 import de.danceinterpreter.graphics.icons.ExitIcon;
 import de.danceinterpreter.songprocessing.DanceInterpreter;
 import de.danceinterpreter.songprocessing.SongData;
 import de.danceinterpreter.songprocessing.dataprovider.PlaylistSongDataProvider;
 
 /**
- * @author Felix
- *
- */
+**/
+
 public class ConfigWindow {
 
 	private JFrame mainframe;
@@ -56,7 +57,10 @@ public class ConfigWindow {
 
 	/**
 	 * 
-	 */
+	 
+	
+	
+	*/
 	public ConfigWindow() {
 
 		imgpath = "./pics/tech_dance2.gif";
@@ -65,7 +69,7 @@ public class ConfigWindow {
 		mainframe = new JFrame();
 		mainpanel = new JPanel();
 		playlistview = false;
-		imgenabled = true;
+		imgenabled = false;
 		log = LoggerFactory.getLogger(this.getClass());
 
 		mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -91,12 +95,22 @@ public class ConfigWindow {
 		JMenu editm = new JMenu("Edit");
 		editm.add(getPictureCheck());
 		editm.add(getConfigAnimationCheck());
+		editm.add(getSpotifyReset());
 
 		if (Main.Instance.getAppMode() == AppModes.Playlist) {
 			editm.add(getPlaylistViewCheck());
 		}
 
 		bar.add(editm);
+
+		if (Main.Instance.getAppMode() == AppModes.Mixxx) {
+
+			JMenu mixxxm = new JMenu("Mixxx");
+
+			mixxxm.add(getMixxxConfig());
+
+			bar.add(mixxxm);
+		}
 
 		bar.setVisible(true);
 
@@ -235,6 +249,35 @@ public class ConfigWindow {
 		mainframe = null;
 	}
 
+	private JMenuItem getSpotifyReset() {
+
+		JMenuItem spi = new JMenuItem("Reset Spotify Config");
+		spi.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Preferences prefs = Preferences.userRoot().node(new File("").getParent() + "_" + new File("").getName()
+						+ "_" + SpotifyInteractions.class.getName());
+				try {
+					prefs.clear();
+				} catch (BackingStoreException e1) {
+					log.error(e1.getMessage(), e1);
+				}
+
+			}
+		});
+
+		return spi;
+
+	}
+
+	private JMenuItem getMixxxConfig() {
+		JMenuItem configI = new JMenuItem("Open Config");
+		configI.setMargin(new Insets(2, -20, 2, 2));
+
+		return configI;
+	}
+
 	private JMenuItem getExit() {
 		JMenuItem exitI = new JMenuItem("Exit");
 		exitI.setIcon(new ExitIcon());
@@ -244,7 +287,6 @@ public class ConfigWindow {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
-
 			}
 		});
 		return exitI;
@@ -263,6 +305,10 @@ public class ConfigWindow {
 				DanceInterpreter di = Main.Instance.getDanceInterpreter();
 
 				if (di == null) {
+					return;
+				}
+
+				if (di.getWindow() == null) {
 					return;
 				}
 
@@ -293,7 +339,7 @@ public class ConfigWindow {
 
 		JCheckBoxMenuItem cbI = new JCheckBoxMenuItem();
 		cbI.setText("Show Picture in ConfigWindow");
-		cbI.setSelected(true);
+		cbI.setSelected(false);
 		cbI.addActionListener(new ActionListener() {
 
 			@Override

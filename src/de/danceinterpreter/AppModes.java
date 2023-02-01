@@ -3,9 +3,11 @@ package de.danceinterpreter;
 import de.danceinterpreter.songprocessing.dataprovider.*;
 
 /**
- * 
- * @author Felix
+
+
  *
+ 
+ 
  */
 public enum AppModes {
 
@@ -13,7 +15,9 @@ public enum AppModes {
 
 	LocalMP3(1, new LocalSongDataProvider()),
 
-	Playlist(2, new PlaylistSongDataProvider());
+	Playlist(2, new PlaylistSongDataProvider()),
+
+	Mixxx(3, new MixxxSongDataProvider());
 
 	private final int id;
 	private final SongDataProvider provider;
@@ -28,6 +32,9 @@ public enum AppModes {
 	 * AppMode. Can be used to retrieve the currently playing song
 	 * 
 	 * @return The static {@link SongDataProvider} of the {@link AppModes}
+	 * 
+	 * 
+	 * 
 	 */
 	public SongDataProvider getDataProvider() {
 		return this.provider;
@@ -38,6 +45,9 @@ public enum AppModes {
 	 * to retrieve the corresponding {@link AppModes} by using {@link #fromId(int)}
 	 * 
 	 * @return The static id of the {@link AppModes}
+	 * 
+	 * 
+	 * 
 	 */
 	public int getId() {
 		return this.id;
@@ -50,6 +60,9 @@ public enum AppModes {
 	 *
 	 * @return The {@link AppModes} that is referred to by the provided id. If the
 	 *         id is unknown, {@link null} is returned.
+	 * 
+	 * 
+	 * 
 	 */
 	public static AppModes fromId(int id) {
 		for (AppModes type : values()) {

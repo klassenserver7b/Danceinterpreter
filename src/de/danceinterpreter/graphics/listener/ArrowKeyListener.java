@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package de.danceinterpreter.graphics.listener;
 
 import java.awt.event.KeyEvent;
@@ -10,9 +8,8 @@ import de.danceinterpreter.Main;
 import de.danceinterpreter.songprocessing.dataprovider.PlaylistSongDataProvider;
 
 /**
- * @author Felix
- *
- */
+**/
+ 
 public class ArrowKeyListener extends CKeyListener {
 
 	@Override

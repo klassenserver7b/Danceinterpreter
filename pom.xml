@@ -16,7 +16,8 @@
 		</plugins>
 	</build>
 
-	<repositories></repositories>
+	<repositories>
+	</repositories>
 
 	<dependencies>
 		<dependency>

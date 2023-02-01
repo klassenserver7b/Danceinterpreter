@@ -24,6 +24,7 @@ import java.io.IOException;
  * @author Felix
  *
  */
+
 public class SongWindow {
 	public final Logger log = LoggerFactory.getLogger("Window");
 	private JFrame mainframe;
@@ -39,6 +40,9 @@ public class SongWindow {
 	 * @param artist
 	 * @param dance
 	 * @param img
+	 * 
+	 * 
+	 * 
 	 */
 	public SongWindow(String songname, String artist, String dance, BufferedImage img) {
 
@@ -103,6 +107,9 @@ public class SongWindow {
 	 * @param artist
 	 * @param dance
 	 * @param img
+	 * 
+	 * 
+	 * 
 	 */
 	public void UpdateWindow(String songname, String artist, String dance, BufferedImage img) {
 

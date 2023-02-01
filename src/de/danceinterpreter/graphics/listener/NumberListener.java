@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package de.danceinterpreter.graphics.listener;
 
 import java.awt.event.KeyEvent;
@@ -13,9 +11,8 @@ import de.danceinterpreter.Main;
 import de.danceinterpreter.songprocessing.dataprovider.PlaylistSongDataProvider;
 
 /**
- * @author Felix
- *
- */
+**/
+ 
 public class NumberListener extends CKeyListener {
 
 	private boolean pressed;
@@ -24,8 +21,10 @@ public class NumberListener extends CKeyListener {
 
 	/**
 	 * 
-	 */
-	public NumberListener() {
+	 
+ 
+ 
+ */	public NumberListener() {
 		super();
 		this.pressed = false;
 		this.numbers = "";
