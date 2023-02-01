@@ -1,0 +1,20 @@
+# Project exclude paths
+/target/
+/resources/
+/logs
+/.settings
+/.idea
+/pics
+/pics/*
+/zulujre17
+/DanceInterpreter.jar
+/DanceInterpreter.exe
+/start.bat
+/commit.txt
+Danceinterpreter.7z
+./Danceinterpreter.7z
+Danceinterpreter_java.7z
+./Danceinterpreter_java.7z
+/icon.png
+/launch4j.log
+/.classpath
