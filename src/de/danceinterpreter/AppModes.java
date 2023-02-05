@@ -1,6 +1,10 @@
 package de.danceinterpreter;
 
-import de.danceinterpreter.songprocessing.dataprovider.*;
+import de.danceinterpreter.songprocessing.dataprovider.LocalSongDataProvider;
+import de.danceinterpreter.songprocessing.dataprovider.MixxxSongDataProvider;
+import de.danceinterpreter.songprocessing.dataprovider.PlaylistSongDataProvider;
+import de.danceinterpreter.songprocessing.dataprovider.SongDataProvider;
+import de.danceinterpreter.songprocessing.dataprovider.SpotifySongDataProvider;
 
 /**
 

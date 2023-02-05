@@ -49,10 +49,11 @@ public class PlaylistLoader {
 	/**
 	 * 
 	 * @return
-	 
- 
- 
- */	public File loadPlaylistFile() {
+	 * 
+	 * 
+	 * 
+	 */
+	public File loadPlaylistFile() {
 		Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
 
 		String dir = prefs.get("Last-Path", "");
@@ -230,6 +231,8 @@ public class PlaylistLoader {
 	}
 
 	private SongData getDataFromFile(File f) {
+
+		log.debug("Data Loading started for: " + f.toPath().toString());
 
 		if (f == null || f.isDirectory() || !f.canRead()) {
 			return null;

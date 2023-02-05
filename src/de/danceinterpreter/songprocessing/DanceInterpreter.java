@@ -78,12 +78,14 @@ public class DanceInterpreter {
 
 			File playlist;
 			if ((playlist = new PlaylistLoader().loadPlaylistFile()) == null) {
+				log.debug("Invalid Playlist File - couldn't load playlist-file");
 				return false;
 			}
 			if ((songs = new PlaylistLoader().loadSongs(playlist)) == null) {
+				log.debug("Invalid Playlist File - couldn't load songs!");
 				return false;
 			}
-			return true;
+			log.debug("Playlist sucessfully loaded!");
 		}
 
 		songcheckT = new SongCheckThread(appmode);

@@ -3,9 +3,6 @@ package de.danceinterpreter.graphics;
 
 import java.awt.Color;
 import java.awt.Image;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
@@ -17,28 +14,18 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.danceinterpreter.AppModes;
 import de.danceinterpreter.Main;
-import de.danceinterpreter.connections.SpotifyInteractions;
-import de.danceinterpreter.graphics.icons.ExitIcon;
-import de.danceinterpreter.songprocessing.DanceInterpreter;
 import de.danceinterpreter.songprocessing.SongData;
 import de.danceinterpreter.songprocessing.dataprovider.PlaylistSongDataProvider;
 
@@ -85,36 +72,9 @@ public class ConfigWindow {
 
 		mainframe.setBounds(10, 10, 500, 281);
 
-		JMenuBar bar = new JMenuBar();
+		MenuGenerator mgen = new MenuGenerator(this);
 
-		JMenu filem = new JMenu("File");
-		filem.add(getExit());
-
-		bar.add(filem);
-
-		JMenu editm = new JMenu("Edit");
-		editm.add(getPictureCheck());
-		editm.add(getConfigAnimationCheck());
-		editm.add(getSpotifyReset());
-
-		if (Main.Instance.getAppMode() == AppModes.Playlist) {
-			editm.add(getPlaylistViewCheck());
-		}
-
-		bar.add(editm);
-
-		if (Main.Instance.getAppMode() == AppModes.Mixxx) {
-
-			JMenu mixxxm = new JMenu("Mixxx");
-
-			mixxxm.add(getMixxxConfig());
-
-			bar.add(mixxxm);
-		}
-
-		bar.setVisible(true);
-
-		mainframe.setJMenuBar(bar);
+		mainframe.setJMenuBar(mgen.getMenuBar());
 
 		JLabel img = new JLabel();
 
@@ -152,7 +112,7 @@ public class ConfigWindow {
 
 	}
 
-	private void updateWindow() {
+	public void updateWindow() {
 
 		mainpanel.removeAll();
 		mainpanel.paintImmediately(0, 0, mainframe.getWidth(), mainframe.getHeight());
@@ -176,7 +136,7 @@ public class ConfigWindow {
 		mainframe.setVisible(true);
 	}
 
-	private void updateWindow(List<JLabel> l) {
+	public void updateWindow(List<JLabel> l) {
 
 		mainpanel.removeAll();
 		mainpanel.paintImmediately(0, 0, mainframe.getWidth(), mainframe.getHeight());
@@ -249,148 +209,28 @@ public class ConfigWindow {
 		mainframe = null;
 	}
 
-	private JMenuItem getSpotifyReset() {
-
-		JMenuItem spi = new JMenuItem("Reset Spotify Config");
-		spi.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Preferences prefs = Preferences.userRoot().node(new File("").getParent() + "_" + new File("").getName()
-						+ "_" + SpotifyInteractions.class.getName());
-				try {
-					prefs.clear();
-				} catch (BackingStoreException e1) {
-					log.error(e1.getMessage(), e1);
-				}
-
-			}
-		});
-
-		return spi;
-
+	public boolean isPlaylistview() {
+		return playlistview;
 	}
 
-	private JMenuItem getMixxxConfig() {
-		JMenuItem configI = new JMenuItem("Open Config");
-		configI.setMargin(new Insets(2, -20, 2, 2));
-
-		return configI;
+	public boolean isImgenabled() {
+		return imgenabled;
 	}
 
-	private JMenuItem getExit() {
-		JMenuItem exitI = new JMenuItem("Exit");
-		exitI.setIcon(new ExitIcon());
-		exitI.getAccessibleContext().setAccessibleDescription("This doesn't really do anything");
-		exitI.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
-		return exitI;
+	public void setPlaylistview(boolean playlistview) {
+		this.playlistview = playlistview;
 	}
 
-	private JCheckBoxMenuItem getPictureCheck() {
-
-		JCheckBoxMenuItem pictureI = new JCheckBoxMenuItem();
-		pictureI.setText("Show Thumbnails");
-		pictureI.setSelected(true);
-		pictureI.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				DanceInterpreter di = Main.Instance.getDanceInterpreter();
-
-				if (di == null) {
-					return;
-				}
-
-				if (di.getWindow() == null) {
-					return;
-				}
-
-				di.getWindow().setImageenabled(pictureI.getState());
-
-				switch (Main.Instance.getAppMode()) {
-				case Playlist -> {
-
-					PlaylistSongDataProvider dp = (PlaylistSongDataProvider) Main.Instance.getAppMode()
-							.getDataProvider();
-					dp.setDirection(0);
-					dp.provideAsynchronous();
-
-				}
-				default -> {
-
-					Main.Instance.getAppMode().getDataProvider().provideAsynchronous();
-				}
-				}
-
-			}
-		});
-
-		return pictureI;
+	public void setImgenabled(boolean imgenabled) {
+		this.imgenabled = imgenabled;
 	}
 
-	private JCheckBoxMenuItem getConfigAnimationCheck() {
-
-		JCheckBoxMenuItem cbI = new JCheckBoxMenuItem();
-		cbI.setText("Show Picture in ConfigWindow");
-		cbI.setSelected(false);
-		cbI.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				imgenabled = cbI.getState();
-
-				switch (Main.Instance.getAppMode()) {
-				case Playlist -> {
-
-					if (playlistview) {
-						updateWindow(loadPlaylistView());
-					} else {
-						updateWindow();
-					}
-
-				}
-				default -> {
-
-					updateWindow();
-				}
-				}
-
-			}
-		});
-
-		return cbI;
+	public JFrame getMainframe() {
+		return mainframe;
 	}
 
-	private JCheckBoxMenuItem getPlaylistViewCheck() {
-
-		JCheckBoxMenuItem cbI = new JCheckBoxMenuItem();
-		cbI.setText("Allow Playlistview");
-		cbI.setSelected(false);
-		cbI.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				playlistview = !playlistview;
-
-				if (playlistview) {
-					updateWindow(loadPlaylistView());
-				} else {
-					updateWindow();
-				}
-
-			}
-		});
-
-		return cbI;
+	public JPanel getMainpanel() {
+		return mainpanel;
 	}
 
 }
