@@ -1,3 +1,0 @@
-- Submenu + integration for mixxx
-- Playlist View auch im MP3 Mode als Song view zur verfügung stellen
-- MP3 mode checkbox ob auswahl zwischen Songs

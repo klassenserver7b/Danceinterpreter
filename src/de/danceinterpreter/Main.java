@@ -6,10 +6,11 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.formdev.flatlaf.FlatLightLaf;
 
 import de.danceinterpreter.connections.SpotifyInteractions;
 import de.danceinterpreter.graphics.ConfigWindow;
@@ -18,23 +19,9 @@ import se.michaelthelin.spotify.SpotifyApi;
 
 /**
  * 
- * 
- * package de.danceinterpreter;
- * 
- * import java.io.BufferedReader; import java.io.IOException; import
- * java.io.InputStreamReader; import java.util.ArrayList;
- * 
- * import javax.swing.JOptionPane; import javax.swing.UIManager;
- * 
- * import org.slf4j.Logger; import org.slf4j.LoggerFactory;
- * 
- * import de.danceinterpreter.connections.SpotifyInteractions; import
- * de.danceinterpreter.graphics.ConfigWindow; import
- * de.danceinterpreter.songprocessing.DanceInterpreter; import
- * se.michaelthelin.spotify.SpotifyApi;
- * 
- * /**
- **/
+ * @author felix
+ *
+ */
 
 public class Main {
 	public static Main Instance;
@@ -51,7 +38,9 @@ public class Main {
 	public Main() {
 		Instance = this;
 
-		initalizeUILayout();
+		if(!initalizeUILayout()) {
+			log.warn("LayoutInitialization failed");
+		}
 
 		this.appMode = askForAppMode();
 
@@ -136,13 +125,8 @@ public class Main {
 	
 	
 	*/
-	private void initalizeUILayout() {
-
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			System.err.println("Error: " + e.getMessage());
-		}
+	private boolean initalizeUILayout() {
+		return FlatLightLaf.setup();
 	}
 
 	/**

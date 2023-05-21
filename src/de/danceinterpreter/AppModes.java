@@ -1,7 +1,6 @@
 package de.danceinterpreter;
 
 import de.danceinterpreter.songprocessing.dataprovider.LocalSongDataProvider;
-import de.danceinterpreter.songprocessing.dataprovider.MixxxSongDataProvider;
 import de.danceinterpreter.songprocessing.dataprovider.PlaylistSongDataProvider;
 import de.danceinterpreter.songprocessing.dataprovider.SongDataProvider;
 import de.danceinterpreter.songprocessing.dataprovider.SpotifySongDataProvider;
@@ -19,9 +18,7 @@ public enum AppModes {
 
 	LocalMP3(1, new LocalSongDataProvider()),
 
-	Playlist(2, new PlaylistSongDataProvider()),
-
-	Mixxx(3, new MixxxSongDataProvider());
+	Playlist(2, new PlaylistSongDataProvider());
 
 	private final int id;
 	private final SongDataProvider provider;
@@ -63,7 +60,7 @@ public enum AppModes {
 	 * @param id The id key of the requested AppMode.
 	 *
 	 * @return The {@link AppModes} that is referred to by the provided id. If the
-	 *         id is unknown, {@link null} is returned.
+	 *         id is unknown, {@code null} is returned.
 	 * 
 	 * 
 	 * 

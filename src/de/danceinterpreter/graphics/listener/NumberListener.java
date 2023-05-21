@@ -12,7 +12,7 @@ import de.danceinterpreter.songprocessing.dataprovider.PlaylistSongDataProvider;
 
 /**
 **/
- 
+
 public class NumberListener extends CKeyListener {
 
 	private boolean pressed;
@@ -22,9 +22,10 @@ public class NumberListener extends CKeyListener {
 	/**
 	 * 
 	 
- 
- 
- */	public NumberListener() {
+	
+	
+	*/
+	public NumberListener() {
 		super();
 		this.pressed = false;
 		this.numbers = "";
@@ -39,6 +40,17 @@ public class NumberListener extends CKeyListener {
 		}
 
 		if (pressed) {
+
+			if (keycode == KeyEvent.VK_BACK_SPACE) {
+				if (numbers.length() <= 0) {
+					return;
+				} else if (numbers.length() == 1) {
+					numbers = "";
+					return;
+				}
+				numbers = numbers.substring(0, numbers.length() - 1);
+				return;
+			}
 
 			if (keycode >= 96 && keycode <= 105) {
 				keycode -= 48;

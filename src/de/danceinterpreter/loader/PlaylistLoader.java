@@ -165,7 +165,6 @@ public class PlaylistLoader {
 		}
 
 		for (File f : files) {
-
 			SongData data = getDataFromFile(f);
 
 			songs.put(f, data);

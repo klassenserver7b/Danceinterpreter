@@ -9,14 +9,11 @@ import java.awt.Graphics2D;
 import javax.swing.Icon;
 
 /**
-
-
-
+ * 
+ * @author Felix
  *
-
- 
- 
- */public class ExitIcon implements Icon {
+ */
+public class ExitIcon implements Icon {
 
 	private int width = 24;
 	private int height = 24;

@@ -4,7 +4,6 @@
 package de.danceinterpreter.graphics;
 
 import java.awt.Color;
-import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +21,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,14 +60,6 @@ public class MenuGenerator {
 
 		bar.add(getSongWindowMenu());
 
-		if (Main.Instance.getAppMode() == AppModes.Mixxx) {
-			JMenu mixxxm = new JMenu("Mixxx");
-
-			mixxxm.add(getMixxxConfig());
-
-			bar.add(mixxxm);
-		}
-
 		bar.setVisible(true);
 		return bar;
 	}
@@ -105,13 +97,15 @@ public class MenuGenerator {
 
 		songwindowm.add(getPictureCheck());
 		songwindowm.add(getFontSizeOpt());
+		songwindowm.add(getRefreshWindow());
 
 		return songwindowm;
 	}
 
 	private JMenuItem getFontSizeOpt() {
 
-		JMenuItem fontsizeopt = new JMenuItem("Change Fontsize");
+		JMenuItem fontsizeopt = new JMenuItem();
+		fontsizeopt.setText("Change Fontsize");
 
 		fontsizeopt.addActionListener(new ActionListener() {
 
@@ -131,6 +125,8 @@ public class MenuGenerator {
 	private JDialog getFontSizeDialogue() {
 
 		JDialog dialogue = new JDialog(cfgwindow.getMainframe(), "Fontsize");
+
+		dialogue.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		Rectangle d = cfgwindow.getMainframe().getBounds();
 		dialogue.setSize((int) (d.getWidth() / 1.5), (int) (d.getHeight() / 3));
@@ -167,27 +163,38 @@ public class MenuGenerator {
 
 				String text = txt.getText();
 
-				if (text.matches("^-?[0-9]+")) {
+				if (!text.matches("^-?[0-9]+")) {
 
-					Integer fontsize = Integer.parseInt(txt.getText());
-					log.debug("fontsize: " + fontsize);
+					label.setText("Please insert a valid FontSize");
+					label.setForeground(Color.decode("#ff0000"));
+					return;
 
-					SongWindow sw = Main.Instance.getDanceInterpreter().getWindow();
-
-					if (fontsize == -1) {
-						sw.setAutofontsize(true);
-					} else {
-						sw.setAutofontsize(false);
-						sw.setFontsize(fontsize);
-					}
-
-					dialogue.setVisible(false);
-					sw.refresh();
-					dialogue.dispose();
-				} else {
-					label.setText("Please a valid FontSize");
-					label.setForeground(Color.decode("ff0000"));
 				}
+
+				Integer fontsize = Integer.parseInt(txt.getText());
+				log.debug("fontsize: " + fontsize);
+
+				SongWindow sw = Main.Instance.getDanceInterpreter().getWindow();
+
+				if (sw == null) {
+					label.setText("Please wait until SongWindow is shown!");
+					label.setForeground(Color.decode("#ff0000"));
+					return;
+				}
+
+				if (fontsize == -1) {
+					sw.setAutofontsizeState(1);
+				}else if(fontsize == -2) {
+					sw.setAutofontsizeState(2);
+				}else {
+				
+					sw.setAutofontsizeState(-1);
+					sw.setFontsize(fontsize);
+				}
+
+				dialogue.setVisible(false);
+				sw.refresh();
+				dialogue.dispose();
 
 			}
 		});
@@ -223,13 +230,6 @@ public class MenuGenerator {
 
 	}
 
-	private JMenuItem getMixxxConfig() {
-		JMenuItem configI = new JMenuItem("Open Config");
-		configI.setMargin(new Insets(2, -20, 2, 2));
-
-		return configI;
-	}
-
 	private JMenuItem getExit() {
 		JMenuItem exitI = new JMenuItem("Exit");
 		exitI.setIcon(new ExitIcon());
@@ -242,6 +242,24 @@ public class MenuGenerator {
 			}
 		});
 		return exitI;
+	}
+
+	private JMenuItem getRefreshWindow() {
+
+		JMenuItem label = new JMenuItem();
+
+		label.setText("Refresh SongWindow");
+		label.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				Main.Instance.getDanceInterpreter().getWindow().refresh();
+
+			}
+		});
+
+		return label;
 	}
 
 	private JCheckBoxMenuItem getPictureCheck() {

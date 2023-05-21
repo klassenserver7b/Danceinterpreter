@@ -67,11 +67,7 @@ public class SpotifyInteractions {
 
 	/**
 	 * 
-	 * @param prop
 	 * @return
-	 * 
-	 * 
-	 * 
 	 */
 	public boolean initialize() {
 
@@ -96,7 +92,6 @@ public class SpotifyInteractions {
 		this.spotifyApi = new SpotifyApi.Builder().setClientId(CLIID).setProxyUrl(proxyurl).setProxyPort(proxyport)
 				.setClientSecret(CLISEC).setRedirectUri(URI.create(REDURI)).build();
 
-		System.out.println(prefs.get(rtkpath, ""));
 		rtk = prefs.get(rtkpath, "");
 
 		if (rtk == null || rtk.isBlank()) {
@@ -193,10 +188,7 @@ public class SpotifyInteractions {
 
 	/**
 	 * 
-	 * @return
-	 * 
-	 * 
-	 * 
+	 * @param code
 	 */
 	public void authorize(String code) {
 

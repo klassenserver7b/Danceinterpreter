@@ -30,7 +30,7 @@ import de.danceinterpreter.songprocessing.SongData;
 
 /**
 **/
- 
+
 public class LocalSongDataProvider implements SongDataProvider {
 
 	private final Logger log;
@@ -40,9 +40,10 @@ public class LocalSongDataProvider implements SongDataProvider {
 	/**
 	 * 
 	 
- 
- 
- */	public LocalSongDataProvider() {
+	
+	
+	*/
+	public LocalSongDataProvider() {
 		log = LoggerFactory.getLogger(this.getClass());
 		hash = 0;
 		datahash = 0;
@@ -51,9 +52,10 @@ public class LocalSongDataProvider implements SongDataProvider {
 	/**
 	 * 
 	 
- 
- 
- */	@Override
+	
+	
+	*/
+	@Override
 	public SongData provideSongData() {
 		return provideParameterizedData(true);
 	}
@@ -72,6 +74,7 @@ public class LocalSongDataProvider implements SongDataProvider {
 				if (mp3file.hasId3v2Tag()) {
 
 					ID3v2 tags = mp3file.getId3v2Tag();
+
 					String title = tags.getTitle();
 					String author = tags.getArtist();
 
@@ -121,10 +124,11 @@ public class LocalSongDataProvider implements SongDataProvider {
 	 * 
 	 * @param checkcurrent
 	 * @return
-	 
- 
- 
- */	private File getLocalSong(boolean checkcurrent) {
+	 * 
+	 * 
+	 * 
+	 */
+	private File getLocalSong(boolean checkcurrent) {
 
 		List<File> blocked = new ArrayList<>();
 
@@ -211,9 +215,10 @@ public class LocalSongDataProvider implements SongDataProvider {
 	/**
 	 * 
 	 
- 
- 
- */	public void provideAsynchronous() {
+	
+	
+	*/
+	public void provideAsynchronous() {
 		SongData data = provideParameterizedData(false);
 
 		if (data != null) {

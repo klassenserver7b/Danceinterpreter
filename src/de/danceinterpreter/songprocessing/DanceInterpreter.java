@@ -206,11 +206,8 @@ public class DanceInterpreter {
 
 	/**
 	 * 
-	 * @param searchquery
+	 * @param spotifyuri
 	 * @return
-	 * 
-	 * 
-	 * 
 	 */
 	public String getDance(String spotifyuri) {
 
@@ -389,7 +386,7 @@ public class DanceInterpreter {
 			return;
 		}
 
-		this.window.UpdateWindow(songname, artist, dance, img);
+		this.window.updateWindow(songname, artist, dance, img);
 	}
 
 	/**
