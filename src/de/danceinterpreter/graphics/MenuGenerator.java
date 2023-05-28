@@ -174,7 +174,7 @@ public class MenuGenerator {
 				Integer fontsize = Integer.parseInt(txt.getText());
 				log.debug("fontsize: " + fontsize);
 
-				SongWindow sw = Main.Instance.getDanceInterpreter().getWindow();
+				SongWindowBACKUP sw = Main.Instance.getDanceInterpreter().getWindow();
 
 				if (sw == null) {
 					label.setText("Please wait until SongWindow is shown!");
@@ -184,10 +184,10 @@ public class MenuGenerator {
 
 				if (fontsize == -1) {
 					sw.setAutofontsizeState(1);
-				}else if(fontsize == -2) {
+				} else if (fontsize == -2) {
 					sw.setAutofontsizeState(2);
-				}else {
-				
+				} else {
+
 					sw.setAutofontsizeState(-1);
 					sw.setFontsize(fontsize);
 				}

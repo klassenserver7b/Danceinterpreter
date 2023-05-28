@@ -42,11 +42,10 @@ public class SongWindowBACKUP {
 	public final Logger log = LoggerFactory.getLogger("Window");
 	private JFrame mainframe;
 	private JPanel mainpanel;
-	private Rectangle rect;
 	private JLabel imglabel;
-	private JTextArea text;
+	private JTextArea textf;
+	private int autofontsizestate;
 	private boolean imageenabled;
-	private boolean autofontsize;
 	private int fontsize;
 
 	/**
@@ -60,9 +59,9 @@ public class SongWindowBACKUP {
 
 		mainframe = new JFrame();
 		imglabel = new JLabel();
-		text = new JTextArea();
+		textf = new JTextArea();
 		imageenabled = true;
-		autofontsize = true;
+		autofontsizestate = 1;
 
 		File file = new File("./icon.png");
 		try {
@@ -77,7 +76,7 @@ public class SongWindowBACKUP {
 		Rectangle b = devices[0].getDefaultConfiguration().getBounds();
 
 		mainframe.setBounds(b);
-		rect = b;
+		Rectangle rect = b;
 
 		mainpanel = new JPanel();
 
@@ -92,16 +91,16 @@ public class SongWindowBACKUP {
 		mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		mainpanel.add(imglabel);
-		mainpanel.add(text);
+		mainpanel.add(textf);
 		mainpanel.setVisible(true);
 
 		imglabel.setBackground(Color.BLACK);
 
-		text.setEditable(false);
-		text.setSelectedTextColor(Color.WHITE);
-		text.setSelectionColor(Color.BLACK);
-		text.setBackground(Color.BLACK);
-		text.setForeground(Color.WHITE);
+		textf.setEditable(false);
+		textf.setSelectedTextColor(Color.WHITE);
+		textf.setSelectionColor(Color.BLACK);
+		textf.setBackground(Color.BLACK);
+		textf.setForeground(Color.WHITE);
 		// text.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 36));
 
 		CustomKeyListener keylis = new CustomKeyListener();
@@ -109,11 +108,30 @@ public class SongWindowBACKUP {
 		keylis.registerKeyListeners(new RefreshListener(), new FullscreenListener(), new ArrowSpaceKeyListener(),
 				new NumberListener());
 
-		text.addKeyListener(keylis);
+		textf.addKeyListener(keylis);
 		mainpanel.addKeyListener(keylis);
 		mainframe.addKeyListener(keylis);
 
-		UpdateWindow(songname, artist, dance, img);
+		updateWindow(songname, artist, dance, img);
+	}
+
+	/**
+	 * 
+	 * @param songname
+	 * @param artist
+	 * @param dance
+	 * @param image
+	 */
+	public void updateWindow(String songname, String artist, String dance, BufferedImage image) {
+		String datatext = "\nSongname: " + songname + "\n\nArtist: " + artist + "\n\nTanz: " + dance;
+		updateWindow(datatext, image);
+	}
+
+	/**
+	 * 
+	 */
+	public void refresh() {
+		updateWindow(textf.getText(), iconToImage(imglabel.getIcon()));
 	}
 
 	/**
@@ -123,149 +141,60 @@ public class SongWindowBACKUP {
 	 * @param dance
 	 * @param img
 	 */
-	public void UpdateWindow(String songname, String artist, String dance, BufferedImage img) {
+	public void updateWindow(String datatext, BufferedImage img) {
 
 		GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+		Rectangle rect = devices[0].getDefaultConfiguration().getBounds();
 
-		rect = devices[0].getDefaultConfiguration().getBounds();
+		mainpanel.removeAll();
+		mainpanel.paintImmediately(0, 0, rect.width, rect.height);
+		mainpanel.setBounds(0, 0, mainframe.getWidth(), mainframe.getHeight());
 
+		textf.setText(datatext);
+
+		if (autofontsizestate > 0) {
+			setFont(textf);
+		} else {
+			textf.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, fontsize));
+		}
+
+		if (imageenabled) {
+			updateImage(img, rect);
+		} else {
+			applyOnlyTextLayout();
+		}
+
+		mainpanel.add(textf);
+		mainpanel.paintComponents(mainpanel.getGraphics());
+
+		mainframe.setVisible(true);
+		mainframe.requestFocus(Cause.ACTIVATION);
+	}
+
+	/**
+	 * 
+	 * @param img
+	 * @param rect
+	 */
+	protected void updateImage(BufferedImage img, Rectangle rect) {
 		Image scaledimg = scaleImage(img, rect);
 		ImageIcon imageIcon = new ImageIcon(scaledimg);
 
-		mainpanel.removeAll();
-		mainpanel.paintImmediately(0, 0, rect.width, rect.height);
-
 		imglabel.setIcon(imageIcon);
 		imglabel.setBounds((rect.width / 2) - (imageIcon.getIconWidth() / 2), (rect.height / 10),
 				imageIcon.getIconWidth() + rect.width / 3, imageIcon.getIconHeight() + 64);
 
-		log.debug("IMG: " + imglabel.getBounds());
-
-		text.setText("\nSongname: " + songname + "\n\nArtist: " + artist + "\n\nTanz: " + dance);
-
-		mainpanel.setBounds(0, 0, mainframe.getWidth(), mainframe.getHeight());
-
-		if (autofontsize) {
-			setFont(text);
-		} else {
-			text.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, fontsize));
-		}
-
-		if (imageenabled) {
-
-			mainpanel.setLayout(new FlowLayout(FlowLayout.CENTER, rect.width, rect.height / 20));
-			mainpanel.add(imglabel);
-
-		} else {
-
-			mainpanel.setLayout(null);
-
-			int estwidth = calcEstimatedWidth(text, text.getFont(), text.getText(), text.getGraphics());
-			int estheight = calcEstimatedHeight(text, text.getFont(), text.getText(), text.getGraphics());
-
-			int x = (mainpanel.getWidth() / 2 - (int) (estwidth / 2));
-			int y = (mainpanel.getHeight() / 2) - (int) (estheight / 2);
-
-			text.setBounds(x, y, (int) estwidth, estheight);
-
-		}
-
-		log.debug("TEXT: " + text.getBounds());
-
-		mainpanel.add(text);
-
-		mainpanel.paintComponents(mainpanel.getGraphics());
-
-		mainframe.setVisible(true);
-		mainframe.requestFocus(Cause.ACTIVATION);
+		mainpanel.setLayout(new FlowLayout(FlowLayout.CENTER, rect.width, rect.height / 20));
+		mainpanel.add(imglabel);
 	}
 
-	public int calcEstimatedWidth(JComponent comp, Font font, String text, Graphics g) {
-
-		int estwidth = 0;
-
-		for (String s : text.split("\n")) {
-
-			if (s.isBlank()) {
-				continue;
-			}
-
-			double testwidth = comp.getFontMetrics(font).getStringBounds(s, g).getBounds().getWidth();
-
-			if (testwidth > estwidth) {
-				estwidth = (int) testwidth;
-			}
-		}
-
-		return estwidth;
-	}
-
-	public int calcEstimatedHeight(JComponent comp, Font font, String text, Graphics g) {
-
-		double oneline = comp.getFontMetrics(font).getStringBounds(text, g).getBounds().getHeight();
-
-		return (int) oneline * text.split("\n").length;
-	}
-
-	public void refresh() {
-
-		GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-
-		rect = devices[0].getDefaultConfiguration().getBounds();
-
-		Image scaledimg = scaleImage(iconToImage(imglabel.getIcon()), rect);
-		ImageIcon imageIcon = new ImageIcon(scaledimg);
-
-		mainpanel.removeAll();
-		mainpanel.paintImmediately(0, 0, rect.width, rect.height);
-
-		imglabel.setIcon(imageIcon);
-		imglabel.setBounds((rect.width / 2) - (imageIcon.getIconWidth() / 2), (rect.height / 10),
-				imageIcon.getIconWidth() + rect.width / 3, imageIcon.getIconHeight() + 64);
-
-		log.debug("IMG: " + imglabel.getBounds());
-
-		text.setText(text.getText());
-
-		mainpanel.setBounds(0, 0, mainframe.getWidth(), mainframe.getHeight());
-
-		if (autofontsize) {
-			setFont(text);
-		} else {
-			text.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, fontsize));
-		}
-
-		if (imageenabled) {
-
-			mainpanel.setLayout(new FlowLayout(FlowLayout.CENTER, rect.width, rect.height / 20));
-			mainpanel.add(imglabel);
-
-		} else {
-
-			mainpanel.setLayout(null);
-
-			int estwidth = calcEstimatedWidth(text, text.getFont(), text.getText(), text.getGraphics());
-			int estheight = calcEstimatedHeight(text, text.getFont(), text.getText(), text.getGraphics());
-
-			int x = (mainpanel.getWidth() / 2 - (int) (estwidth / 2));
-			int y = (mainpanel.getHeight() / 2) - (int) (estheight / 2);
-
-			text.setBounds(x, y, (int) estwidth, estheight);
-
-		}
-
-		log.debug("TEXT: " + text.getBounds());
-
-		mainpanel.add(text);
-
-		mainpanel.paintComponents(mainpanel.getGraphics());
-
-		mainframe.setVisible(true);
-		mainframe.requestFocus(Cause.ACTIVATION);
-
-	}
-
-	public Image scaleImage(BufferedImage img, Rectangle rect) {
+	/**
+	 * 
+	 * @param img
+	 * @param rect
+	 * @return
+	 */
+	protected Image scaleImage(BufferedImage img, Rectangle rect) {
 
 		if (img.getHeight() >= rect.height * 0.50 || img.getWidth() >= rect.width * 0.75) {
 			double heightscale = (rect.getHeight() * 0.50) / img.getHeight();
@@ -287,23 +216,97 @@ public class SongWindowBACKUP {
 
 	/**
 	 * 
+	 */
+	protected void applyOnlyTextLayout() {
+		mainpanel.setLayout(null);
+
+		int estwidth = calcEstimatedWidth(textf, textf.getFont(), textf.getText(), textf.getGraphics());
+		int estheight = calcEstimatedHeight(textf, textf.getFont(), textf.getText(), textf.getGraphics());
+
+		int x = (mainpanel.getWidth() / 2 - estwidth / 2);
+		int y = (mainpanel.getHeight() / 2) - estheight / 2;
+
+		textf.setBounds(x, y, estwidth, estheight);
+	}
+
+	/**
+	 * 
+	 * @param comp
+	 * @param font
+	 * @param text
+	 * @param g
+	 * @return
+	 */
+	protected int calcEstimatedWidth(JComponent comp, Font font, String text, Graphics g) {
+
+		int estwidth = 0;
+
+		for (String s : text.split("\n")) {
+
+			if (s.isBlank()) {
+				continue;
+			}
+
+			double testwidth = comp.getFontMetrics(font).getStringBounds(s, g).getBounds().getWidth();
+
+			if (testwidth > estwidth) {
+				estwidth = (int) testwidth;
+			}
+		}
+
+		return estwidth;
+	}
+
+	/**
+	 * 
+	 * @param comp
+	 * @param font
+	 * @param text
+	 * @param g
+	 * @return
+	 */
+	protected int calcEstimatedHeight(JComponent comp, Font font, String text, Graphics g) {
+
+		double oneline = comp.getFontMetrics(font).getStringBounds(text, g).getBounds().getHeight();
+
+		return (int) oneline * text.split("\n").length;
+	}
+
+	/**
+	 * 
 	 * @param area
 	 */
-	public void setFont(JTextArea area) {
+	protected void setFont(JTextArea area) {
 
 		int height = mainframe.getHeight();
 		int fontsize;
 
 		if (imageenabled) {
-			fontsize = (int) height / 30;
+
+			fontsize = height / 20;
+
 		} else {
-			fontsize = (int) height / 20;
+
+			if (autofontsizestate <= 0) {
+				return;
+			}
+
+			if (autofontsizestate == 1) {
+				fontsize = height / 20;
+			} else {
+				fontsize = height / 10;
+			}
 		}
 		area.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, fontsize));
 		this.fontsize = fontsize;
 
 	}
 
+	/**
+	 * 
+	 * @param icon
+	 * @return
+	 */
 	public static BufferedImage iconToImage(Icon icon) {
 
 		int w = icon.getIconWidth();
@@ -319,30 +322,66 @@ public class SongWindowBACKUP {
 
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public JFrame getMainFrame() {
 		return this.mainframe;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public JPanel getMainPanel() {
 		return this.mainpanel;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isImageenabled() {
 		return imageenabled;
 	}
 
+	/**
+	 * 
+	 * @param imageenabled
+	 */
 	public void setImageenabled(boolean imageenabled) {
 		this.imageenabled = imageenabled;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isAutofontsize() {
-		return autofontsize;
+		return autofontsizestate > 0;
 	}
 
-	public void setAutofontsize(boolean autofontsize) {
-		this.autofontsize = autofontsize;
+	/**
+	 * 
+	 * @return
+	 */
+	public int getAutofontsizeState() {
+		return autofontsizestate;
 	}
 
+	/**
+	 * 
+	 * @param autofontsize
+	 */
+	public void setAutofontsizeState(int autofontsizestate) {
+		this.autofontsizestate = autofontsizestate;
+	}
+
+	/**
+	 * 
+	 * @param fontsize
+	 */
 	public void setFontsize(int fontsize) {
 		this.fontsize = fontsize;
 	}

@@ -28,7 +28,7 @@ import com.google.gson.JsonParser;
 
 import de.danceinterpreter.AppModes;
 import de.danceinterpreter.Main;
-import de.danceinterpreter.graphics.SongWindow;
+import de.danceinterpreter.graphics.SongWindowBACKUP;
 import de.danceinterpreter.loader.PlaylistLoader;
 import de.danceinterpreter.threads.SongCheckThread;
 
@@ -43,7 +43,7 @@ public class DanceInterpreter {
 
 	private TreeMap<String, JsonObject> dancelist = new TreeMap<>();
 	private SongCheckThread songcheckT;
-	private SongWindow window;
+	private SongWindowBACKUP window;
 
 	private LinkedHashMap<File, SongData> songs;
 
@@ -382,7 +382,7 @@ public class DanceInterpreter {
 	public void updateSongWindow(String songname, String artist, String dance, BufferedImage img) {
 
 		if (this.window == null) {
-			this.window = new SongWindow(songname, artist, dance, img);
+			this.window = new SongWindowBACKUP(songname, artist, dance, img);
 			return;
 		}
 
@@ -396,7 +396,7 @@ public class DanceInterpreter {
 	 * 
 	 * 
 	 */
-	public SongWindow getWindow() {
+	public SongWindowBACKUP getWindow() {
 		return this.window;
 	}
 
@@ -451,7 +451,7 @@ public class DanceInterpreter {
 	 * 
 	 * 
 	 */
-	public void setSongWindow(SongWindow swindow) {
+	public void setSongWindow(SongWindowBACKUP swindow) {
 		this.window = swindow;
 	}
 }
