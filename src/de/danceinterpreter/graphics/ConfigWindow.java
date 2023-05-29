@@ -248,7 +248,7 @@ class ClickListener implements MouseListener {
 		PlaylistSongDataProvider pd = (PlaylistSongDataProvider) Main.Instance.getAppMode().getDataProvider();
 		pd.setDirection(0);
 		pd.setPosition(clickid + 1);
-		pd.provideAsynchronous();
+		pd.provideAsync();
 	}
 
 	@Override

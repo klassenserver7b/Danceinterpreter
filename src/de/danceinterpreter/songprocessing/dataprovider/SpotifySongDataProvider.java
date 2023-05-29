@@ -139,7 +139,7 @@ public class SpotifySongDataProvider implements SongDataProvider {
 	}
 
 	@Override
-	public void provideAsynchronous() {
+	public void provideAsync() {
 		Track t = getCurrentSpotifySong();
 
 		if (t == null) {

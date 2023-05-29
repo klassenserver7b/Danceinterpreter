@@ -46,7 +46,7 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 	}
 
 	@Override
-	public void provideAsynchronous() {
+	public void provideAsync() {
 
 		LinkedHashMap<File, SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
 

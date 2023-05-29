@@ -1,15 +1,15 @@
 package de.danceinterpreter.graphics.listener;
 
-public abstract class CKeyListener {
+public interface CKeyListener {
 
-	public void performPressedAction(int keycode) {
+	default void performPressedAction(int keycode) {
 	};
 
-	public void performPressedAction(int keycode, int keylocation) {
+	default void performPressedAction(int keycode, int keylocation) {
 		performPressedAction(keycode);
 	};
 
-	public void performReleasedAction(int keycode) {
+	default void performReleasedAction(int keycode) {
 	};
 
 }

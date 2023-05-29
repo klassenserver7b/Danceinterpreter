@@ -218,7 +218,7 @@ public class LocalSongDataProvider implements SongDataProvider {
 	
 	
 	*/
-	public void provideAsynchronous() {
+	public void provideAsync() {
 		SongData data = provideParameterizedData(false);
 
 		if (data != null) {

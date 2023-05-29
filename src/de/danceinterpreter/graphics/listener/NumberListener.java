@@ -13,7 +13,7 @@ import de.danceinterpreter.songprocessing.dataprovider.PlaylistSongDataProvider;
 /**
 **/
 
-public class NumberListener extends CKeyListener {
+public class NumberListener implements CKeyListener {
 
 	private boolean pressed;
 	private String numbers;
@@ -88,10 +88,11 @@ public class NumberListener extends CKeyListener {
 					return;
 				}
 
+				assert (am.getDataProvider() instanceof PlaylistSongDataProvider);
 				PlaylistSongDataProvider prov = (PlaylistSongDataProvider) am.getDataProvider();
 
 				if (prov.setPosition(pos)) {
-					prov.provideAsynchronous();
+					prov.provideAsync();
 				}
 
 			} catch (NumberFormatException e) {

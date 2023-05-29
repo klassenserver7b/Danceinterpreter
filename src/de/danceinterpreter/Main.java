@@ -44,22 +44,22 @@ public class Main {
 		}
 
 		new SongWindow();
-//
-//		this.appMode = askForAppMode();
-//
-//		if (this.appMode == null) {
-//			onShutdown(null);
-//			return;
-//		}
-//
-//		cfgwindow = new ConfigWindow();
-//
-//		if (!load()) {
-//			onShutdown(appMode);
-//			return;
-//		}
-//
-//		startShutdownT(this.appMode);
+		//
+		// this.appMode = askForAppMode();
+		//
+		// if (this.appMode == null) {
+		// onShutdown(null);
+		// return;
+		// }
+		//
+		// cfgwindow = new ConfigWindow();
+		//
+		// if (!load()) {
+		// onShutdown(appMode);
+		// return;
+		// }
+		//
+		// startShutdownT(this.appMode);
 
 	}
 

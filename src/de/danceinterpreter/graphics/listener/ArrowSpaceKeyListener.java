@@ -10,7 +10,7 @@ import de.danceinterpreter.songprocessing.dataprovider.PlaylistSongDataProvider;
 /**
 **/
 
-public class ArrowSpaceKeyListener extends CKeyListener {
+public class ArrowSpaceKeyListener implements CKeyListener {
 
 	@Override
 	public void performPressedAction(int keycode) {
@@ -24,6 +24,7 @@ public class ArrowSpaceKeyListener extends CKeyListener {
 			return;
 		}
 
+		assert (am.getDataProvider() instanceof PlaylistSongDataProvider);
 		PlaylistSongDataProvider prov = (PlaylistSongDataProvider) am.getDataProvider();
 
 		if (keycode == KeyEvent.VK_LEFT) {
@@ -32,7 +33,7 @@ public class ArrowSpaceKeyListener extends CKeyListener {
 			prov.setDirection(1);
 		}
 
-		prov.provideAsynchronous();
+		prov.provideAsync();
 
 	}
 

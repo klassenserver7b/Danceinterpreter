@@ -12,7 +12,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 
 import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.JLabel;
 
 /**
  * @author felix
@@ -31,15 +31,14 @@ public abstract class FormattedSongWindow implements TypedWindow {
 	 * 
 	 * @param comp
 	 * @param font
-	 * @param text
 	 * @param g
 	 * @return
 	 */
-	protected int calcEstimatedWidth(JComponent comp, Font font, String text, Graphics g) {
+	protected int calcEstimatedWidth(JLabel comp, Font font, Graphics g) {
 
 		int estwidth = 0;
 
-		for (String s : text.split("\n")) {
+		for (String s : comp.getText().split("\n")) {
 
 			if (s.isBlank()) {
 				continue;
@@ -58,16 +57,41 @@ public abstract class FormattedSongWindow implements TypedWindow {
 	/**
 	 * 
 	 * @param comp
-	 * @param font
-	 * @param text
 	 * @param g
 	 * @return
 	 */
-	protected int calcEstimatedHeight(JComponent comp, Font font, String text, Graphics g) {
+	protected int calcEstimatedWidth(JLabel comp, Graphics g) {
 
-		double oneline = comp.getFontMetrics(font).getStringBounds(text, g).getBounds().getHeight();
+		int estwidth = 0;
 
-		return (int) oneline * text.split("\n").length;
+		for (String s : comp.getText().split("\n")) {
+
+			if (s.isBlank()) {
+				continue;
+			}
+
+			double testwidth = comp.getFontMetrics(comp.getFont()).getStringBounds(s, g).getBounds().getWidth();
+
+			if (testwidth > estwidth) {
+				estwidth = (int) testwidth;
+			}
+		}
+
+		return estwidth;
+	}
+
+	/**
+	 * 
+	 * @param comp
+	 * @param font
+	 * @param g
+	 * @return
+	 */
+	protected int calcEstimatedHeight(JLabel comp, Font font, Graphics g) {
+
+		double oneline = comp.getFontMetrics(font).getStringBounds(comp.getText(), g).getBounds().getHeight();
+
+		return (int) oneline * comp.getText().split("\n").length;
 	}
 
 	/**

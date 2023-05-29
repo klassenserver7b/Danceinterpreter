@@ -7,6 +7,8 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -30,7 +32,6 @@ import de.danceinterpreter.AppModes;
 import de.danceinterpreter.Main;
 import de.danceinterpreter.connections.SpotifyInteractions;
 import de.danceinterpreter.graphics.icons.ExitIcon;
-import de.danceinterpreter.graphics.listener.EnterListener;
 import de.danceinterpreter.songprocessing.DanceInterpreter;
 import de.danceinterpreter.songprocessing.dataprovider.PlaylistSongDataProvider;
 
@@ -174,7 +175,7 @@ public class MenuGenerator {
 				Integer fontsize = Integer.parseInt(txt.getText());
 				log.debug("fontsize: " + fontsize);
 
-				SongWindowBACKUP sw = Main.Instance.getDanceInterpreter().getWindow();
+				SongWindow sw = Main.Instance.getDanceInterpreter().getWindow();
 
 				if (sw == null) {
 					label.setText("Please wait until SongWindow is shown!");
@@ -182,15 +183,15 @@ public class MenuGenerator {
 					return;
 				}
 
-				if (fontsize == -1) {
-					sw.setAutofontsizeState(1);
-				} else if (fontsize == -2) {
-					sw.setAutofontsizeState(2);
-				} else {
-
-					sw.setAutofontsizeState(-1);
-					sw.setFontsize(fontsize);
-				}
+//				if (fontsize == -1) {
+//					sw.setAutofontsizeState(1);
+//				} else if (fontsize == -2) {
+//					sw.setAutofontsizeState(2);
+//				} else {
+//
+//					sw.setAutofontsizeState(-1);
+//					sw.setFontsize(fontsize);
+//				}
 
 				dialogue.setVisible(false);
 				sw.refresh();
@@ -199,7 +200,19 @@ public class MenuGenerator {
 			}
 		});
 
-		txt.addKeyListener(new EnterListener(change, txt));
+		txt.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+
+					if (!txt.getText().isBlank()) {
+						change.doClick();
+					}
+				}
+
+			}
+		});
 
 		popupmenu.add(txt);
 		popupmenu.add(change);
@@ -282,7 +295,7 @@ public class MenuGenerator {
 					return;
 				}
 
-				di.getWindow().setImageenabled(pictureI.getState());
+//				di.getWindow().setImageenabled(pictureI.getState());
 
 				switch (Main.Instance.getAppMode()) {
 				case Playlist -> {
@@ -290,12 +303,12 @@ public class MenuGenerator {
 					PlaylistSongDataProvider dp = (PlaylistSongDataProvider) Main.Instance.getAppMode()
 							.getDataProvider();
 					dp.setDirection(0);
-					dp.provideAsynchronous();
+					dp.provideAsync();
 
 				}
 				default -> {
 
-					Main.Instance.getAppMode().getDataProvider().provideAsynchronous();
+					Main.Instance.getAppMode().getDataProvider().provideAsync();
 				}
 				}
 
