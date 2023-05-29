@@ -1,79 +1,131 @@
 package de.danceinterpreter.graphics;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
-import java.awt.event.FocusEvent.Cause;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author Felix
- *
  */
 public class SongWindow extends FormattedSongWindow {
 	public final Logger log = LoggerFactory.getLogger("Window");
-	private JFrame mainframe;
-	private JPanel mainpanel;
+
+	private static final int OUTER_SPACING = 20;
+	private static final int INNER_SPACING = 10;
+	private static final int SONG_VIEW_MAX_WIDTH = 500;
+
+
+	private JFrame frame;
+
+	private String danceName = "Jive";
+	private String songName = "Someone To You";
+	private String artistName = "BANNERS";
+	private BufferedImage albumImage;
+
+	private boolean hasAlbumImage = true;
+
+	private JLabel textDance;
+	private JLabel textSong;
+	private JLabel textArtist;
+	private JLabel imgAlbum;
 
 	/**
-	 * 
 	 * @param songname
 	 * @param artist
 	 * @param dance
 	 * @param img
 	 */
 	public SongWindow() {
-
-		mainframe = new JFrame();
-		mainpanel = new JPanel();
-
-		mainframe.setLayout(null);
-		mainpanel.setLayout(null);
-
 		GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-		Rectangle b = devices[0].getDefaultConfiguration().getBounds();
+		Rectangle screenBounds = devices[0].getDefaultConfiguration().getBounds();
 
-		System.err.println(b);
+		frame = new JFrame();
 
-		mainframe.setBounds(b);
-		mainpanel.setBounds(b);
+		frame.setTitle("DanceInterpreter");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		mainpanel = new JPanel();
+		frame.setBounds(screenBounds);
+		frame.setLayout(null);
 
-		mainframe.setContentPane(mainpanel);
+		frame.getContentPane().setBackground(Color.BLACK);
 
-		mainpanel.setBackground(Color.BLACK);
+		initComponents();
 
-		mainframe.setTitle("DanceInterpreter");
-		mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//TODO use actual content
+		textDance.setText(danceName);
+		textSong.setText(songName);
+		textArtist.setText(artistName);
 
-		JTextArea tanz = new JTextArea();
-		tanz.setEditable(false);
-		tanz.setSelectedTextColor(Color.white);
-		tanz.setSelectionColor(Color.black);
-	
-		tanz.setText("Jive");
-		tanz.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 100));
-		tanz.setForeground(Color.white);
-		tanz.setBackground(Color.black);
-		tanz.setBounds(200, 500, 1000, 900);
-		tanz.setVisible(true);
+		try {
+			albumImage = ImageIO.read(new URL("https://i.scdn.co/image/ab67616d0000b273f1bff89049561177b7cccebb"));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
-		mainpanel.add(tanz);
-		mainpanel.paintComponents(mainpanel.getGraphics());
+		frame.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				calculateSizes();
+			}
+		});
 
-		mainframe.setVisible(true);
-		mainframe.requestFocus(Cause.ACTIVATION);
+		frame.setVisible(true);
+	}
 
+	private void initComponents() {
+		textDance = new JLabel();
+		textDance.setHorizontalAlignment(SwingConstants.CENTER);
+		textDance.setVerticalAlignment(SwingConstants.BOTTOM);
+
+		textDance.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 100));
+		textDance.setForeground(Color.white);
+		frame.add(textDance);
+
+		textSong = new JLabel();
+		textSong.setHorizontalAlignment(SwingConstants.LEFT);
+
+		textSong.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
+		textSong.setForeground(Color.white);
+		frame.add(textSong);
+
+		textArtist = new JLabel();
+		textArtist.setHorizontalAlignment(SwingConstants.LEFT);
+
+		textArtist.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 15));
+		textArtist.setForeground(Color.white);
+		frame.add(textArtist);
+
+		imgAlbum = new JLabel();
+		frame.add(imgAlbum);
+	}
+
+	private void calculateSizes() {
+		textDance.setBounds(0, OUTER_SPACING / 2, frame.getWidth(), frame.getHeight() / 2 - OUTER_SPACING / 2);
+
+		int songViewTotalWidth = Math.min(frame.getWidth() - OUTER_SPACING * 2, SONG_VIEW_MAX_WIDTH);
+		int songViewStart = (frame.getWidth() - songViewTotalWidth) / 2;
+		int songViewEnd = (frame.getWidth() + songViewTotalWidth) / 2;
+
+		if (hasAlbumImage) {
+			int imgAlbumSize = textSong.getFont().getSize() + INNER_SPACING + textArtist.getFont().getSize();
+			imgAlbum.setBounds(songViewStart, frame.getHeight() / 2 + OUTER_SPACING / 2, imgAlbumSize, imgAlbumSize);
+			songViewStart += imgAlbumSize + INNER_SPACING;
+
+			Image scaledImage = albumImage.getScaledInstance(imgAlbumSize, imgAlbumSize, Image.SCALE_SMOOTH);
+			imgAlbum.setIcon(new ImageIcon(scaledImage));
+		}
+
+		textSong.setBounds(songViewStart, frame.getHeight() / 2 + OUTER_SPACING / 2, songViewEnd - songViewStart, textSong.getFont().getSize());
+		textArtist.setBounds(songViewStart, textSong.getY() + textSong.getHeight() + INNER_SPACING, songViewEnd - songViewStart, textArtist.getFont().getSize());
 	}
 
 	@Override
@@ -96,11 +148,11 @@ public class SongWindow extends FormattedSongWindow {
 
 	@Override
 	public JFrame getMainFrame() {
-		return mainframe;
+		return frame;
 	}
 
 	@Override
 	public JPanel getMainPanel() {
-		return mainpanel;
+		return null;
 	}
 }
