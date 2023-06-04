@@ -76,7 +76,9 @@ public class SongWindow extends FormattedSongWindow {
 		textArtist.setText(artistName);
 
 		try {
-			albumImage = ImageIO.read(new URL("https://i.scdn.co/image/ab67616d0000b273f1bff89049561177b7cccebb"));
+			// albumImage = ImageIO.read(new
+			// URL("https://i.scdn.co/image/ab67616d0000b273f1bff89049561177b7cccebb"));
+			albumImage = ImageIO.read(new URL("https://img.youtube.com/vi/U2H1LInYPXE/maxresdefault.jpg"));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -119,10 +121,10 @@ public class SongWindow extends FormattedSongWindow {
 	}
 
 	private void calculateSizes() {
-		int OUTER_SPACING = frame.getWidth() / 10;
+		int OUTER_SPACING = frame.getWidth() / 7;
 		int INNER_SPACING = frame.getWidth() / 150;
-		
-		textDance.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, frame.getHeight() / 10));
+
+		textDance.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, frame.getHeight() / 8));
 		textSong.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, frame.getHeight() / 20));
 		textArtist.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, frame.getHeight() / 30));
 
@@ -136,17 +138,19 @@ public class SongWindow extends FormattedSongWindow {
 		int songViewEnd = calcSongViewEnd(songViewStart, songViewTotalWidth);
 
 		if (hasAlbumImage) {
-			int imgAlbumSize = textSong.getFont().getSize() + INNER_SPACING + textArtist.getFont().getSize();
-			Image scaledImage = albumImage.getScaledInstance(imgAlbumSize, imgAlbumSize, Image.SCALE_SMOOTH);
+			int imgAlbumHeight = textSong.getFont().getSize() + INNER_SPACING + textArtist.getFont().getSize();
+			int imgAlbumWidth = (int) (albumImage.getWidth() * (imgAlbumHeight / (double) albumImage.getHeight()));
+
+			Image scaledImage = albumImage.getScaledInstance(imgAlbumWidth, imgAlbumHeight, Image.SCALE_SMOOTH);
 			imgAlbum.setIcon(new ImageIcon(scaledImage));
 
-			songViewTotalWidth += imgAlbumSize;
+			songViewTotalWidth += imgAlbumWidth;
 			songViewStart = calcSongViewStart(songViewTotalWidth);
 			songViewEnd = calcSongViewEnd(songViewStart, songViewTotalWidth);
 
-			imgAlbum.setBounds(songViewStart, frame.getHeight() / 2 + OUTER_SPACING / 2, imgAlbumSize, imgAlbumSize);
+			imgAlbum.setBounds(songViewStart, frame.getHeight() / 2 + OUTER_SPACING / 2, imgAlbumWidth, imgAlbumHeight);
 
-			songViewStart += imgAlbumSize + INNER_SPACING;
+			songViewStart += imgAlbumWidth + INNER_SPACING;
 			songViewEnd = calcSongViewEnd(songViewStart, songViewTotalWidth);
 		}
 
