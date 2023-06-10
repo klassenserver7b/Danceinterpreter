@@ -27,7 +27,7 @@ import de.danceinterpreter.graphics.listener.FullscreenListener;
 /**
  * @author Felix
  */
-public class SongWindow extends FormattedSongWindow {
+public class SongWindowBdImgTA extends FormattedSongWindow {
 	public final Logger log = LoggerFactory.getLogger("Window");
 
 	private JFrame frame;
@@ -50,7 +50,7 @@ public class SongWindow extends FormattedSongWindow {
 	 * @param dance
 	 * @param img
 	 */
-	public SongWindow() {
+	public SongWindowBdImgTA() {
 		GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
 		Rectangle screenBounds = devices[0].getDefaultConfiguration().getBounds();
 

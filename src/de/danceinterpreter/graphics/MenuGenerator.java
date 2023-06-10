@@ -94,7 +94,7 @@ public class MenuGenerator {
 
 	private JMenu getSongWindowMenu() {
 
-		JMenu songwindowm = new JMenu("SongWindow");
+		JMenu songwindowm = new JMenu("SongWindowBdImgTA");
 
 		songwindowm.add(getPictureCheck());
 		songwindowm.add(getFontSizeOpt());
@@ -175,10 +175,10 @@ public class MenuGenerator {
 				Integer fontsize = Integer.parseInt(txt.getText());
 				log.debug("fontsize: " + fontsize);
 
-				SongWindow sw = Main.Instance.getDanceInterpreter().getWindow();
+				SongWindowBdImgTA sw = Main.Instance.getDanceInterpreter().getWindow();
 
 				if (sw == null) {
-					label.setText("Please wait until SongWindow is shown!");
+					label.setText("Please wait until SongWindowBdImgTA is shown!");
 					label.setForeground(Color.decode("#ff0000"));
 					return;
 				}
@@ -261,7 +261,7 @@ public class MenuGenerator {
 
 		JMenuItem label = new JMenuItem();
 
-		label.setText("Refresh SongWindow");
+		label.setText("Refresh SongWindowBdImgTA");
 		label.addActionListener(new ActionListener() {
 
 			@Override

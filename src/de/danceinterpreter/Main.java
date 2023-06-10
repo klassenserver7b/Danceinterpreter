@@ -14,7 +14,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 
 import de.danceinterpreter.connections.SpotifyInteractions;
 import de.danceinterpreter.graphics.ConfigWindow;
-import de.danceinterpreter.graphics.SongWindow;
+import de.danceinterpreter.graphics.SongWindowBdImgTA;
 import de.danceinterpreter.songprocessing.DanceInterpreter;
 import se.michaelthelin.spotify.SpotifyApi;
 
@@ -43,7 +43,7 @@ public class Main {
 			log.warn("LayoutInitialization failed");
 		}
 
-		new SongWindow();
+		new SongWindowBdImgTA();
 		//
 		// this.appMode = askForAppMode();
 		//
