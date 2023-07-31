@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>Danceinterpreter</groupId>
 	<artifactId>Danceinterpreter</artifactId>
-	<version>2.4.2</version>
+	<version>3.0.0</version>
 	<packaging>jar</packaging>
 	<name>DanceInterpreter</name>
 	<description>Tool to present a playlist for ballroom dancing</description>
@@ -77,7 +77,7 @@
 		<dependency>
 			<groupId>se.michaelthelin.spotify</groupId>
 			<artifactId>spotify-web-api-java</artifactId>
-			<version>7.2.0</version>
+			<version>8.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mpatric</groupId>
@@ -101,12 +101,12 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.4.5</version>
+			<version>1.4.8</version>
 		</dependency>
 		<dependency>
 			<groupId> com.formdev</groupId>
 			<artifactId>flatlaf</artifactId>
-			<version>3.0</version>
+			<version>3.1.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
 		<dependency>
