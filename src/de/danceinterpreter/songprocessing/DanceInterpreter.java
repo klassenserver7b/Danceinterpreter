@@ -239,7 +239,7 @@ public class DanceInterpreter {
 
 			String dance;
 			JsonElement elem = danceobj.get("dance");
-			if (elem != null && !elem.isJsonNull() && !(dance = elem.getAsString()).equalsIgnoreCase("")) {
+			if (elem != null && !elem.isJsonNull() && !(dance = elem.getAsString()).isBlank()) {
 				return dance;
 			} else {
 				return "unknown";

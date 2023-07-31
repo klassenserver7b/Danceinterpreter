@@ -80,7 +80,7 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 
 			SongData data = songs.entrySet().parallelStream().toList().get(current).getValue();
 
-			Main.Instance.getSongWindowServer().forceData(data);
+			Main.Instance.getSongWindowServer().provideData(data);
 		}
 
 	}

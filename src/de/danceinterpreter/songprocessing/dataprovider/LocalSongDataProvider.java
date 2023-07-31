@@ -225,7 +225,7 @@ public class LocalSongDataProvider implements SongDataProvider {
 		if (data != null) {
 			log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
 
-			Main.Instance.getSongWindowServer().forceData(data);
+			Main.Instance.getSongWindowServer().provideData(data);
 
 		}
 	}

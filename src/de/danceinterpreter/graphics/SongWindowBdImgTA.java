@@ -9,10 +9,7 @@ import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,8 +18,12 @@ import javax.swing.SwingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.danceinterpreter.graphics.listener.ArrowSpaceKeyListener;
 import de.danceinterpreter.graphics.listener.CustomKeyListener;
 import de.danceinterpreter.graphics.listener.FullscreenListener;
+import de.danceinterpreter.graphics.listener.NumberListener;
+import de.danceinterpreter.graphics.listener.RefreshListener;
+import de.danceinterpreter.songprocessing.SongData;
 
 /**
  * @author Felix
@@ -68,22 +69,12 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 
 		CustomKeyListener keylis = new CustomKeyListener();
 		keylis.registerKeyListeners(new FullscreenListener(frame));
+		keylis.registerKeyListeners(new ArrowSpaceKeyListener());
+		keylis.registerKeyListeners(new NumberListener());
+		keylis.registerKeyListeners(new RefreshListener());
 		frame.addKeyListener(keylis);
 
 		initComponents();
-
-		// TODO use actual content
-		textDance.setText(danceName);
-		textSong.setText(songName);
-		textArtist.setText(artistName);
-
-		try {
-			// albumImage = ImageIO.read(new
-			// URL("https://i.scdn.co/image/ab67616d0000b273f1bff89049561177b7cccebb"));
-			albumImage = ImageIO.read(new URL("https://img.youtube.com/vi/U2H1LInYPXE/maxresdefault.jpg"));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 
 		frame.addComponentListener(new ComponentAdapter() {
 			@Override
@@ -91,8 +82,6 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 				calculateSizes();
 			}
 		});
-
-		frame.setVisible(true);
 	}
 
 	private void initComponents() {
@@ -140,7 +129,8 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 		int songViewEnd = calcSongViewEnd(songViewStart, songViewTotalWidth);
 
 		if (hasAlbumImage) {
-			int imgAlbumHeight = textSong.getFont().getSize() + INNER_SPACING + textArtist.getFont().getSize();
+			int imgAlbumHeight = calcEstimatedHeight(textSong, textSong.getFont(), textSong.getGraphics())
+					+ INNER_SPACING + calcEstimatedHeight(textArtist, textArtist.getFont(), textArtist.getGraphics());
 			int imgAlbumWidth = (int) (albumImage.getWidth() * (imgAlbumHeight / (double) albumImage.getHeight()));
 
 			Image scaledImage = albumImage.getScaledInstance(imgAlbumWidth, imgAlbumHeight, Image.SCALE_SMOOTH);
@@ -157,9 +147,11 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 		}
 
 		textSong.setBounds(songViewStart, frame.getHeight() / 2 + OUTER_SPACING / 2, songViewEnd - songViewStart,
-				textSong.getFont().getSize());
+				calcEstimatedHeight(textSong, textSong.getFont(), textSong.getGraphics()));
+
 		textArtist.setBounds(songViewStart, textSong.getY() + textSong.getHeight() + INNER_SPACING,
-				songViewEnd - songViewStart, textArtist.getFont().getSize());
+				songViewEnd - songViewStart,
+				calcEstimatedHeight(textArtist, textArtist.getFont(), textArtist.getGraphics()));
 	}
 
 	protected int calcSongViewStart(int songViewTotalWidth) {
@@ -171,26 +163,40 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 	}
 
 	@Override
-	public int show() {
+	public void show() {
 		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
-	public int close() {
+	public void close() {
 		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
-	public int refresh() {
-		// TODO Auto-generated method stub
-		return 0;
+	public void refresh() {
+
+		textDance.setText(danceName);
+		textSong.setText(songName);
+		textArtist.setText(artistName);
+
+		calculateSizes();
+
+		frame.setVisible(true);
+		frame.requestFocus();
 	}
 
 	@Override
 	public JFrame getMainFrame() {
 		return frame;
+	}
+
+	@Override
+	public void updateData(SongData data) {
+		this.songName = data.getTitle();
+		this.artistName = data.getAuthor();
+		this.albumImage = data.getImage();
+		this.danceName = data.getDance();
+		refresh();
 	}
 
 }

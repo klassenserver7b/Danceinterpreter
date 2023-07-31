@@ -14,6 +14,8 @@ import java.awt.image.BufferedImage;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 
+import de.danceinterpreter.songprocessing.SongData;
+
 /**
  * @author felix
  *
@@ -120,4 +122,5 @@ public abstract class FormattedSongWindow implements TypedWindow {
 		return windowSpecs;
 	}
 
+	abstract public void updateData(SongData data);
 }

@@ -11,11 +11,11 @@ import javax.swing.JFrame;
  */
 public interface TypedWindow {
 
-	int show();
+	void show();
 
-	int refresh();
+	void refresh();
 
-	int close();
+	void close();
 
 	JFrame getMainFrame();
 

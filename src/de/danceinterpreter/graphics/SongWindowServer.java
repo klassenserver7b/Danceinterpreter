@@ -17,20 +17,20 @@ import de.danceinterpreter.songprocessing.SongData;
 public class SongWindowServer {
 
 	private final List<FormattedSongWindow> registeredWindows;
+	private int selectedWindow;
 
 	/**
 	 * 
 	 */
-	public SongWindowServer() {
+	protected SongWindowServer() {
 		registeredWindows = new ArrayList<>();
+		selectedWindow = 0;
 	}
 
 	public void provideData(SongData data) {
-		// TODO
-	}
-
-	public synchronized void forceData(SongData data) {
-		// TODO
+		reselectWindow(data);
+		
+		registeredWindows.get(selectedWindow).updateData(data);
 	}
 
 	public void registerSongWindow(FormattedSongWindow window) {
@@ -53,12 +53,11 @@ public class SongWindowServer {
 	}
 
 	public FormattedSongWindow getWindow() {
-		// TODO Provide selected
-		return registeredWindows.get(0);
+		return registeredWindows.get(selectedWindow);
 	}
 
 	public void refresh() {
-		// TODO -> forward to selected window (rescale, etc.)
+		registeredWindows.get(selectedWindow).refresh();
 	}
 
 	public static SongWindowServer createDefault() {
@@ -66,5 +65,17 @@ public class SongWindowServer {
 		server.registerSongWindows(new SongWindowBdImgTA());
 
 		return server;
+	}
+
+	protected void reselectWindow(SongData data) {
+		SongWindowSpecs dataspecs = data.toSongWindowSpecs();
+
+		for (int i = 0; i < registeredWindows.size(); i++) {
+			if (registeredWindows.get(i).getWindowSpecs().equals(dataspecs)) {
+				selectedWindow = i;
+				return;
+			}
+		}
+
 	}
 }

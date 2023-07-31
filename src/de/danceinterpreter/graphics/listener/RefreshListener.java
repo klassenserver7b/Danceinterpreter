@@ -17,7 +17,7 @@ public class RefreshListener implements CKeyListener {
 			return;
 		}
 
-		Main.Instance.getAppMode().getDataProvider().provideAsync();
+		Main.Instance.getSongWindowServer().refresh();
 
 	}
 }

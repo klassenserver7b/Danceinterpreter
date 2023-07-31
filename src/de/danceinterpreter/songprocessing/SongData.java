@@ -8,13 +8,16 @@ import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
+import de.danceinterpreter.graphics.SongWindowSpecs;
+
 /**
 
 
  *
  
  
- */public class SongData {
+ */
+public class SongData {
 
 	private String title;
 	private String author;
@@ -44,8 +47,10 @@ import javax.imageio.ImageIO;
 		this.img = buffimg;
 	}
 
-	public SongData() {
-
+	public SongWindowSpecs toSongWindowSpecs() {
+		return new SongWindowSpecs(this.img != null, (this.author == null || !this.author.isBlank()),
+				(this.title == null || !this.title.isBlank()),
+				(this.dance == null || !this.dance.isBlank() || this.dance.equalsIgnoreCase("unknown")));
 	}
 
 	public String getTitle() {

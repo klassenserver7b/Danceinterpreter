@@ -14,7 +14,6 @@ import com.formdev.flatlaf.FlatLightLaf;
 
 import de.danceinterpreter.connections.SpotifyInteractions;
 import de.danceinterpreter.graphics.ConfigWindow;
-import de.danceinterpreter.graphics.SongWindowBdImgTA;
 import de.danceinterpreter.graphics.SongWindowServer;
 import de.danceinterpreter.songprocessing.DanceInterpreter;
 import se.michaelthelin.spotify.SpotifyApi;
@@ -44,24 +43,23 @@ public class Main {
 		if (!initalizeUILayout()) {
 			log.warn("LayoutInitialization failed");
 		}
-
-		new SongWindowBdImgTA();
-		//
-		// this.appMode = askForAppMode();
-		//
-		// if (this.appMode == null) {
-		// onShutdown(null);
-		// return;
-		// }
-		//
-		// cfgWindow = new ConfigWindow();
-		//
-		// if (!load()) {
-		// onShutdown(appMode);
-		// return;
-		// }
-		//
-		// startShutdownT(this.appMode);
+		
+		
+		 this.appMode = askForAppMode();
+		
+		 if (this.appMode == null) {
+		 onShutdown(null);
+		 return;
+		 }
+		
+		 cfgWindow = new ConfigWindow();
+		
+		 if (!load()) {
+		 onShutdown(appMode);
+		 return;
+		 }
+		
+		 startShutdownT(this.appMode);
 
 	}
 
@@ -84,7 +82,7 @@ public class Main {
 	*/
 	private boolean load() {
 		this.danceInterpreter = new DanceInterpreter();
-		this.songWindowServer = new SongWindowServer();
+		this.songWindowServer = SongWindowServer.createDefault();
 
 		if (appMode == AppModes.Spotify) {
 			this.spotify = new SpotifyInteractions();
