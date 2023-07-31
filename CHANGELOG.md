@@ -1,10 +1,14 @@
-#Full Graphics Rework - v3.0.0
+# Changelog
+All notable changes to this project will be documented in this file.
 
-## New UI
-- UI is variable based on the provided SongData
-- removed FontSizeOption -> replaced by better Auto-Mode
+## v3.0.0
 
-## Other
-- removed Mixxx integration
-- improved general code readability and quality
-- some gh-actions and workflow stuff
+  ## New UI
+    - Full UI-Rework
+    - UI is variable based on the provided SongData
+    - removed FontSizeOption -> replaced by better Auto-Mode
+
+  ## Other
+    - removed Mixxx integration
+    - improved general code readability and quality
+    - some gh-actions and workflow stuff
