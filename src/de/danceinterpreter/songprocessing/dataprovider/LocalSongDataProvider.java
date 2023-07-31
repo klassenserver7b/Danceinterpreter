@@ -29,8 +29,9 @@ import de.danceinterpreter.songprocessing.DanceInterpreter;
 import de.danceinterpreter.songprocessing.SongData;
 
 /**
-**/
-
+ * 
+ * @author K7
+ */
 public class LocalSongDataProvider implements SongDataProvider {
 
 	private final Logger log;
@@ -39,10 +40,7 @@ public class LocalSongDataProvider implements SongDataProvider {
 
 	/**
 	 * 
-	 
-	
-	
-	*/
+	 */
 	public LocalSongDataProvider() {
 		log = LoggerFactory.getLogger(this.getClass());
 		hash = 0;
@@ -51,10 +49,7 @@ public class LocalSongDataProvider implements SongDataProvider {
 
 	/**
 	 * 
-	 
-	
-	
-	*/
+	 */
 	@Override
 	public SongData provideSongData() {
 		return provideParameterizedData(true);
@@ -124,12 +119,48 @@ public class LocalSongDataProvider implements SongDataProvider {
 	 * 
 	 * @param checkcurrent
 	 * @return
-	 * 
-	 * 
-	 * 
 	 */
 	private File getLocalSong(boolean checkcurrent) {
+		List<File> blocked = getBlockedFiles();
 
+		boolean checked = checkcurrent;
+
+		if (checkcurrent) {
+			checked = (blocked.hashCode() != hash);
+		} else {
+			checked = true;
+		}
+
+		if (!blocked.isEmpty() && checked) {
+
+			this.hash = blocked.hashCode();
+			if (blocked.size() == 1) {
+				return blocked.get(0);
+			}
+
+			ConcurrentHashMap<String, File> fileoptions = new ConcurrentHashMap<>();
+
+			for (File f : blocked) {
+				fileoptions.put(f.getName(), f);
+			}
+
+			String filename = (String) JOptionPane.showInputDialog(null, "Which is the current Song?",
+					"Please select current song!", JOptionPane.QUESTION_MESSAGE, null,
+					fileoptions.keySet().toArray(new String[0]), null);
+
+			if (filename != null) {
+				return fileoptions.get(filename);
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private List<File> getBlockedFiles() {
 		List<File> blocked = new ArrayList<>();
 
 		DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
@@ -179,45 +210,12 @@ public class LocalSongDataProvider implements SongDataProvider {
 
 		}
 
-		boolean checked = checkcurrent;
-
-		if (checkcurrent) {
-			checked = (blocked.hashCode() != hash);
-		} else {
-			checked = true;
-		}
-
-		if (!blocked.isEmpty() && checked) {
-
-			this.hash = blocked.hashCode();
-			if (blocked.size() == 1) {
-				return blocked.get(0);
-			}
-
-			ConcurrentHashMap<String, File> fileoptions = new ConcurrentHashMap<>();
-
-			for (File f : blocked) {
-				fileoptions.put(f.getName(), f);
-			}
-
-			String filename = (String) JOptionPane.showInputDialog(null, "Which is the current Song?",
-					"Please select current song!", JOptionPane.QUESTION_MESSAGE, null,
-					fileoptions.keySet().toArray(new String[0]), null);
-
-			if (filename != null) {
-				return fileoptions.get(filename);
-			}
-		}
-
-		return null;
+		return blocked;
 	}
 
-	/**
+	/***
 	 * 
-	 
-	
-	
-	*/
+	 */
 	@Override
 	public void provideAsync() {
 		SongData data = provideParameterizedData(false);
