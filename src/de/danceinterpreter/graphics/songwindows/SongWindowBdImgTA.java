@@ -180,12 +180,13 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
+		refresh();
 	}
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
+		frame.dispose();
+		frame.setVisible(false);
 	}
 
 	@Override

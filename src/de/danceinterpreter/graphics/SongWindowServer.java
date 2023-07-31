@@ -20,6 +20,7 @@ public class SongWindowServer {
 	private final List<FormattedSongWindow> registeredWindows;
 	private int selectedWindow;
 	private boolean allowImages;
+	private SongData currentData;
 
 	/**
 	 * 
@@ -28,6 +29,7 @@ public class SongWindowServer {
 		registeredWindows = new ArrayList<>();
 		selectedWindow = 0;
 		allowImages = true;
+		currentData = null;
 	}
 
 	/**
@@ -48,7 +50,7 @@ public class SongWindowServer {
 	 */
 	public void provideData(SongData data) {
 		reselectWindow(data);
-
+		currentData = data;
 		registeredWindows.get(selectedWindow).updateData(data);
 	}
 
@@ -65,6 +67,7 @@ public class SongWindowServer {
 	 */
 	public void setAllowImages(boolean allowImages) {
 		this.allowImages = allowImages;
+		reselectWindow(currentData);
 	}
 
 	/**
@@ -81,6 +84,9 @@ public class SongWindowServer {
 
 		for (int i = 0; i < registeredWindows.size(); i++) {
 			if (registeredWindows.get(i).getWindowSpecs().equals(dataspecs)) {
+
+				registeredWindows.get(selectedWindow).close();
+
 				selectedWindow = i;
 				return;
 			}
