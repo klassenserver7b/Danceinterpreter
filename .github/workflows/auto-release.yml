@@ -16,11 +16,8 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
-      - uses: CupOfTea696/gh-action-auto-release@v1.0.2
+      - name: Auto Release
+        uses: CupOfTea696/gh-action-auto-release@v1.0.2
         with:
-          title: "Release: $version"
-          tag: "v$semver"
-          draft: false
-          regex: "^Release: #{semver}$"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Title for the release
+          title: $semver
