@@ -6,7 +6,7 @@ package de.danceinterpreter.graphics;
 import javax.swing.JFrame;
 
 /**
- * @author felix
+ * @author K7
  *
  */
 public interface TypedWindow {

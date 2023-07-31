@@ -8,8 +8,15 @@ import de.danceinterpreter.songprocessing.SongData;
  
 public interface SongDataProvider {
 	
+	/**
+	 * 
+	 * @return
+	 */
 	SongData provideSongData();
 	
+	/**
+	 * 
+	 */
 	void provideAsync();
 
 }

@@ -10,7 +10,7 @@ import javax.swing.Icon;
 
 /**
  * 
- * @author Felix
+ * @author K7
  *
  */
 public class ExitIcon implements Icon {

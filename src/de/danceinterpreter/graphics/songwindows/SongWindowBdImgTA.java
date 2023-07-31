@@ -1,4 +1,4 @@
-package de.danceinterpreter.graphics;
+package de.danceinterpreter.graphics.songwindows;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -18,6 +18,8 @@ import javax.swing.SwingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.danceinterpreter.graphics.FormattedSongWindow;
+import de.danceinterpreter.graphics.SongWindowSpecs;
 import de.danceinterpreter.graphics.listener.ArrowSpaceKeyListener;
 import de.danceinterpreter.graphics.listener.CustomKeyListener;
 import de.danceinterpreter.graphics.listener.FullscreenListener;
@@ -26,7 +28,7 @@ import de.danceinterpreter.graphics.listener.RefreshListener;
 import de.danceinterpreter.songprocessing.SongData;
 
 /**
- * @author Felix
+ * @author K7
  */
 public class SongWindowBdImgTA extends FormattedSongWindow {
 	public final Logger log = LoggerFactory.getLogger("Window");
@@ -45,14 +47,28 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 	private JLabel imgAlbum;
 
 	/**
-	 * @param songname
-	 * @param artist
-	 * @param dance
-	 * @param img
+	 * 
 	 */
 	public SongWindowBdImgTA() {
+		this(true);
+	}
 
-		super(new SongWindowSpecs(true, true, true, true));
+	/**
+	 * 
+	 * @param withimage
+	 */
+	public SongWindowBdImgTA(boolean withimage) {
+		this(new SongWindowSpecs(withimage, true, true, true));
+		this.hasAlbumImage = withimage;
+	}
+
+	/**
+	 * 
+	 * @param windowspecs
+	 */
+	protected SongWindowBdImgTA(SongWindowSpecs windowspecs) {
+
+		super(windowspecs);
 
 		GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
 		Rectangle screenBounds = devices[0].getDefaultConfiguration().getBounds();

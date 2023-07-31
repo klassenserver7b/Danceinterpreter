@@ -20,7 +20,7 @@ import se.michaelthelin.spotify.SpotifyApi;
 
 /**
  * 
- * @author felix
+ * @author K7
  *
  */
 
@@ -37,29 +37,31 @@ public class Main {
 	private Thread shutdownT;
 	private final Logger log = LoggerFactory.getLogger("Main");
 
+	/**
+	 * 
+	 */
 	public Main() {
 		Instance = this;
 
 		if (!initalizeUILayout()) {
 			log.warn("LayoutInitialization failed");
 		}
-		
-		
-		 this.appMode = askForAppMode();
-		
-		 if (this.appMode == null) {
-		 onShutdown(null);
-		 return;
-		 }
-		
-		 cfgWindow = new ConfigWindow();
-		
-		 if (!load()) {
-		 onShutdown(appMode);
-		 return;
-		 }
-		
-		 startShutdownT(this.appMode);
+
+		this.appMode = askForAppMode();
+
+		if (this.appMode == null) {
+			onShutdown(null);
+			return;
+		}
+
+		cfgWindow = new ConfigWindow();
+
+		if (!load()) {
+			onShutdown(appMode);
+			return;
+		}
+
+		startShutdownT(this.appMode);
 
 	}
 
@@ -76,10 +78,9 @@ public class Main {
 	}
 
 	/**
-	 *
-	 
-	
-	*/
+	 * 
+	 * @return
+	 */
 	private boolean load() {
 		this.danceInterpreter = new DanceInterpreter();
 		this.songWindowServer = SongWindowServer.createDefault();
@@ -125,20 +126,16 @@ public class Main {
 
 	/**
 	 * 
-	 
-	
-	
-	*/
+	 * @return
+	 */
 	private boolean initalizeUILayout() {
 		return FlatLightLaf.setup();
 	}
 
 	/**
 	 * 
-	 
-	
-	
-	*/
+	 * @param appMode
+	 */
 	private void startShutdownT(AppModes appMode) {
 		this.shutdownT = new Thread(() -> {
 			String line;
@@ -166,10 +163,8 @@ public class Main {
 
 	/**
 	 * 
-	 
-	
-	
-	*/
+	 * @param appMode
+	 */
 	public void onShutdown(AppModes appMode) {
 
 		this.log.info("Shutdown started");
@@ -200,9 +195,6 @@ public class Main {
 	/**
 	 * 
 	 * @return
-	 * 
-	 * 
-	 * 
 	 */
 	public AppModes getAppMode() {
 		return this.appMode;
@@ -211,9 +203,6 @@ public class Main {
 	/**
 	 * 
 	 * @return
-	 * 
-	 * 
-	 * 
 	 */
 	public SpotifyApi getSpotifyAPI() {
 
@@ -224,9 +213,6 @@ public class Main {
 	/**
 	 * 
 	 * @return
-	 * 
-	 * 
-	 * 
 	 */
 	public DanceInterpreter getDanceInterpreter() {
 
@@ -237,9 +223,6 @@ public class Main {
 	/**
 	 * 
 	 * @return
-	 * 
-	 * 
-	 * 
 	 */
 	public ConfigWindow getConfigWindow() {
 		return this.cfgWindow;

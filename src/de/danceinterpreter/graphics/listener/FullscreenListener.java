@@ -7,7 +7,7 @@ import java.awt.Frame;
 import java.awt.event.KeyEvent;
 
 /**
- * @author felix
+ * @author K7
  *
  */
 public class FullscreenListener implements CKeyListener {

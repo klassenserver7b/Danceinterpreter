@@ -17,7 +17,7 @@ import javax.swing.JLabel;
 import de.danceinterpreter.songprocessing.SongData;
 
 /**
- * @author felix
+ * @author K7
  *
  */
 public abstract class FormattedSongWindow implements TypedWindow {

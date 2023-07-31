@@ -10,7 +10,7 @@ import java.awt.event.FocusListener;
 import javax.swing.text.JTextComponent;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class HintFocusListener implements FocusListener {
