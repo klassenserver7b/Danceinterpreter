@@ -10,10 +10,15 @@ This tool provides information about a currently playing song and displays them.
 It's meant to be used on e.g. a Prom or other Dance events
 
 ## Requirements
-- Java 15 or newer
+- Java 17 or newer
 - For Spotify-use:
   -  Spotify Account
-  - Internet Connection
+  -  Internet Connection
+- For Playlist-Mode
+  - A valid m3u/m3u8/xspf file
+- For Local-MP3-Mode
+  - Windows -> file locking which is not available on UNIX needed by this mode
+  - A Folder containing mp3 files / subfolders which contain mp3 files
 
 ## **How to Use**
 
@@ -24,28 +29,35 @@ It's meant to be used on e.g. a Prom or other Dance events
 
 ## Spotify
 
-_IF YOU ALREADY HAVE A VALID CONFIG FILE YOU CAN GO TO_ [**`Usage`**](README.md#usage)
-
-### _First Startup_
 1. Run `Danceinterpreter.jar`
 2. Select `Spotify` in the drop-down
-3. Do step 1 and 2 again
-4. Head to `CURRENT_DIRECTORY\logs`
-5. Open the newest Log and open the given URL
-6. Authorize the App and copy the code from the URL
-7. Example-code : <img width="359" alt="185384118-c16f5fae-0a0f-4b0c-81c7-01b2359ee32e" src="https://user-images.githubusercontent.com/79657220/185385213-13cc7660-f8a5-483e-ba94-f580be4c3919.png">
-8.  Insert the code in `CURRENT_DIRECTORY\resources\config.properties`  -> `authorization_token=YOUR_TOKEN` 
+3. Authorize Spotify Account access in your browser
 9. Setup Finished!
-
-### _Usage_
-1. Make sure there is a valid config-file in `CURRENT_DIRECTORY\resources\config.properties`
-2. Run `DanceInterpreter.jar`
-3. Select "Spotify" in the drop-down
-4. Finished!
 
 ## Local mp3 Files
 
 1. Run `Danceinterpreter.jar`
-5. Select `local .mp3 files` in the drop-down
+5. Select `LocalMP3` in the drop-down
 6. Select the Directory the App should check for playing .mp3 files
 7. Finished!
+
+## Playlists
+
+1. Run `Danceinterpreter.jar`
+5. Select `Playlist` in the drop-down
+6. Select your m3u/m3u8/xspf file
+7. Finished!
+
+## _Usage_
+1. Run `DanceInterpreter.jar`
+2. Select your appmode in the drop-down
+3. Have Fun!
+
+
+## Self compile and building
+1. Clone the project `git clone --recursive https://github.com/klassenserver7b/Danceinterpreter.git`
+2. `cd Danceinterpreter`
+3. Make sure you have java-jdk-17 and maven installed
+4. run 'maven clean package'
+5. you can now find your jar at ./target/Danceinterpreter-$VERSION-jar-with-dependencies.jar
+6. run it with `java -jar YOUR_JAR_FILE_NAME`
