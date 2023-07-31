@@ -1,6 +1,5 @@
 package de.danceinterpreter.songprocessing;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -15,8 +14,6 @@ import java.util.TreeMap;
 import java.util.prefs.Preferences;
 
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +25,6 @@ import com.google.gson.JsonParser;
 
 import de.danceinterpreter.AppModes;
 import de.danceinterpreter.Main;
-import de.danceinterpreter.graphics.SongWindow;
 import de.danceinterpreter.loader.PlaylistLoader;
 import de.danceinterpreter.threads.SongCheckThread;
 
@@ -43,7 +39,6 @@ public class DanceInterpreter {
 
 	private TreeMap<String, JsonObject> dancelist = new TreeMap<>();
 	private SongCheckThread songcheckT;
-	private SongWindow window;
 
 	private LinkedHashMap<File, SongData> songs;
 
@@ -149,25 +144,25 @@ public class DanceInterpreter {
 	*/
 	public void shutdown() {
 
-		if (this.songcheckT != null) {
-			this.songcheckT.interrupt();
-
-		}
-
-		if (this.window != null) {
-			JFrame mainframe = this.getWindow().getMainFrame();
-			if (mainframe != null) {
-				mainframe.dispose();
-				mainframe.setVisible(false);
-				mainframe = null;
-			}
-			JPanel mainpanel = this.getWindow().getMainPanel();
-			if (mainpanel != null) {
-				mainpanel.removeAll();
-				mainpanel.setEnabled(false);
-				mainpanel = null;
-			}
-		}
+		// if (this.songcheckT != null) {
+		// this.songcheckT.interrupt();
+		//
+		// }
+		//
+		// if (this.window != null) {
+		// JFrame mainframe = this.getWindow().getMainFrame();
+		// if (mainframe != null) {
+		// mainframe.dispose();
+		// mainframe.setVisible(false);
+		// mainframe = null;
+		// }
+		// JPanel mainpanel = this.getWindow().getMainPanel();
+		// if (mainpanel != null) {
+		// mainpanel.removeAll();
+		// mainpanel.setEnabled(false);
+		// mainpanel = null;
+		// }
+		// }
 	}
 
 	/**
@@ -244,7 +239,7 @@ public class DanceInterpreter {
 
 			String dance;
 			JsonElement elem = danceobj.get("dance");
-			if (elem != null && !elem.isJsonNull() && !(dance = elem.getAsString()).equalsIgnoreCase("")) {
+			if (elem != null && !elem.isJsonNull() && !(dance = elem.getAsString()).isBlank()) {
 				return dance;
 			} else {
 				return "unknown";
@@ -371,37 +366,6 @@ public class DanceInterpreter {
 
 	/**
 	 * 
-	 * @param songname
-	 * @param artist
-	 * @param dance
-	 * @param img
-	 * 
-	 * 
-	 * 
-	 */
-	public void updateSongWindow(String songname, String artist, String dance, BufferedImage img) {
-
-		if (this.window == null) {
-			this.window = new SongWindow(songname, artist, dance, img);
-			return;
-		}
-
-		this.window.updateWindow(songname, artist, dance, img);
-	}
-
-	/**
-	 * 
-	 * @return
-	 * 
-	 * 
-	 * 
-	 */
-	public SongWindow getWindow() {
-		return this.window;
-	}
-
-	/**
-	 * 
 	 * @return
 	 * 
 	 * 
@@ -444,14 +408,7 @@ public class DanceInterpreter {
 		return data;
 	}
 
-	/**
-	 * 
-	 * @param swindow
-	 * 
-	 * 
-	 * 
-	 */
-	public void setSongWindow(SongWindow swindow) {
-		this.window = swindow;
+	public SongCheckThread getSongcheckT() {
+		return songcheckT;
 	}
 }

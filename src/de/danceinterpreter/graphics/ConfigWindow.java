@@ -90,6 +90,7 @@ public class ConfigWindow {
 		mainpanel.add(img);
 		mainframe.addComponentListener(new ComponentAdapter() {
 
+			@Override
 			public void componentResized(ComponentEvent componentEvent) {
 
 				if (System.currentTimeMillis() - 1000 <= time) {
@@ -233,46 +234,44 @@ public class ConfigWindow {
 		return mainpanel;
 	}
 
-}
+	class ClickListener implements MouseListener {
 
-class ClickListener implements MouseListener {
+		private final int clickid;
 
-	private final int clickid;
+		public ClickListener(int id) {
+			clickid = id;
+		}
 
-	public ClickListener(int id) {
-		clickid = id;
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			PlaylistSongDataProvider pd = (PlaylistSongDataProvider) Main.Instance.getAppMode().getDataProvider();
+			pd.setDirection(0);
+			pd.setPosition(clickid + 1);
+			pd.provideAsync();
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// Nothing to do here
+
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// Nothing to do here
+
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// Nothing to do here
+
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// Nothing to do here
+
+		}
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		PlaylistSongDataProvider pd = (PlaylistSongDataProvider) Main.Instance.getAppMode().getDataProvider();
-		pd.setDirection(0);
-		pd.setPosition(clickid + 1);
-		pd.provideAsynchronous();
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

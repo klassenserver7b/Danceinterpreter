@@ -1,4 +1,3 @@
-Text Size u Box fix
-- Submenu + integration for mixxx
+- reitroduce mixxx and trktor support based on https://github.com/ErikMinekus/traktor-api-client/ and https://github.com/erikrichardlarson/unbox
 - Playlist View auch im MP3 Mode als Song view zur verfügung stellen
 - MP3 mode checkbox ob auswahl zwischen Songs

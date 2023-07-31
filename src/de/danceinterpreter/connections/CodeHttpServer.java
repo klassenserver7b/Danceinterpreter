@@ -28,56 +28,56 @@ public class CodeHttpServer {
 
 	}
 
-}
+	class CodeHandler implements HttpHandler {
 
-class CodeHandler implements HttpHandler {
+		private final Logger log;
+		private final String response;
+		private final HttpServer server;
+		private final SpotifyInteractions interact;
 
-	private final Logger log;
-	private final String response;
-	private final HttpServer server;
-	private final SpotifyInteractions interact;
+		public CodeHandler(HttpServer server, SpotifyInteractions interaction) {
 
-	public CodeHandler(HttpServer server, SpotifyInteractions interaction) {
+			this.server = server;
+			this.interact = interaction;
 
-		this.server = server;
-		this.interact = interaction;
+			log = LoggerFactory.getLogger(this.getClass());
 
-		log = LoggerFactory.getLogger(this.getClass());
-
-		response = "<!DOCTYPE html>\r\n" + "<html>\r\n" + "   <head>\r\n" + "      <title>HTML Meta Tag</title>\r\n"
-				+ "      <meta http-equiv = \"refresh\" content = \"1; url = https://github.com/klassenserver7b/Danceinterpreter \" />\r\n"
-				+ "   </head>\r\n" + "   <body>\r\n" + "      <p>Redirecting to GitHub </p>\r\n" + "   </body>\r\n"
-				+ "</html>";
-	}
-
-	@Override
-	public void handle(HttpExchange exchange) throws IOException {
-
-		URI uri = exchange.getRequestURI();
-
-		interact.authorize(uri.toString().split("=")[1]);
-
-		OutputStream os = exchange.getResponseBody();
-
-		exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-
-		if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
-
-			log.debug("OPTIONS request accepted - returning CORS allow");
-			exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS, HEAD");
-			exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type,Authorization");
-			exchange.sendResponseHeaders(204, -1);
-
-			return;
+			response = "<!DOCTYPE html>\r\n" + "<html>\r\n" + "   <head>\r\n" + "      <title>HTML Meta Tag</title>\r\n"
+					+ "      <meta http-equiv = \"refresh\" content = \"1; url = https://github.com/klassenserver7b/Danceinterpreter \" />\r\n"
+					+ "   </head>\r\n" + "   <body>\r\n" + "      <p>Redirecting to GitHub </p>\r\n" + "   </body>\r\n"
+					+ "</html>";
 		}
 
-		exchange.getResponseHeaders().add("Content-Type", "text/html; charset=utf-8");
-		exchange.sendResponseHeaders(200, response.toString().getBytes(StandardCharsets.UTF_8).length);
+		@Override
+		public void handle(HttpExchange exchange) throws IOException {
 
-		os.write(response.toString().getBytes(StandardCharsets.UTF_8));
-		os.close();
+			URI uri = exchange.getRequestURI();
 
-		server.stop(5);
+			interact.authorize(uri.toString().split("=")[1]);
 
+			OutputStream os = exchange.getResponseBody();
+
+			exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+
+			if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+
+				log.debug("OPTIONS request accepted - returning CORS allow");
+				exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS, HEAD");
+				exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type,Authorization");
+				exchange.sendResponseHeaders(204, -1);
+
+				return;
+			}
+
+			exchange.getResponseHeaders().add("Content-Type", "text/html; charset=utf-8");
+			exchange.sendResponseHeaders(200, response.toString().getBytes(StandardCharsets.UTF_8).length);
+
+			os.write(response.toString().getBytes(StandardCharsets.UTF_8));
+			os.close();
+
+			server.stop(5);
+
+		}
 	}
+
 }

@@ -14,12 +14,13 @@ import com.formdev.flatlaf.FlatLightLaf;
 
 import de.danceinterpreter.connections.SpotifyInteractions;
 import de.danceinterpreter.graphics.ConfigWindow;
+import de.danceinterpreter.graphics.SongWindowServer;
 import de.danceinterpreter.songprocessing.DanceInterpreter;
 import se.michaelthelin.spotify.SpotifyApi;
 
 /**
  * 
- * @author felix
+ * @author K7
  *
  */
 
@@ -29,16 +30,20 @@ public class Main {
 	public static boolean errordetected;
 
 	private SpotifyInteractions spotify;
-	private DanceInterpreter danceinterpreter;
-	private ConfigWindow cfgwindow;
+	private DanceInterpreter danceInterpreter;
+	private ConfigWindow cfgWindow;
+	private SongWindowServer songWindowServer;
 	private AppModes appMode;
 	private Thread shutdownT;
 	private final Logger log = LoggerFactory.getLogger("Main");
 
+	/**
+	 * 
+	 */
 	public Main() {
 		Instance = this;
 
-		if(!initalizeUILayout()) {
+		if (!initalizeUILayout()) {
 			log.warn("LayoutInitialization failed");
 		}
 
@@ -49,7 +54,7 @@ public class Main {
 			return;
 		}
 
-		cfgwindow = new ConfigWindow();
+		cfgWindow = new ConfigWindow();
 
 		if (!load()) {
 			onShutdown(appMode);
@@ -73,19 +78,19 @@ public class Main {
 	}
 
 	/**
-	 *
-	 
-	
-	*/
+	 * 
+	 * @return
+	 */
 	private boolean load() {
-		this.danceinterpreter = new DanceInterpreter();
+		this.danceInterpreter = new DanceInterpreter();
+		this.songWindowServer = SongWindowServer.createDefault();
 
 		if (appMode == AppModes.Spotify) {
 			this.spotify = new SpotifyInteractions();
 		}
 
 		if (!errordetected) {
-			return danceinterpreter.startSongCheck(appMode);
+			return danceInterpreter.startSongCheck(appMode);
 		}
 
 		return false;
@@ -121,20 +126,16 @@ public class Main {
 
 	/**
 	 * 
-	 
-	
-	
-	*/
+	 * @return
+	 */
 	private boolean initalizeUILayout() {
 		return FlatLightLaf.setup();
 	}
 
 	/**
 	 * 
-	 
-	
-	
-	*/
+	 * @param appMode
+	 */
 	private void startShutdownT(AppModes appMode) {
 		this.shutdownT = new Thread(() -> {
 			String line;
@@ -162,20 +163,18 @@ public class Main {
 
 	/**
 	 * 
-	 
-	
-	
-	*/
+	 * @param appMode
+	 */
 	public void onShutdown(AppModes appMode) {
 
 		this.log.info("Shutdown started");
 
-		if (danceinterpreter != null) {
-			danceinterpreter.shutdown();
+		if (danceInterpreter != null) {
+			danceInterpreter.shutdown();
 		}
 
-		if (cfgwindow != null) {
-			cfgwindow.close();
+		if (cfgWindow != null) {
+			cfgWindow.close();
 		}
 
 		this.log.debug("Danceinterpreter deactivated");
@@ -196,9 +195,6 @@ public class Main {
 	/**
 	 * 
 	 * @return
-	 * 
-	 * 
-	 * 
 	 */
 	public AppModes getAppMode() {
 		return this.appMode;
@@ -207,9 +203,6 @@ public class Main {
 	/**
 	 * 
 	 * @return
-	 * 
-	 * 
-	 * 
 	 */
 	public SpotifyApi getSpotifyAPI() {
 
@@ -220,25 +213,27 @@ public class Main {
 	/**
 	 * 
 	 * @return
-	 * 
-	 * 
-	 * 
 	 */
 	public DanceInterpreter getDanceInterpreter() {
 
-		return this.danceinterpreter;
+		return this.danceInterpreter;
 
 	}
 
 	/**
 	 * 
 	 * @return
-	 * 
-	 * 
-	 * 
 	 */
 	public ConfigWindow getConfigWindow() {
-		return this.cfgwindow;
+		return this.cfgWindow;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public SongWindowServer getSongWindowServer() {
+		return songWindowServer;
 	}
 
 }

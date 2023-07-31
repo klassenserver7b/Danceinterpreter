@@ -1,17 +1,25 @@
-
+/**
+ * 
+ */
 package de.danceinterpreter.graphics.listener;
 
+import java.awt.Frame;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JFrame;
-
-import de.danceinterpreter.Main;
-import de.danceinterpreter.songprocessing.DanceInterpreter;
-
 /**
-**/
- 
-public class FullscreenListener extends CKeyListener {
+ * @author K7
+ *
+ */
+public class FullscreenListener implements CKeyListener {
+
+	private final Frame frame;
+
+	/**
+	 * 
+	 */
+	public FullscreenListener(Frame frame) {
+		this.frame = frame;
+	}
 
 	@Override
 	public void performPressedAction(int keycode) {
@@ -19,10 +27,6 @@ public class FullscreenListener extends CKeyListener {
 		if (keycode != KeyEvent.VK_F11) {
 			return;
 		}
-
-		DanceInterpreter interpreter = Main.Instance.getDanceInterpreter();
-
-		JFrame frame = interpreter.getWindow().getMainFrame();
 
 		frame.dispose();
 
@@ -36,5 +40,4 @@ public class FullscreenListener extends CKeyListener {
 		frame.repaint();
 
 	}
-
 }

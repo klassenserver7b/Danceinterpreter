@@ -8,12 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.danceinterpreter.Main;
-import de.danceinterpreter.songprocessing.DanceInterpreter;
 import de.danceinterpreter.songprocessing.SongData;
 
 /**
 **/
- 
+
 public class PlaylistSongDataProvider implements SongDataProvider {
 
 	private final Logger log;
@@ -23,9 +22,10 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 	/**
 	 * 
 	 
- 
- 
- */	public PlaylistSongDataProvider() {
+	
+	
+	*/
+	public PlaylistSongDataProvider() {
 		this.log = LoggerFactory.getLogger(this.getClass());
 		this.current = null;
 	}
@@ -46,7 +46,7 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 	}
 
 	@Override
-	public void provideAsynchronous() {
+	public void provideAsync() {
 
 		LinkedHashMap<File, SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
 
@@ -80,9 +80,7 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 
 			SongData data = songs.entrySet().parallelStream().toList().get(current).getValue();
 
-			DanceInterpreter di = Main.Instance.getDanceInterpreter();
-
-			di.updateSongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImage());
+			Main.Instance.getSongWindowServer().provideData(data);
 		}
 
 	}
