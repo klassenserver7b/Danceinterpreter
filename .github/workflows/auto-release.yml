@@ -21,3 +21,5 @@ jobs:
         with:
           # Title for the release
           title: $semver
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
