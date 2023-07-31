@@ -36,7 +36,6 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 	private String songName = "Someone To You";
 	private String artistName = "BANNERS";
 	private BufferedImage albumImage;
-
 	private boolean hasAlbumImage = true;
 
 	private JLabel textDance;
@@ -51,6 +50,9 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 	 * @param img
 	 */
 	public SongWindowBdImgTA() {
+
+		super(new SongWindowSpecs(true, true, true, true));
+
 		GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
 		Rectangle screenBounds = devices[0].getDefaultConfiguration().getBounds();
 

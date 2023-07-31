@@ -20,11 +20,13 @@ import javax.swing.JLabel;
  */
 public abstract class FormattedSongWindow implements TypedWindow {
 
+	private final SongWindowSpecs windowSpecs;
+
 	/**
 	 * 
 	 */
-	public FormattedSongWindow() {
-
+	public FormattedSongWindow(SongWindowSpecs songWindowSpecs) {
+		this.windowSpecs = songWindowSpecs;
 	}
 
 	/**
@@ -112,6 +114,10 @@ public abstract class FormattedSongWindow implements TypedWindow {
 		g.dispose();
 		return image;
 
+	}
+
+	public SongWindowSpecs getWindowSpecs() {
+		return windowSpecs;
 	}
 
 }

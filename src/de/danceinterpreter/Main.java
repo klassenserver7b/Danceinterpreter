@@ -15,6 +15,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import de.danceinterpreter.connections.SpotifyInteractions;
 import de.danceinterpreter.graphics.ConfigWindow;
 import de.danceinterpreter.graphics.SongWindowBdImgTA;
+import de.danceinterpreter.graphics.SongWindowServer;
 import de.danceinterpreter.songprocessing.DanceInterpreter;
 import se.michaelthelin.spotify.SpotifyApi;
 
@@ -30,8 +31,9 @@ public class Main {
 	public static boolean errordetected;
 
 	private SpotifyInteractions spotify;
-	private DanceInterpreter danceinterpreter;
-	private ConfigWindow cfgwindow;
+	private DanceInterpreter danceInterpreter;
+	private ConfigWindow cfgWindow;
+	private SongWindowServer songWindowServer;
 	private AppModes appMode;
 	private Thread shutdownT;
 	private final Logger log = LoggerFactory.getLogger("Main");
@@ -52,7 +54,7 @@ public class Main {
 		// return;
 		// }
 		//
-		// cfgwindow = new ConfigWindow();
+		// cfgWindow = new ConfigWindow();
 		//
 		// if (!load()) {
 		// onShutdown(appMode);
@@ -81,14 +83,15 @@ public class Main {
 	
 	*/
 	private boolean load() {
-		this.danceinterpreter = new DanceInterpreter();
+		this.danceInterpreter = new DanceInterpreter();
+		this.songWindowServer = new SongWindowServer();
 
 		if (appMode == AppModes.Spotify) {
 			this.spotify = new SpotifyInteractions();
 		}
 
 		if (!errordetected) {
-			return danceinterpreter.startSongCheck(appMode);
+			return danceInterpreter.startSongCheck(appMode);
 		}
 
 		return false;
@@ -173,12 +176,12 @@ public class Main {
 
 		this.log.info("Shutdown started");
 
-		if (danceinterpreter != null) {
-			danceinterpreter.shutdown();
+		if (danceInterpreter != null) {
+			danceInterpreter.shutdown();
 		}
 
-		if (cfgwindow != null) {
-			cfgwindow.close();
+		if (cfgWindow != null) {
+			cfgWindow.close();
 		}
 
 		this.log.debug("Danceinterpreter deactivated");
@@ -229,7 +232,7 @@ public class Main {
 	 */
 	public DanceInterpreter getDanceInterpreter() {
 
-		return this.danceinterpreter;
+		return this.danceInterpreter;
 
 	}
 
@@ -241,7 +244,15 @@ public class Main {
 	 * 
 	 */
 	public ConfigWindow getConfigWindow() {
-		return this.cfgwindow;
+		return this.cfgWindow;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public SongWindowServer getSongWindowServer() {
+		return songWindowServer;
 	}
 
 }

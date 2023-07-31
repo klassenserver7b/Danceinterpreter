@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import de.danceinterpreter.AppModes;
 import de.danceinterpreter.Main;
-import de.danceinterpreter.songprocessing.DanceInterpreter;
 import de.danceinterpreter.songprocessing.SongData;
 
 public class SongCheckThread implements Runnable {
@@ -33,11 +32,10 @@ public class SongCheckThread implements Runnable {
 					log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", "
 							+ data.getDuration());
 
-					DanceInterpreter di = Main.Instance.getDanceInterpreter();
-
-					di.updateSongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImage());
+					Main.Instance.getSongWindowServer().provideData(data);
 
 				}
+
 				try {
 					Thread.sleep(5000);
 				} catch (InterruptedException e) {

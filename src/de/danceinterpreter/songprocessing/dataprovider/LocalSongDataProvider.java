@@ -218,15 +218,14 @@ public class LocalSongDataProvider implements SongDataProvider {
 	
 	
 	*/
+	@Override
 	public void provideAsync() {
 		SongData data = provideParameterizedData(false);
 
 		if (data != null) {
 			log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
 
-			DanceInterpreter di = Main.Instance.getDanceInterpreter();
-
-			di.updateSongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImage());
+			Main.Instance.getSongWindowServer().forceData(data);
 
 		}
 	}

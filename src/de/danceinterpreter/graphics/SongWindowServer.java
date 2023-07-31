@@ -26,11 +26,11 @@ public class SongWindowServer {
 	}
 
 	public void provideData(SongData data) {
-
+		// TODO
 	}
 
-	public void forceData(SongData data) {
-
+	public synchronized void forceData(SongData data) {
+		// TODO
 	}
 
 	public void registerSongWindow(FormattedSongWindow window) {
@@ -50,5 +50,21 @@ public class SongWindowServer {
 
 	public void registerSongWindows(FormattedSongWindow... windows) {
 		registerSongWindows(Arrays.asList(windows));
+	}
+
+	public FormattedSongWindow getWindow() {
+		// TODO Provide selected
+		return registeredWindows.get(0);
+	}
+
+	public void refresh() {
+		// TODO -> forward to selected window (rescale, etc.)
+	}
+
+	public static SongWindowServer createDefault() {
+		SongWindowServer server = new SongWindowServer();
+		server.registerSongWindows(new SongWindowBdImgTA());
+
+		return server;
 	}
 }

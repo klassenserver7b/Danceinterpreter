@@ -1,6 +1,5 @@
 package de.danceinterpreter.songprocessing;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +25,6 @@ import com.google.gson.JsonParser;
 
 import de.danceinterpreter.AppModes;
 import de.danceinterpreter.Main;
-import de.danceinterpreter.graphics.SongWindowBdImgTA;
 import de.danceinterpreter.loader.PlaylistLoader;
 import de.danceinterpreter.threads.SongCheckThread;
 
@@ -41,7 +39,6 @@ public class DanceInterpreter {
 
 	private TreeMap<String, JsonObject> dancelist = new TreeMap<>();
 	private SongCheckThread songcheckT;
-	private SongWindowBdImgTA window;
 
 	private LinkedHashMap<File, SongData> songs;
 
@@ -369,37 +366,6 @@ public class DanceInterpreter {
 
 	/**
 	 * 
-	 * @param songname
-	 * @param artist
-	 * @param dance
-	 * @param img
-	 * 
-	 * 
-	 * 
-	 */
-	public void updateSongWindow(String songname, String artist, String dance, BufferedImage img) {
-
-		// if (this.window == null) {
-		// this.window = new SongWindowBdImgTA(songname, artist, dance, img);
-		// return;
-		// }
-		//
-		// this.window.updateWindow(songname, artist, dance, img);
-	}
-
-	/**
-	 * 
-	 * @return
-	 * 
-	 * 
-	 * 
-	 */
-	public SongWindowBdImgTA getWindow() {
-		return this.window;
-	}
-
-	/**
-	 * 
 	 * @return
 	 * 
 	 * 
@@ -442,14 +408,7 @@ public class DanceInterpreter {
 		return data;
 	}
 
-	/**
-	 * 
-	 * @param swindow
-	 * 
-	 * 
-	 * 
-	 */
-	public void setSongWindow(SongWindowBdImgTA swindow) {
-		this.window = swindow;
+	public SongCheckThread getSongcheckT() {
+		return songcheckT;
 	}
 }

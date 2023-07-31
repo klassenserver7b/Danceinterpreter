@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.danceinterpreter.Main;
-import de.danceinterpreter.songprocessing.DanceInterpreter;
 import de.danceinterpreter.songprocessing.SongData;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
@@ -22,7 +21,7 @@ import se.michaelthelin.spotify.requests.data.tracks.GetTrackRequest;
 
 /**
 **/
- 
+
 public class SpotifySongDataProvider implements SongDataProvider {
 
 	private final Logger log;
@@ -31,8 +30,9 @@ public class SpotifySongDataProvider implements SongDataProvider {
 	/**
 	 *
 	 
- 
- */	public SpotifySongDataProvider() {
+	
+	*/
+	public SpotifySongDataProvider() {
 		log = LoggerFactory.getLogger(this.getClass());
 		datahash = 0;
 	}
@@ -57,10 +57,11 @@ public class SpotifySongDataProvider implements SongDataProvider {
 	/**
 	 * 
 	 * @return
-	 
- 
- 
- */	private Track getCurrentSpotifySong() {
+	 * 
+	 * 
+	 * 
+	 */
+	private Track getCurrentSpotifySong() {
 
 		SpotifyApi spotifyapi = Main.Instance.getSpotifyAPI();
 
@@ -154,9 +155,7 @@ public class SpotifySongDataProvider implements SongDataProvider {
 
 		log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
 
-		DanceInterpreter di = Main.Instance.getDanceInterpreter();
-
-		di.updateSongWindow(data.getTitle(), data.getAuthor(), data.getDance(), data.getImage());
+		Main.Instance.getSongWindowServer().forceData(data);
 	}
 
 }

@@ -175,7 +175,7 @@ public class MenuGenerator {
 				Integer fontsize = Integer.parseInt(txt.getText());
 				log.debug("fontsize: " + fontsize);
 
-				SongWindowBdImgTA sw = Main.Instance.getDanceInterpreter().getWindow();
+				FormattedSongWindow sw = Main.Instance.getSongWindowServer().getWindow();
 
 				if (sw == null) {
 					label.setText("Please wait until SongWindowBdImgTA is shown!");
@@ -183,15 +183,15 @@ public class MenuGenerator {
 					return;
 				}
 
-//				if (fontsize == -1) {
-//					sw.setAutofontsizeState(1);
-//				} else if (fontsize == -2) {
-//					sw.setAutofontsizeState(2);
-//				} else {
-//
-//					sw.setAutofontsizeState(-1);
-//					sw.setFontsize(fontsize);
-//				}
+				// if (fontsize == -1) {
+				// sw.setAutofontsizeState(1);
+				// } else if (fontsize == -2) {
+				// sw.setAutofontsizeState(2);
+				// } else {
+				//
+				// sw.setAutofontsizeState(-1);
+				// sw.setFontsize(fontsize);
+				// }
 
 				dialogue.setVisible(false);
 				sw.refresh();
@@ -267,7 +267,7 @@ public class MenuGenerator {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				Main.Instance.getDanceInterpreter().getWindow().refresh();
+				Main.Instance.getSongWindowServer().refresh();
 
 			}
 		});
@@ -291,11 +291,11 @@ public class MenuGenerator {
 					return;
 				}
 
-				if (di.getWindow() == null) {
+				if (Main.Instance.getSongWindowServer().getWindow() == null) {
 					return;
 				}
 
-//				di.getWindow().setImageenabled(pictureI.getState());
+				// di.getWindow().setImageenabled(pictureI.getState());
 
 				switch (Main.Instance.getAppMode()) {
 				case Playlist -> {
