@@ -7,3 +7,4 @@
 ## Other
 - removed Mixxx integration
 - improved general code readability and quality
+- some gh actions and workflow stuff
