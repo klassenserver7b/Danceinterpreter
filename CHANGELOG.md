@@ -1,4 +1,4 @@
-#Full Graphics Rework
+#Full Graphics Rework - v3.0.0
 
 
 ## New UI
