@@ -90,6 +90,7 @@ public class ConfigWindow {
 		mainpanel.add(img);
 		mainframe.addComponentListener(new ComponentAdapter() {
 
+			@Override
 			public void componentResized(ComponentEvent componentEvent) {
 
 				if (System.currentTimeMillis() - 1000 <= time) {
@@ -253,25 +254,25 @@ class ClickListener implements MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// Nothing to do here
 
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// Nothing to do here
 
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// Nothing to do here
 
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// Nothing to do here
 
 	}
 
