@@ -18,11 +18,50 @@
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
 	<build>
 		<plugins>
 			<plugin>
+				<inherited>true</inherited>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<id>enforce-maven-3</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireMavenVersion>
+									<version>3.8.0</version>
+								</requireMavenVersion>
+							</rules>
+							<fail>true</fail>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>2.16.0</version>
+			</plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.6.0</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -57,13 +96,32 @@
 			</plugin>
 		</plugins>
 	</build>
+
+
 	<reporting>
 		<plugins>
 			<plugin>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>3.4.5</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>2.16.0</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>dependency-updates-report</report>
+							<report>plugin-updates-report</report>
+							<report>property-updates-report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
 			</plugin>
 		</plugins>
 	</reporting>
+
+
 	<repositories></repositories>
 	<dependencies>
 		<dependency>
@@ -93,12 +151,12 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.4.9</version>
+			<version>1.4.11</version>
 		</dependency>
 		<dependency>
 			<groupId> com.formdev</groupId>
 			<artifactId>flatlaf</artifactId>
-			<version>3.1.1</version>
+			<version>3.2</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
 		<dependency>
@@ -106,13 +164,11 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>2.0.7</version>
 		</dependency>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.13.2</version>
 		</dependency>
-
 		<!--
 		https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-transcoder -->
 		<dependency>
