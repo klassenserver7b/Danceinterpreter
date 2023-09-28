@@ -62,6 +62,7 @@ public class Main {
 		}
 
 		startShutdownT(this.appMode);
+	
 
 	}
 
@@ -103,7 +104,7 @@ public class Main {
 	 * 
 	 * 
 	 */
-	public AppModes askForAppMode() {
+	protected AppModes askForAppMode() {
 
 		ArrayList<String> optionsToChoose = new ArrayList<>();
 
@@ -128,7 +129,7 @@ public class Main {
 	 * 
 	 * @return
 	 */
-	private boolean initalizeUILayout() {
+	protected boolean initalizeUILayout() {
 		return FlatLightLaf.setup();
 	}
 
@@ -136,7 +137,7 @@ public class Main {
 	 * 
 	 * @param appMode
 	 */
-	private void startShutdownT(AppModes appMode) {
+	protected void startShutdownT(AppModes appMode) {
 		this.shutdownT = new Thread(() -> {
 			String line;
 

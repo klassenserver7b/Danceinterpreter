@@ -39,7 +39,7 @@
 						<id>enforce-maven-3</id>
 						<goals>
 							<goal>enforce</goal>
-						</goals>
+						</goals>S
 						<configuration>
 							<rules>
 								<requireMavenVersion>

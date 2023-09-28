@@ -8,7 +8,6 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -25,7 +24,6 @@ import de.klassenserver7b.danceinterpreter.graphics.listener.CustomKeyListener;
 import de.klassenserver7b.danceinterpreter.graphics.listener.FullscreenListener;
 import de.klassenserver7b.danceinterpreter.graphics.listener.NumberListener;
 import de.klassenserver7b.danceinterpreter.graphics.listener.RefreshListener;
-import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 
 /**
  * @author K7
@@ -33,18 +31,12 @@ import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 public class SongWindowBdImgTA extends FormattedSongWindow {
 	public final Logger log = LoggerFactory.getLogger("Window");
 
-	private JFrame frame;
+	protected JFrame frame;
 
-	private String danceName = "Jive";
-	private String songName = "Someone To You";
-	private String artistName = "BANNERS";
-	private BufferedImage albumImage;
-	private boolean hasAlbumImage = true;
-
-	private JLabel textDance;
-	private JLabel textSong;
-	private JLabel textArtist;
-	private JLabel imgAlbum;
+	protected JLabel textDance;
+	protected JLabel textSong;
+	protected JLabel textArtist;
+	protected JLabel imgAlbum;
 
 	/**
 	 * 
@@ -58,7 +50,7 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 	 * @param withimage
 	 */
 	public SongWindowBdImgTA(boolean withimage) {
-		this(new SongWindowSpecs(withimage, true, true, true));
+		this(new SongWindowSpecs(withimage, true, true, true, false));
 		this.hasAlbumImage = withimage;
 	}
 
@@ -127,7 +119,7 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 		frame.add(imgAlbum);
 	}
 
-	private void calculateSizes() {
+	protected void calculateSizes() {
 		int OUTER_SPACING = frame.getWidth() / 7;
 		int INNER_SPACING = frame.getWidth() / 150;
 
@@ -192,9 +184,9 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 	@Override
 	public void refresh() {
 
-		textDance.setText(danceName);
-		textSong.setText(songName);
-		textArtist.setText(artistName);
+		textDance.setText(super.danceName);
+		textSong.setText(super.songName);
+		textArtist.setText(super.artistName);
 
 		calculateSizes();
 
@@ -205,15 +197,6 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 	@Override
 	public JFrame getMainFrame() {
 		return frame;
-	}
-
-	@Override
-	public void updateData(SongData data) {
-		this.songName = data.getTitle();
-		this.artistName = data.getAuthor();
-		this.albumImage = data.getImage();
-		this.danceName = data.getDance();
-		refresh();
 	}
 
 }

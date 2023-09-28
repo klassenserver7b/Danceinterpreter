@@ -52,11 +52,11 @@ public class LocalSongDataProvider implements SongDataProvider {
 	 */
 	@Override
 	public SongData provideSongData() {
-		return provideParameterizedData(true);
+		boolean force = false;
+		return provideParameterizedData(getLocalSong(force), force);
 	}
 
-	private SongData provideParameterizedData(boolean checkcurrent) {
-		File f = getLocalSong(checkcurrent);
+	protected SongData provideParameterizedData(File f, boolean provideforced) {
 
 		SongData ret = null;
 		DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
@@ -108,24 +108,26 @@ public class LocalSongDataProvider implements SongDataProvider {
 			}
 		}
 
-		if (ret != null && (datahash != ret.hashCode() || !checkcurrent)) {
-			datahash = ret.hashCode();
-			return ret;
+		if (ret == null || (datahash == ret.hashCode() && !provideforced)) {
+			return null;
 		}
-		return null;
+		
+		datahash = ret.hashCode();
+		return ret;
+
 	}
 
 	/**
 	 * 
-	 * @param checkcurrent
+	 * @param provideforced
 	 * @return
 	 */
-	private File getLocalSong(boolean checkcurrent) {
+	private File getLocalSong(boolean provideforced) {
 		List<File> blocked = getBlockedFiles();
 
-		boolean checked = checkcurrent;
+		boolean checked = provideforced;
 
-		if (checkcurrent) {
+		if (provideforced) {
 			checked = (blocked.hashCode() != hash);
 		} else {
 			checked = true;
@@ -218,7 +220,8 @@ public class LocalSongDataProvider implements SongDataProvider {
 	 */
 	@Override
 	public void provideAsync() {
-		SongData data = provideParameterizedData(false);
+		boolean force = true;
+		SongData data = provideParameterizedData(getLocalSong(force), force);
 
 		if (data != null) {
 			log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());

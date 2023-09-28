@@ -22,13 +22,30 @@ import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
  */
 public abstract class FormattedSongWindow implements TypedWindow {
 
-	private final SongWindowSpecs windowSpecs;
+	protected final SongWindowSpecs windowSpecs;
+	protected String danceName;
+	protected String songName;
+	protected String artistName;
+	protected BufferedImage albumImage;
+	protected boolean hasAlbumImage;
+	protected boolean hasNextData;
+	protected SongData nextData;
 
 	/**
 	 * 
+	 * @param songWindowSpecs
+	 * @param withImage
 	 */
 	public FormattedSongWindow(SongWindowSpecs songWindowSpecs) {
 		this.windowSpecs = songWindowSpecs;
+		this.hasAlbumImage = songWindowSpecs.containsImage();
+		this.danceName = "";
+		this.songName = "";
+		this.artistName = "";
+		this.hasAlbumImage = false;
+		this.albumImage = null;
+		this.hasNextData = false;
+		this.nextData = null;
 	}
 
 	/**
@@ -118,9 +135,24 @@ public abstract class FormattedSongWindow implements TypedWindow {
 
 	}
 
+	/**
+	 * 
+	 * @param data
+	 */
+	public void updateData(SongData data) {
+		this.songName = data.getTitle();
+		this.artistName = data.getAuthor();
+		this.albumImage = data.getImage();
+		this.danceName = data.getDance();
+		this.nextData = data.getNext();
+		refresh();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public SongWindowSpecs getWindowSpecs() {
 		return windowSpecs;
 	}
-
-	abstract public void updateData(SongData data);
 }

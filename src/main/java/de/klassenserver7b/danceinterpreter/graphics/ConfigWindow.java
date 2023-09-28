@@ -2,7 +2,9 @@
 package de.klassenserver7b.danceinterpreter.graphics;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Image;
+import java.awt.dnd.DropTarget;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
@@ -26,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.klassenserver7b.danceinterpreter.Main;
+import de.klassenserver7b.danceinterpreter.graphics.listener.FileDropListener;
 import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 import de.klassenserver7b.danceinterpreter.songprocessing.dataprovider.PlaylistSongDataProvider;
 
@@ -41,6 +44,7 @@ public class ConfigWindow {
 	private boolean imgenabled;
 	private String imgpath;
 	private final Logger log;
+	private final DropTarget dropTarget;
 
 	/**
 	 * 
@@ -51,13 +55,15 @@ public class ConfigWindow {
 	public ConfigWindow() {
 
 		imgpath = "./pics/tech_dance2.gif";
+		log = LoggerFactory.getLogger(this.getClass());
 
 		time = 0L;
 		mainframe = new JFrame();
 		mainpanel = new JPanel();
 		playlistview = false;
 		imgenabled = false;
-		log = LoggerFactory.getLogger(this.getClass());
+
+		dropTarget = new DropTarget(mainframe, new FileDropListener());
 
 		mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		File file = new File("./icon.png");
@@ -120,15 +126,7 @@ public class ConfigWindow {
 
 		if (!playlistview && imgenabled) {
 			JLabel img = new JLabel();
-
-			// Image image;
-
-			// image = ImageIO.read(new File(imgpath));
-			// ImageIcon icon = new ImageIcon(image.getScaledInstance(mainframe.getWidth(),
-			// mainframe.getHeight(), 0));
 			img = new JLabel(new ImageIcon(imgpath));
-
-			// img.setIcon(icon);
 
 			mainpanel.add(img);
 		}
@@ -187,8 +185,16 @@ public class ConfigWindow {
 			SongData data = song.getValue();
 			JLabel songp = new JLabel();
 
-			songp.setText("<html><body>Title: " + data.getTitle() + "<br>Author: " + data.getAuthor() + "<br>Dance: "
-					+ data.getDance() + "</body></html>");
+			if (!(data.getTitle().isBlank() && data.getAuthor().isBlank() && data.getDance().isBlank())) {
+				
+				songp.setText("<html><body>Title: " + data.getTitle() + "<br>Author: " + data.getAuthor()
+						+ "<br>Dance: " + data.getDance() + "</body></html>");
+				
+			}else {
+				songp.setFont(new Font("Arial", Font.BOLD, 20));
+				songp.setText("BLANK");
+			}
+			
 			songp.addMouseListener(new ClickListener(i));
 			songp.setSize(200, 200);
 			songp.setBorder(BorderFactory.createLineBorder(Color.black, 5, true));
@@ -273,5 +279,9 @@ public class ConfigWindow {
 			// Nothing to do here
 
 		}
+	}
+
+	public DropTarget getDropTarget() {
+		return dropTarget;
 	}
 }

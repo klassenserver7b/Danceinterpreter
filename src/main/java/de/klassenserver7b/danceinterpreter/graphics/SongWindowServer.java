@@ -79,14 +79,16 @@ public class SongWindowServer {
 
 		if (!allowImages) {
 			dataspecs = new SongWindowSpecs(false, dataspecs.containsArtist(), dataspecs.containsTitle(),
-					dataspecs.containsDance());
+					dataspecs.containsDance(), dataspecs.hasNext());
+		}
+
+		if (registeredWindows.get(selectedWindow).getWindowSpecs().equals(dataspecs)) {
+			return;
 		}
 
 		for (int i = 0; i < registeredWindows.size(); i++) {
 			if (registeredWindows.get(i).getWindowSpecs().equals(dataspecs)) {
-
 				registeredWindows.get(selectedWindow).close();
-
 				selectedWindow = i;
 				return;
 			}

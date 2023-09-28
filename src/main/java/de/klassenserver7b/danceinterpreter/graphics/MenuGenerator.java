@@ -202,7 +202,7 @@ public class MenuGenerator {
 	private JCheckBoxMenuItem getPlaylistViewCheck() {
 
 		JCheckBoxMenuItem cbI = new JCheckBoxMenuItem();
-		cbI.setText("Allow Playlistview");
+		cbI.setText("Enable Playlistview");
 		cbI.setSelected(false);
 		cbI.addActionListener(new ActionListener() {
 

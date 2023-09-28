@@ -38,7 +38,8 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 		if (current == null && !songs.isEmpty()) {
 			current = 0;
 			log.info("Loaded first Song");
-			return songs.entrySet().parallelStream().toList().get(current).getValue();
+
+			return songs.values().stream().toList().get(current);
 		}
 
 		return null;
@@ -78,7 +79,7 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 
 		if (current < songs.size() && current >= 0) {
 
-			SongData data = songs.entrySet().parallelStream().toList().get(current).getValue();
+			SongData data = songs.values().stream().toList().get(current);
 
 			Main.Instance.getSongWindowServer().provideData(data);
 		}

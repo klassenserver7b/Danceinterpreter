@@ -40,14 +40,14 @@ public class DanceInterpreter {
 	private TreeMap<String, JsonObject> dancelist = new TreeMap<>();
 	private SongCheckThread songcheckT;
 
-	private LinkedHashMap<File, SongData> songs;
+	private LinkedHashMap<File, SongData> playlistSongs;
 
-	private final List<File> data;
+	private final List<File> localMp3Files;
 
 	private final Logger log;
 
 	public DanceInterpreter() {
-		this.data = new ArrayList<>();
+		this.localMp3Files = new ArrayList<>();
 		this.log = LoggerFactory.getLogger("Danceinterpreter");
 	}
 
@@ -76,7 +76,7 @@ public class DanceInterpreter {
 				log.debug("Invalid Playlist File - couldn't load playlist-file");
 				return false;
 			}
-			if ((songs = new PlaylistLoader().loadSongs(playlist)) == null) {
+			if ((playlistSongs = new PlaylistLoader().loadSongs(playlist)) == null) {
 				log.debug("Invalid Playlist File - couldn't load songs!");
 				return false;
 			}
@@ -127,7 +127,7 @@ public class DanceInterpreter {
 		for (File file : f.listFiles()) {
 			if (!file.isDirectory()) {
 				if (file.getName().endsWith(".mp3")) {
-					data.add(file);
+					localMp3Files.add(file);
 				}
 			} else {
 				findAllFilesInFolder(file);
@@ -383,7 +383,7 @@ public class DanceInterpreter {
 	 * 
 	 */
 	public List<File> getFiles() {
-		return this.data;
+		return this.localMp3Files;
 	}
 
 	/**
@@ -394,7 +394,7 @@ public class DanceInterpreter {
 	 * 
 	 */
 	public LinkedHashMap<File, SongData> getPlaylistSongs() {
-		return this.songs;
+		return this.playlistSongs;
 	}
 
 	/**
@@ -405,7 +405,7 @@ public class DanceInterpreter {
 	 * 
 	 */
 	public List<File> getSongs() {
-		return data;
+		return localMp3Files;
 	}
 
 	public SongCheckThread getSongcheckT() {

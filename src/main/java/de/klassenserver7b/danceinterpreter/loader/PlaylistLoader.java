@@ -7,16 +7,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URLDecoder;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.DocumentBuilder;
@@ -30,11 +33,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import com.mpatric.mp3agic.ID3v2;
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.Mp3File;
-import com.mpatric.mp3agic.UnsupportedTagException;
 
 import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 
@@ -90,23 +88,27 @@ public class PlaylistLoader {
 
 		String[] fileparts = f.getName().split("\\.");
 
+		LinkedHashMap<File, SongData> songs;
+
 		switch (fileparts[fileparts.length - 1]) {
 
 		case "m3u", "m3u8" -> {
 			log.info("loading m3u -> " + f.getPath());
-			return loadM3U(f);
+			songs = loadM3U(f);
 		}
 
 		case "xspf" -> {
 			log.info("loading xspf -> " + f.getPath());
-			return loadXSPF(f);
+			songs = loadXSPF(f);
 		}
 
 		default -> {
 			return null;
 		}
-
 		}
+
+		songs.put(new File("blank.mp3"), new SongData("", "", "", 0l, (BufferedImage) null));
+		return songs;
 	}
 
 	private LinkedHashMap<File, SongData> loadM3U(File f) {
@@ -139,13 +141,15 @@ public class PlaylistLoader {
 				continue;
 			}
 
-			String filepath = URLDecoder.decode(s, StandardCharsets.UTF_8);
+			String filePath = new File(f.getParent()).toURI() + s;
 
-			File song = new File(f.getParentFile().getAbsolutePath() + "/" + filepath);
+			File songFile = getFileFromEncodedString(filePath);
 
-			SongData data = getDataFromFile(song);
+			if (songFile != null) {
+				SongData data = new FileLoader().getDataFromFile(songFile);
 
-			songs.put(song, data);
+				songs.put(songFile, data);
+			}
 
 		}
 
@@ -165,7 +169,8 @@ public class PlaylistLoader {
 		}
 
 		for (File f : files) {
-			SongData data = getDataFromFile(f);
+
+			SongData data = new FileLoader().getDataFromFile(f);
 
 			songs.put(f, data);
 
@@ -192,17 +197,32 @@ public class PlaylistLoader {
 				Element e = (Element) track;
 
 				String encodedpath = e.getElementsByTagName("location").item(0).getTextContent();
-				encodedpath = encodedpath.replaceAll("file:///", "");
+				File f = getFileFromEncodedString(encodedpath);
 
-				String path = URLDecoder.decode(encodedpath, StandardCharsets.UTF_8);
-
-				ret.add(new File(path));
-
+				if (f != null) {
+					ret.add(f);
+				}
 			}
 		}
 
 		return ret;
 
+	}
+
+	protected File getFileFromEncodedString(String encodedpath) {
+		try {
+
+			URI uri = new URL(encodedpath).toURI();
+			File f = Paths.get(uri).toFile();
+
+			if (f != null) {
+				return f;
+			}
+		} catch (MalformedURLException | URISyntaxException e1) {
+			log.error(e1.getMessage(), e1);
+		}
+
+		return null;
 	}
 
 	private Document getXMLDoc(File f) {
@@ -227,62 +247,6 @@ public class PlaylistLoader {
 		}
 
 		return null;
-	}
-
-	private SongData getDataFromFile(File f) {
-
-		log.debug("Data Loading started for: " + f.toPath().toString());
-
-		if (f == null || f.isDirectory() || !f.canRead()) {
-			return null;
-		}
-
-		SongData ret = null;
-
-		Mp3File mp3file;
-		try {
-			mp3file = new Mp3File(f);
-
-			if (mp3file.hasId3v2Tag()) {
-
-				ID3v2 tags = mp3file.getId3v2Tag();
-				String title = tags.getTitle();
-				String author = tags.getArtist();
-
-				byte[] imageData = tags.getAlbumImage();
-
-				BufferedImage img = new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB);
-
-				// converting the bytes to an image
-				if (imageData != null) {
-					try {
-						img = ImageIO.read(new ByteArrayInputStream(imageData));
-					} catch (IOException e) {
-						this.log.error("Couldn't parse ID3 Cover");
-						log.error(e.getMessage(), e);
-					}
-				} else {
-					this.log.info("Song doesn't have a Cover");
-				}
-
-				Long length = mp3file.getLength();
-
-				String dance = tags.getComment();
-
-				ret = new SongData(title, author, dance, length, img);
-
-			} else {
-
-				ret = new SongData("Unknown", "Unknown", "null", 0L,
-						new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB));
-			}
-
-		} catch (UnsupportedTagException | InvalidDataException | IOException e1) {
-			log.error(e1.getMessage(), e1);
-		}
-
-		return ret;
-
 	}
 
 }
