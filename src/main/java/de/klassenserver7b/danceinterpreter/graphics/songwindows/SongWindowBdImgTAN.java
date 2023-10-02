@@ -10,6 +10,7 @@ import javax.swing.SwingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.klassenserver7b.danceinterpreter.graphics.PVector;
 import de.klassenserver7b.danceinterpreter.graphics.SongWindowSpecs;
 
 /**
@@ -32,7 +33,7 @@ public class SongWindowBdImgTAN extends SongWindowBdImgTA {
 	 * @param withimage
 	 */
 	public SongWindowBdImgTAN(boolean withimage) {
-		this(new SongWindowSpecs(withimage, true, true, true, false));
+		this(new SongWindowSpecs(withimage, true, true, true, true));
 	}
 
 	/**
@@ -44,14 +45,26 @@ public class SongWindowBdImgTAN extends SongWindowBdImgTA {
 		initComponents();
 	}
 
-	private void initComponents() {
+	protected void initComponents() {
 		textNextDance = new JLabel();
-		textNextDance.setHorizontalAlignment(SwingConstants.RIGHT);
-		textNextDance.setVerticalAlignment(SwingConstants.BOTTOM);
+		textNextDance.setHorizontalAlignment(SwingConstants.CENTER);
+		textNextDance.setVerticalAlignment(SwingConstants.CENTER);
 
-		textNextDance.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, frame.getHeight() / 10));
+		textNextDance.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, frame.getHeight() / 30));
 		textNextDance.setForeground(Color.white);
 		super.frame.add(textNextDance);
+	}
+
+	@Override
+	protected void calculateSizes() {
+		super.calculateSizes();
+
+		PVector size = calcSize(textNextDance);
+		int size_x = (int) size.getX();
+		int size_y = (int) size.getY();
+
+		textNextDance.setBounds(super.frame.getWidth() - (int) (size_x * 1.5),
+				super.frame.getHeight() - size_y * 3, size_x, size_y);
 	}
 
 	@Override

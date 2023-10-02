@@ -16,7 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.prefs.Preferences;
 
@@ -80,7 +80,7 @@ public class PlaylistLoader {
 		return f.getSelectedFile();
 	}
 
-	public LinkedHashMap<File, SongData> loadSongs(File f) {
+	public LinkedList<SongData> loadSongs(File f) {
 
 		if (f == null || f.isDirectory() || !f.canRead()) {
 			return null;
@@ -88,7 +88,7 @@ public class PlaylistLoader {
 
 		String[] fileparts = f.getName().split("\\.");
 
-		LinkedHashMap<File, SongData> songs;
+		LinkedList<SongData> songs;
 
 		switch (fileparts[fileparts.length - 1]) {
 
@@ -107,13 +107,13 @@ public class PlaylistLoader {
 		}
 		}
 
-		songs.put(new File("blank.mp3"), new SongData("", "", "", 0l, (BufferedImage) null));
+		songs.add(new SongData("", "", "", 0l, (BufferedImage) null));
 		return songs;
 	}
 
-	private LinkedHashMap<File, SongData> loadM3U(File f) {
+	private LinkedList<SongData> loadM3U(File f) {
 
-		LinkedHashMap<File, SongData> songs = new LinkedHashMap<>();
+		LinkedList<SongData> songs = new LinkedList<>();
 		List<String> lines = null;
 
 		try {
@@ -148,7 +148,7 @@ public class PlaylistLoader {
 			if (songFile != null) {
 				SongData data = new FileLoader().getDataFromFile(songFile);
 
-				songs.put(songFile, data);
+				songs.add(data);
 			}
 
 		}
@@ -157,8 +157,8 @@ public class PlaylistLoader {
 
 	}
 
-	private LinkedHashMap<File, SongData> loadXSPF(File file) {
-		LinkedHashMap<File, SongData> songs = new LinkedHashMap<>();
+	private LinkedList<SongData> loadXSPF(File file) {
+		LinkedList<SongData> songs = new LinkedList<>();
 
 		Document doc = getXMLDoc(file);
 
@@ -172,7 +172,7 @@ public class PlaylistLoader {
 
 			SongData data = new FileLoader().getDataFromFile(f);
 
-			songs.put(f, data);
+			songs.add(data);
 
 		}
 

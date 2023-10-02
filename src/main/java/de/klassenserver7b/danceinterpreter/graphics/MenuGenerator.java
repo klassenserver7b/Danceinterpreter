@@ -88,6 +88,7 @@ public class MenuGenerator {
 		JMenu songwindowm = new JMenu("SongWindow");
 
 		songwindowm.add(getPictureCheck());
+		songwindowm.add(getNextCheck());
 		songwindowm.add(getRefreshWindow());
 
 		return songwindowm;
@@ -157,13 +158,38 @@ public class MenuGenerator {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				Main.Instance.getSongWindowServer().setAllowImages(pictureI.getState());
-				Main.Instance.getSongWindowServer().refresh();
+				SongWindowSpecs current = Main.Instance.getSongWindowServer().getSettingsOverride();
+
+				current.setContainsImage(pictureI.getState());
+
+				Main.Instance.getSongWindowServer().setSettingsOverride(current);
 
 			}
 		});
 
 		return pictureI;
+	}
+
+	private JCheckBoxMenuItem getNextCheck() {
+
+		JCheckBoxMenuItem hasNextI = new JCheckBoxMenuItem();
+		hasNextI.setText("Show Next Dance");
+		hasNextI.setSelected(true);
+		hasNextI.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				SongWindowSpecs current = Main.Instance.getSongWindowServer().getSettingsOverride();
+
+				current.setContainsNext(hasNextI.getState());
+
+				Main.Instance.getSongWindowServer().setSettingsOverride(current);
+
+			}
+		});
+
+		return hasNextI;
 	}
 
 	private JCheckBoxMenuItem getConfigAnimationCheck() {

@@ -8,7 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.prefs.Preferences;
@@ -40,7 +40,7 @@ public class DanceInterpreter {
 	private TreeMap<String, JsonObject> dancelist = new TreeMap<>();
 	private SongCheckThread songcheckT;
 
-	private LinkedHashMap<File, SongData> playlistSongs;
+	private LinkedList<SongData> playlistSongs;
 
 	private final List<File> localMp3Files;
 
@@ -393,7 +393,7 @@ public class DanceInterpreter {
 	 * 
 	 * 
 	 */
-	public LinkedHashMap<File, SongData> getPlaylistSongs() {
+	public LinkedList<SongData> getPlaylistSongs() {
 		return this.playlistSongs;
 	}
 

@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 import de.klassenserver7b.danceinterpreter.graphics.songwindows.SongWindowBdImgTA;
+import de.klassenserver7b.danceinterpreter.graphics.songwindows.SongWindowBdImgTAN;
 import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 
 /**
@@ -19,7 +20,7 @@ public class SongWindowServer {
 
 	private final List<FormattedSongWindow> registeredWindows;
 	private int selectedWindow;
-	private boolean allowImages;
+	private SongWindowSpecs settingsOverride;
 	private SongData currentData;
 
 	/**
@@ -28,7 +29,7 @@ public class SongWindowServer {
 	protected SongWindowServer() {
 		registeredWindows = new ArrayList<>();
 		selectedWindow = 0;
-		allowImages = true;
+		settingsOverride = new SongWindowSpecs();
 		currentData = null;
 	}
 
@@ -40,6 +41,8 @@ public class SongWindowServer {
 		SongWindowServer server = new SongWindowServer();
 		server.registerSongWindows(new SongWindowBdImgTA(true));
 		server.registerSongWindows(new SongWindowBdImgTA(false));
+		server.registerSongWindows(new SongWindowBdImgTAN(true));
+		server.registerSongWindows(new SongWindowBdImgTAN(false));
 
 		return server;
 	}
@@ -63,24 +66,10 @@ public class SongWindowServer {
 
 	/**
 	 * 
-	 * @param allowImages
-	 */
-	public void setAllowImages(boolean allowImages) {
-		this.allowImages = allowImages;
-		reselectWindow(currentData);
-	}
-
-	/**
-	 * 
 	 * @param data
 	 */
 	protected void reselectWindow(SongData data) {
-		SongWindowSpecs dataspecs = data.toSongWindowSpecs();
-
-		if (!allowImages) {
-			dataspecs = new SongWindowSpecs(false, dataspecs.containsArtist(), dataspecs.containsTitle(),
-					dataspecs.containsDance(), dataspecs.hasNext());
-		}
+		SongWindowSpecs dataspecs = applyOverride(data.toSongWindowSpecs());
 
 		if (registeredWindows.get(selectedWindow).getWindowSpecs().equals(dataspecs)) {
 			return;
@@ -90,9 +79,26 @@ public class SongWindowServer {
 			if (registeredWindows.get(i).getWindowSpecs().equals(dataspecs)) {
 				registeredWindows.get(selectedWindow).close();
 				selectedWindow = i;
+
 				return;
 			}
 		}
+
+	}
+
+	protected SongWindowSpecs applyOverride(SongWindowSpecs base) {
+
+		boolean containsImage = (!settingsOverride.containsImage() ? false : base.containsImage());
+
+		boolean containsArtist = (!settingsOverride.containsArtist() ? false : base.containsArtist());
+
+		boolean containsTitle = (!settingsOverride.containsTitle() ? false : base.containsTitle());
+
+		boolean containsDance = (!settingsOverride.containsDance() ? false : base.containsDance());
+
+		boolean hasNext = (!settingsOverride.containsNext() ? false : base.containsNext());
+
+		return new SongWindowSpecs(containsImage, containsArtist, containsTitle, containsDance, hasNext);
 
 	}
 
@@ -134,4 +140,14 @@ public class SongWindowServer {
 	public FormattedSongWindow getWindow() {
 		return registeredWindows.get(selectedWindow);
 	}
+
+	public SongWindowSpecs getSettingsOverride() {
+		return settingsOverride;
+	}
+
+	public void setSettingsOverride(SongWindowSpecs settingsOverride) {
+		this.settingsOverride = settingsOverride;
+		provideData(currentData);
+	}
+
 }

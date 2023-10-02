@@ -27,7 +27,7 @@ public abstract class FormattedSongWindow implements TypedWindow {
 	protected String songName;
 	protected String artistName;
 	protected BufferedImage albumImage;
-	protected boolean hasAlbumImage;
+	protected final boolean hasAlbumImage;
 	protected boolean hasNextData;
 	protected SongData nextData;
 
@@ -42,7 +42,6 @@ public abstract class FormattedSongWindow implements TypedWindow {
 		this.danceName = "";
 		this.songName = "";
 		this.artistName = "";
-		this.hasAlbumImage = false;
 		this.albumImage = null;
 		this.hasNextData = false;
 		this.nextData = null;
@@ -83,22 +82,17 @@ public abstract class FormattedSongWindow implements TypedWindow {
 	 */
 	protected int calcEstimatedWidth(JLabel comp, Graphics g) {
 
-		int estwidth = 0;
+		return calcEstimatedWidth(comp, comp.getFont(), g);
+	}
 
-		for (String s : comp.getText().split("\n")) {
+	/**
+	 * 
+	 * @param comp
+	 * @return
+	 */
+	protected int calcEstimatedWidth(JLabel comp) {
 
-			if (s.isBlank()) {
-				continue;
-			}
-
-			double testwidth = comp.getFontMetrics(comp.getFont()).getStringBounds(s, g).getBounds().getWidth();
-
-			if (testwidth > estwidth) {
-				estwidth = (int) testwidth;
-			}
-		}
-
-		return estwidth;
+		return calcEstimatedWidth(comp, comp.getFont(), comp.getGraphics());
 	}
 
 	/**
@@ -112,7 +106,41 @@ public abstract class FormattedSongWindow implements TypedWindow {
 
 		double oneline = comp.getFontMetrics(font).getStringBounds(comp.getText(), g).getBounds().getHeight();
 
-		return (int) oneline * comp.getText().split("\n").length;
+		return (int) (oneline * comp.getText().split("\n").length);
+	}
+
+	/**
+	 * 
+	 * @param comp
+	 * @param g
+	 * @return
+	 */
+	protected int calcEstimatedHeight(JLabel comp, Graphics g) {
+
+		return calcEstimatedHeight(comp, comp.getFont(), g);
+	}
+
+	/**
+	 * 
+	 * @param comp
+	 * @return
+	 */
+	protected int calcEstimatedHeight(JLabel comp) {
+		return calcEstimatedHeight(comp, comp.getFont(), comp.getGraphics());
+	}
+
+	protected PVector calcSize(JLabel comp, Font font, Graphics g) {
+		double x = calcEstimatedWidth(comp, font, g);
+		double y = calcEstimatedHeight(comp, font, g);
+		return new PVector(x, y);
+	}
+
+	protected PVector calcSize(JLabel comp, Graphics g) {
+		return calcSize(comp, comp.getFont(), g);
+	}
+
+	protected PVector calcSize(JLabel comp) {
+		return calcSize(comp, comp.getFont(), comp.getGraphics());
 	}
 
 	/**
@@ -140,11 +168,17 @@ public abstract class FormattedSongWindow implements TypedWindow {
 	 * @param data
 	 */
 	public void updateData(SongData data) {
+
 		this.songName = data.getTitle();
+
 		this.artistName = data.getAuthor();
+
 		this.albumImage = data.getImage();
+
 		this.danceName = data.getDance();
+
 		this.nextData = data.getNext();
+		this.hasNextData = nextData != null;
 		refresh();
 	}
 

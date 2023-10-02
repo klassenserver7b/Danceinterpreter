@@ -1,8 +1,7 @@
 
 package de.klassenserver7b.danceinterpreter.songprocessing.dataprovider;
 
-import java.io.File;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,13 +32,13 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 	@Override
 	public SongData provideSongData() {
 
-		LinkedHashMap<File, SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
+		LinkedList<SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
 
 		if (current == null && !songs.isEmpty()) {
 			current = 0;
 			log.info("Loaded first Song");
 
-			return songs.values().stream().toList().get(current);
+			return getDataFromPos(current);
 		}
 
 		return null;
@@ -49,7 +48,7 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 	@Override
 	public void provideAsync() {
 
-		LinkedHashMap<File, SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
+		LinkedList<SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
 
 		switch (forward) {
 
@@ -77,12 +76,22 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 		log.debug("current: " + current);
 		log.debug("songs.size: " + songs.size());
 
-		if (current < songs.size() && current >= 0) {
+		Main.Instance.getSongWindowServer().provideData(getDataFromPos(current));
 
-			SongData data = songs.values().stream().toList().get(current);
+	}
 
-			Main.Instance.getSongWindowServer().provideData(data);
+	protected SongData getDataFromPos(int listIndex) {
+
+		LinkedList<SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
+
+		SongData ret = songs.get(listIndex);
+		SongData next;
+
+		if (listIndex < songs.size() - 1 && (next = songs.get(listIndex + 1)) != null) {
+			ret.setNext(next);
 		}
+
+		return ret;
 
 	}
 

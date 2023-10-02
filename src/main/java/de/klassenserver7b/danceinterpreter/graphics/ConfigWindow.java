@@ -13,9 +13,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -168,7 +167,7 @@ public class ConfigWindow {
 
 	public List<JLabel> loadPlaylistView() {
 
-		LinkedHashMap<File, SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
+		LinkedList<SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
 		List<JLabel> labels = new ArrayList<>();
 
 		if (songs == null || songs.isEmpty()) {
@@ -176,25 +175,21 @@ public class ConfigWindow {
 			return null;
 		}
 
-		List<Entry<File, SongData>> listedsongs = songs.entrySet().stream().toList();
+		for (int i = 0; i < songs.size(); i++) {
 
-		for (int i = 0; i < listedsongs.size(); i++) {
-
-			Entry<File, SongData> song = listedsongs.get(i);
-
-			SongData data = song.getValue();
+			SongData data = songs.get(i);
 			JLabel songp = new JLabel();
 
 			if (!(data.getTitle().isBlank() && data.getAuthor().isBlank() && data.getDance().isBlank())) {
-				
+
 				songp.setText("<html><body>Title: " + data.getTitle() + "<br>Author: " + data.getAuthor()
 						+ "<br>Dance: " + data.getDance() + "</body></html>");
-				
-			}else {
+
+			} else {
 				songp.setFont(new Font("Arial", Font.BOLD, 20));
 				songp.setText("BLANK");
 			}
-			
+
 			songp.addMouseListener(new ClickListener(i));
 			songp.setSize(200, 200);
 			songp.setBorder(BorderFactory.createLineBorder(Color.black, 5, true));

@@ -51,7 +51,6 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 	 */
 	public SongWindowBdImgTA(boolean withimage) {
 		this(new SongWindowSpecs(withimage, true, true, true, false));
-		this.hasAlbumImage = withimage;
 	}
 
 	/**
@@ -129,16 +128,16 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 
 		textDance.setBounds(0, OUTER_SPACING / 2, frame.getWidth(), frame.getHeight() / 2 - OUTER_SPACING / 2);
 
-		// int songViewTotalWidth = Math.min(frame.getWidth() - OUTER_SPACING * 2,
-		// SONG_VIEW_MAX_WIDTH);
-		int songViewTotalWidth = Math.max(calcEstimatedWidth(textSong, frame.getGraphics()),
-				calcEstimatedWidth(textArtist, frame.getGraphics()));
+		int songViewTotalWidth = Math.max(calcEstimatedWidth(textSong), calcEstimatedWidth(textArtist));
+
 		int songViewStart = calcSongViewStart(songViewTotalWidth);
+
 		int songViewEnd = calcSongViewEnd(songViewStart, songViewTotalWidth);
 
 		if (hasAlbumImage) {
-			int imgAlbumHeight = calcEstimatedHeight(textSong, textSong.getFont(), textSong.getGraphics())
-					+ INNER_SPACING + calcEstimatedHeight(textArtist, textArtist.getFont(), textArtist.getGraphics());
+
+			int imgAlbumHeight = calcEstimatedHeight(textSong) + INNER_SPACING + calcEstimatedHeight(textArtist);
+
 			int imgAlbumWidth = (int) (albumImage.getWidth() * (imgAlbumHeight / (double) albumImage.getHeight()));
 
 			Image scaledImage = albumImage.getScaledInstance(imgAlbumWidth, imgAlbumHeight, Image.SCALE_SMOOTH);
@@ -155,11 +154,10 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 		}
 
 		textSong.setBounds(songViewStart, frame.getHeight() / 2 + OUTER_SPACING / 2, songViewEnd - songViewStart,
-				calcEstimatedHeight(textSong, textSong.getFont(), textSong.getGraphics()));
+				calcEstimatedHeight(textSong));
 
 		textArtist.setBounds(songViewStart, textSong.getY() + textSong.getHeight() + INNER_SPACING,
-				songViewEnd - songViewStart,
-				calcEstimatedHeight(textArtist, textArtist.getFont(), textArtist.getGraphics()));
+				songViewEnd - songViewStart, calcEstimatedHeight(textArtist));
 	}
 
 	protected int calcSongViewStart(int songViewTotalWidth) {
