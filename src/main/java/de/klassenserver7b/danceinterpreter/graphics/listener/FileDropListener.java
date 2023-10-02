@@ -37,25 +37,25 @@ public class FileDropListener implements DropTargetListener {
 
 	@Override
 	public void dragEnter(DropTargetDragEvent dtde) {
-		// TODO Auto-generated method stub
+		// Nothing to do here
 
 	}
 
 	@Override
 	public void dragOver(DropTargetDragEvent dtde) {
-		// TODO Auto-generated method stub
+		// Nothing to do here
 
 	}
 
 	@Override
 	public void dropActionChanged(DropTargetDragEvent dtde) {
-		// TODO Auto-generated method stub
+		// Nothing to do here
 
 	}
 
 	@Override
 	public void dragExit(DropTargetEvent dte) {
-		// TODO Auto-generated method stub
+		// Nothing to do here
 
 	}
 

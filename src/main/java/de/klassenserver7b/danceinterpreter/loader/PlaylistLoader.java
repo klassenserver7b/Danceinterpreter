@@ -107,7 +107,7 @@ public class PlaylistLoader {
 		}
 		}
 
-		songs.add(new SongData("", "", "", 0l, (BufferedImage) null));
+		songs.add(new SongData("", "", "", 0L, (BufferedImage) null));
 		return songs;
 	}
 
