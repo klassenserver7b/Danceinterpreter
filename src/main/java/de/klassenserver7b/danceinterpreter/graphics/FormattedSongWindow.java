@@ -12,6 +12,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 
 import javax.swing.Icon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
@@ -22,6 +23,7 @@ import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
  */
 public abstract class FormattedSongWindow implements TypedWindow {
 
+	protected JFrame frame;
 	protected final SongWindowSpecs windowSpecs;
 	protected String danceName;
 	protected String songName;
@@ -47,6 +49,14 @@ public abstract class FormattedSongWindow implements TypedWindow {
 		this.nextData = null;
 	}
 
+	@Override
+	public void onInit(JFrame mainFrame) {
+		if (frame == null) {
+			frame = mainFrame;
+		}
+		initComponents();
+	}
+
 	/**
 	 * 
 	 * @param comp
@@ -58,7 +68,8 @@ public abstract class FormattedSongWindow implements TypedWindow {
 
 		int estwidth = 0;
 
-		for (String s : comp.getText().split("\n")) {
+		for (String s : comp.getText().split("<br>|\n")) {
+			s = s.replaceAll("<.*>", "");
 
 			if (s.isBlank()) {
 				continue;
@@ -106,7 +117,7 @@ public abstract class FormattedSongWindow implements TypedWindow {
 
 		double oneline = comp.getFontMetrics(font).getStringBounds(comp.getText(), g).getBounds().getHeight();
 
-		return (int) (oneline * comp.getText().split("\n").length);
+		return (int) (oneline * comp.getText().split("<br>|\n").length);
 	}
 
 	/**

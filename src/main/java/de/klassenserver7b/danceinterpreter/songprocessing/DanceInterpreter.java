@@ -81,6 +81,8 @@ public class DanceInterpreter {
 				return false;
 			}
 			log.debug("Playlist sucessfully loaded!");
+			Main.Instance.getSongWindowServer().provideData(appmode.getDataProvider().provideSongData());
+			return true;
 		}
 
 		songcheckT = new SongCheckThread(appmode);

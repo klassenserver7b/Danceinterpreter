@@ -88,7 +88,9 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 		SongData next;
 
 		if (listIndex < songs.size() - 1 && (next = songs.get(listIndex + 1)) != null) {
+			if(!(next.getTitle().isBlank() && next.getAuthor().isBlank())){
 			ret.setNext(next);
+			}
 		}
 
 		return ret;

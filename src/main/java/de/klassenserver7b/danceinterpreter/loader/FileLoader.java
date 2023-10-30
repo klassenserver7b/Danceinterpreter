@@ -63,7 +63,7 @@ public class FileLoader {
 					this.log.info("Song doesn't have a Cover");
 				}
 
-				Long length = mp3file.getLength();
+				Long length = mp3file.getLengthInSeconds();
 
 				String dance = tags.getComment();
 				if (dance == null || dance.isBlank()) {

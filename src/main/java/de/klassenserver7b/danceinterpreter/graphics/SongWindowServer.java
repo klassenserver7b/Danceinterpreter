@@ -3,11 +3,27 @@
  */
 package de.klassenserver7b.danceinterpreter.graphics;
 
+import java.awt.Color;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.JFrame;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.klassenserver7b.danceinterpreter.graphics.listener.ArrowSpaceKeyListener;
+import de.klassenserver7b.danceinterpreter.graphics.listener.CustomKeyListener;
+import de.klassenserver7b.danceinterpreter.graphics.listener.FullscreenListener;
+import de.klassenserver7b.danceinterpreter.graphics.listener.NumberListener;
+import de.klassenserver7b.danceinterpreter.graphics.listener.RefreshListener;
 import de.klassenserver7b.danceinterpreter.graphics.songwindows.SongWindowBdImgTA;
 import de.klassenserver7b.danceinterpreter.graphics.songwindows.SongWindowBdImgTAN;
 import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
@@ -22,6 +38,8 @@ public class SongWindowServer {
 	private int selectedWindow;
 	private SongWindowSpecs settingsOverride;
 	private SongData currentData;
+	private JFrame mainFrame;
+	private final Logger log;
 
 	/**
 	 * 
@@ -31,6 +49,9 @@ public class SongWindowServer {
 		selectedWindow = 0;
 		settingsOverride = new SongWindowSpecs();
 		currentData = null;
+		log = LoggerFactory.getLogger(getClass());
+
+		initFrame();
 	}
 
 	/**
@@ -38,7 +59,9 @@ public class SongWindowServer {
 	 * @return
 	 */
 	public static SongWindowServer createDefault() {
+
 		SongWindowServer server = new SongWindowServer();
+
 		server.registerSongWindows(new SongWindowBdImgTA(true));
 		server.registerSongWindows(new SongWindowBdImgTA(false));
 		server.registerSongWindows(new SongWindowBdImgTAN(true));
@@ -47,14 +70,55 @@ public class SongWindowServer {
 		return server;
 	}
 
+	protected void initFrame() {
+
+		mainFrame = new JFrame();
+
+		GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+		Rectangle screenBounds = devices[0].getDefaultConfiguration().getBounds();
+
+		mainFrame.setTitle("DanceInterpreter");
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		mainFrame.setBounds(screenBounds);
+		mainFrame.setLayout(null);
+
+		mainFrame.getContentPane().setBackground(Color.BLACK);
+
+		CustomKeyListener keylis = new CustomKeyListener();
+		keylis.registerKeyListeners(new FullscreenListener(mainFrame));
+		keylis.registerKeyListeners(new ArrowSpaceKeyListener());
+		keylis.registerKeyListeners(new NumberListener());
+		keylis.registerKeyListeners(new RefreshListener());
+		mainFrame.addKeyListener(keylis);
+
+		mainFrame.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+
+				if (selectedWindow >= registeredWindows.size()) {
+					return;
+				}
+
+				registeredWindows.get(selectedWindow).refresh();
+			}
+		});
+	}
+
 	/**
 	 * 
 	 * @param data
 	 */
 	public void provideData(SongData data) {
+
+		int mins = (int) (data.getDuration() / 60);
+		log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + mins + "min "
+				+ (data.getDuration() - mins * 60) + "s");
+
 		reselectWindow(data);
 		currentData = data;
 		registeredWindows.get(selectedWindow).updateData(data);
+		mainFrame.requestFocus();
 	}
 
 	/**
@@ -77,8 +141,12 @@ public class SongWindowServer {
 
 		for (int i = 0; i < registeredWindows.size(); i++) {
 			if (registeredWindows.get(i).getWindowSpecs().equals(dataspecs)) {
-				registeredWindows.get(selectedWindow).close();
 				selectedWindow = i;
+
+				mainFrame.getContentPane().removeAll();
+				registeredWindows.get(selectedWindow).onInit(mainFrame);
+				mainFrame.repaint();
+				mainFrame.setVisible(true);
 
 				return;
 			}

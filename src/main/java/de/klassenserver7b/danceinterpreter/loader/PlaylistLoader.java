@@ -39,6 +39,8 @@ import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 public class PlaylistLoader {
 
 	private final Logger log;
+	
+	private final String[] dances = {"", "Discofox", "Cha Cha Cha", "Samba", "Langsamer Waltzer", "Wiener Waltzer", "Rumba", "Tango", "Jive", "Quickstep", "Quickstep / Foxtrott", "Rock n' Roll", "Jive / Rock n' Roll", "Salsa", "Slowfox"};
 
 	public PlaylistLoader() {
 		this.log = LoggerFactory.getLogger(this.getClass());
@@ -106,8 +108,11 @@ public class PlaylistLoader {
 			return null;
 		}
 		}
-
-		songs.add(new SongData("", "", "", 0L, (BufferedImage) null));
+		
+		for(String s : dances) {
+			songs.add(new SongData("", "", s, 0L, (BufferedImage) null));
+		}
+		
 		return songs;
 	}
 

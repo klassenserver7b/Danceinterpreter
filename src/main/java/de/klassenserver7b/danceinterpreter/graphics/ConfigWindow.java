@@ -180,20 +180,27 @@ public class ConfigWindow {
 			SongData data = songs.get(i);
 			JLabel songp = new JLabel();
 
-			if (!(data.getTitle().isBlank() && data.getAuthor().isBlank() && data.getDance().isBlank())) {
-
-				songp.setText("<html><body>Title: " + data.getTitle() + "<br>Author: " + data.getAuthor()
-						+ "<br>Dance: " + data.getDance() + "</body></html>");
-
-			} else {
-				songp.setFont(new Font("Arial", Font.BOLD, 20));
-				songp.setText("BLANK");
-			}
-
 			songp.addMouseListener(new ClickListener(i));
 			songp.setSize(200, 200);
 			songp.setBorder(BorderFactory.createLineBorder(Color.black, 5, true));
 			labels.add(songp);
+
+			if (data.getDance().isBlank()) {
+				songp.setFont(new Font("Arial", Font.BOLD, 20));
+				songp.setText("BLANK");
+				continue;
+			}
+
+			if (data.getAuthor().isBlank() || data.getTitle().isBlank()) {
+
+				songp.setFont(new Font("Arial", Font.BOLD, 20));
+				songp.setText(data.getDance());
+				continue;
+
+			}
+
+			songp.setText("<html><body>Title: " + data.getTitle() + "<br>Author: " + data.getAuthor() + "<br>Dance: "
+					+ data.getDance() + "</body></html>");
 
 		}
 

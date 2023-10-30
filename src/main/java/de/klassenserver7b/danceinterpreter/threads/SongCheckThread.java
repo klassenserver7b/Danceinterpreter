@@ -29,8 +29,9 @@ public class SongCheckThread implements Runnable {
 				SongData data = appmode.getDataProvider().provideSongData();
 
 				if (data != null) {
-					log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", "
-							+ data.getDuration());
+					int mins = (int) (data.getDuration() / 60);
+					log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + mins + "min "
+							+ (data.getDuration() - mins * 60) + "s");
 
 					Main.Instance.getSongWindowServer().provideData(data);
 
