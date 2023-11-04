@@ -67,7 +67,7 @@ public class SongWindowBdImgTAN extends SongWindowBdImgTA {
 
 		textNextDance.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, frame.getHeight() / 20));
 		textNextDance.setBounds(frame.getWidth() - size_x - frame.getWidth() / 20,
-				frame.getHeight() - size_y - frame.getHeight() / 20, size_x, size_y);
+				frame.getHeight() - size_y - frame.getHeight() / 10, size_x, size_y);
 	}
 
 	@Override

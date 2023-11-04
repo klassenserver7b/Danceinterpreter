@@ -65,9 +65,12 @@ public class FileLoader {
 
 				Long length = mp3file.getLengthInSeconds();
 
-				String dance = tags.getComment();
+				String dance = tags.getGenreDescription();
+
 				if (dance == null || dance.isBlank()) {
-					dance = tags.getItunesComment();
+					if ((dance = tags.getComment()) == null || dance.isBlank()) {
+						dance = tags.getItunesComment();
+					}
 				}
 
 				ret = new SongData(title, author, dance, length, img);
