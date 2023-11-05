@@ -36,19 +36,19 @@ public class NumberListener implements CKeyListener {
 	public void performPressedAction(int keycode, int keylocation) {
 
 		if (keycode == KeyEvent.VK_CONTROL) {
-			pressed = true;
+			this.pressed = true;
 		}
 
-		if (pressed) {
+		if (this.pressed) {
 
 			if (keycode == KeyEvent.VK_BACK_SPACE) {
-				if (numbers.length() <= 0) {
+				if (this.numbers.length() <= 0) {
 					return;
-				} else if (numbers.length() == 1) {
-					numbers = "";
+				} else if (this.numbers.length() == 1) {
+					this.numbers = "";
 					return;
 				}
-				numbers = numbers.substring(0, numbers.length() - 1);
+				this.numbers = this.numbers.substring(0, this.numbers.length() - 1);
 				return;
 			}
 
@@ -62,7 +62,7 @@ public class NumberListener implements CKeyListener {
 				return;
 			}
 
-			numbers = numbers + c;
+			this.numbers = this.numbers + c;
 
 		}
 
@@ -72,16 +72,16 @@ public class NumberListener implements CKeyListener {
 	public void performReleasedAction(int keycode) {
 
 		if (keycode == KeyEvent.VK_CONTROL) {
-			pressed = false;
+			this.pressed = false;
 
-			if (numbers.isBlank()) {
-				numbers = "";
+			if (this.numbers.isBlank()) {
+				this.numbers = "";
 				return;
 			}
 
 			try {
 
-				int pos = Integer.valueOf(numbers);
+				int pos = Integer.valueOf(this.numbers);
 
 				AppModes am = Main.Instance.getAppMode();
 				if (am != AppModes.Playlist) {
@@ -96,10 +96,10 @@ public class NumberListener implements CKeyListener {
 				}
 
 			} catch (NumberFormatException e) {
-				log.warn(e.getMessage(), e);
+				this.log.warn(e.getMessage(), e);
 			}
 
-			numbers = "";
+			this.numbers = "";
 		}
 	}
 

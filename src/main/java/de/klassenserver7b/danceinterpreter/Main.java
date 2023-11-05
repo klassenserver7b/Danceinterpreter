@@ -44,7 +44,7 @@ public class Main {
 		Instance = this;
 
 		if (!initalizeUILayout()) {
-			log.warn("LayoutInitialization failed");
+			this.log.warn("LayoutInitialization failed");
 		}
 
 		this.appMode = askForAppMode();
@@ -54,14 +54,15 @@ public class Main {
 			return;
 		}
 
-		cfgWindow = new ConfigWindow();
+		this.cfgWindow = new ConfigWindow();
 
 		if (!load()) {
-			onShutdown(appMode);
+			onShutdown(this.appMode);
 			return;
 		}
 
 		startShutdownT(this.appMode);
+	
 
 	}
 
@@ -85,12 +86,12 @@ public class Main {
 		this.danceInterpreter = new DanceInterpreter();
 		this.songWindowServer = SongWindowServer.createDefault();
 
-		if (appMode == AppModes.Spotify) {
+		if (this.appMode == AppModes.Spotify) {
 			this.spotify = new SpotifyInteractions();
 		}
 
 		if (!errordetected) {
-			return danceInterpreter.startSongCheck(appMode);
+			return this.danceInterpreter.startSongCheck(this.appMode);
 		}
 
 		return false;
@@ -103,7 +104,7 @@ public class Main {
 	 * 
 	 * 
 	 */
-	public AppModes askForAppMode() {
+	protected AppModes askForAppMode() {
 
 		ArrayList<String> optionsToChoose = new ArrayList<>();
 
@@ -128,7 +129,7 @@ public class Main {
 	 * 
 	 * @return
 	 */
-	private boolean initalizeUILayout() {
+	protected boolean initalizeUILayout() {
 		return FlatLightLaf.setup();
 	}
 
@@ -136,7 +137,7 @@ public class Main {
 	 * 
 	 * @param appMode
 	 */
-	private void startShutdownT(AppModes appMode) {
+	protected void startShutdownT(AppModes appMode) {
 		this.shutdownT = new Thread(() -> {
 			String line;
 
@@ -154,7 +155,7 @@ public class Main {
 					System.out.println("Use Exit to Shutdown");
 				}
 			} catch (IOException e) {
-				log.error(e.getMessage(), e);
+				this.log.error(e.getMessage(), e);
 			}
 		});
 		this.shutdownT.setName("Shutdown");
@@ -169,18 +170,13 @@ public class Main {
 
 		this.log.info("Shutdown started");
 
-		if (danceInterpreter != null) {
-			danceInterpreter.shutdown();
-		}
-
-		if (cfgWindow != null) {
-			cfgWindow.close();
+		if (this.cfgWindow != null) {
+			this.cfgWindow.close();
 		}
 
 		this.log.debug("Danceinterpreter deactivated");
-
 		if (appMode == AppModes.Spotify) {
-			spotify.fetchthread.interrupt();
+			this.spotify.fetchthread.interrupt();
 			this.log.debug("Spotify deactivated");
 		}
 
@@ -190,6 +186,17 @@ public class Main {
 			this.shutdownT.interrupt();
 		}
 
+	}
+	public boolean isWinOS() {
+		String os = System.getProperty("os.name").toLowerCase();
+		return os.contains("win");
+	}
+	
+	public String getHomeDir() {
+		if(isWinOS()) {
+			return System.getenv("HOMEDRIVE") + System.getenv("HOMEPATH");
+		}
+		return System.getenv("HOME");
 	}
 
 	/**
@@ -233,7 +240,7 @@ public class Main {
 	 * @return
 	 */
 	public SongWindowServer getSongWindowServer() {
-		return songWindowServer;
+		return this.songWindowServer;
 	}
 
 }

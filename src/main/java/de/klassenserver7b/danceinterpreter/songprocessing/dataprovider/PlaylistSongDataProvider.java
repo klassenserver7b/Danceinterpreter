@@ -1,8 +1,7 @@
 
 package de.klassenserver7b.danceinterpreter.songprocessing.dataprovider;
 
-import java.io.File;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,12 +32,13 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 	@Override
 	public SongData provideSongData() {
 
-		LinkedHashMap<File, SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
+		LinkedList<SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
 
-		if (current == null && !songs.isEmpty()) {
-			current = 0;
-			log.info("Loaded first Song");
-			return songs.entrySet().parallelStream().toList().get(current).getValue();
+		if (this.current == null && !songs.isEmpty()) {
+			this.current = 0;
+			this.log.info("Loaded first Song");
+
+			return getDataFromPos(this.current);
 		}
 
 		return null;
@@ -48,40 +48,52 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 	@Override
 	public void provideAsync() {
 
-		LinkedHashMap<File, SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
+		LinkedList<SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
 
-		switch (forward) {
+		switch (this.forward) {
 
 		case 1 -> {
 
-			if (current < songs.size() - 1) {
-				current++;
+			if (this.current < songs.size() - 1) {
+				this.current++;
 			}
-			log.debug("forward");
+			this.log.debug("forward");
 		}
 
 		case -1 -> {
 
-			if (current > 0) {
-				current--;
+			if (this.current > 0) {
+				this.current--;
 			}
-			log.debug("back");
+			this.log.debug("back");
 		}
 		case 0 -> {
-			log.debug("same");
+			this.log.debug("same");
 		}
 
 		}
 
-		log.debug("current: " + current);
-		log.debug("songs.size: " + songs.size());
+		this.log.debug("current: " + this.current);
+		this.log.debug("songs.size: " + songs.size());
 
-		if (current < songs.size() && current >= 0) {
+		Main.Instance.getSongWindowServer().provideData(getDataFromPos(this.current));
 
-			SongData data = songs.entrySet().parallelStream().toList().get(current).getValue();
+	}
 
-			Main.Instance.getSongWindowServer().provideData(data);
+	protected SongData getDataFromPos(int listIndex) {
+
+		LinkedList<SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
+
+		SongData ret = songs.get(listIndex);
+		SongData next;
+
+		if (listIndex < songs.size() - 1 && (next = songs.get(listIndex + 1)) != null) {
+			if(!(next.getTitle().isBlank() && next.getAuthor().isBlank())){
+			ret.setNext(next);
+			}
 		}
+
+		return ret;
 
 	}
 
@@ -93,8 +105,8 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 			return false;
 		}
 
-		current = pos - 1;
-		forward = 0;
+		this.current = pos - 1;
+		this.forward = 0;
 
 		return true;
 

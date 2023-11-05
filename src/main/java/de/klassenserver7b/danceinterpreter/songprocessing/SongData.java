@@ -22,35 +22,79 @@ public class SongData {
 	private String title;
 	private String author;
 	private String dance;
-	private Long duration;
+	private long duration;
 	private BufferedImage img;
+	private boolean hasNext;
+	private SongData nextData;
 
-	public SongData(String tit, String author, String dance, Long dur, BufferedImage img) {
-
-		this.title = tit;
+	/**
+	 * @param title
+	 * @param author
+	 * @param dance
+	 * @param duration
+	 * @param img
+	 * @param hasNext
+	 * @param nextData
+	 */
+	public SongData(String title, String author, String dance, long duration, BufferedImage img, boolean hasNext,
+			SongData nextData) {
+		this.title = title;
 		this.author = author;
 		this.dance = dance;
-		this.duration = dur;
+		this.duration = duration;
 		this.img = img;
-
+		this.hasNext = hasNext;
+		this.nextData = nextData;
 	}
 
+	/**
+	 * 
+	 * @param title
+	 * @param author
+	 * @param dance
+	 * @param duration
+	 * @param img
+	 * @param nextData
+	 */
+	public SongData(String title, String author, String dance, long duration, BufferedImage img, SongData nextData) {
+		this(title, author, dance, duration, img, nextData != null, nextData);
+	}
+
+	/**
+	 * 
+	 * @param tit
+	 * @param author
+	 * @param dance
+	 * @param dur
+	 * @param img
+	 */
+	public SongData(String tit, String author, String dance, long dur, BufferedImage img) {
+		this(tit, author, dance, dur, img, false, null);
+	}
+
+	/**
+	 * 
+	 * @param tit
+	 * @param author
+	 * @param dance
+	 * @param dur
+	 * @param imgurl
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 */
 	public SongData(String tit, String author, String dance, Long dur, String imgurl)
 			throws MalformedURLException, IOException {
 
-		this.title = tit;
-		this.author = author;
-		this.dance = dance;
-		this.duration = dur;
-
-		BufferedImage buffimg = ImageIO.read(new URL(imgurl));
-		this.img = buffimg;
+		this(tit, author, dance, dur, ImageIO.read(new URL(imgurl)));
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public SongWindowSpecs toSongWindowSpecs() {
-		return new SongWindowSpecs(this.img != null, (this.author == null || !this.author.isBlank()),
-				(this.title == null || !this.title.isBlank()),
-				(this.dance == null || !this.dance.isBlank() || this.dance.equalsIgnoreCase("unknown")));
+		return new SongWindowSpecs(this.img != null, this.author != null, this.title != null,
+				(this.dance != null && !this.dance.equalsIgnoreCase("unknown")), this.hasNext);
 	}
 
 	public String getTitle() {
@@ -65,12 +109,23 @@ public class SongData {
 		return this.dance;
 	}
 
-	public Long getDuration() {
+	public long getDuration() {
 		return this.duration;
 	}
 
 	public BufferedImage getImage() {
 		return this.img;
+	}
+
+	public boolean hasNext() {
+		return this.hasNext;
+	}
+
+	public SongData getNext() {
+		if (!hasNext()) {
+			return null;
+		}
+		return this.nextData;
 	}
 
 	public void setTitle(String tit) {
@@ -98,9 +153,20 @@ public class SongData {
 		this.img = buffimg;
 	}
 
+	public void setNext(SongData data) {
+		if (data == null) {
+			this.hasNext = false;
+			return;
+		}
+
+		this.hasNext = true;
+		this.nextData = data;
+
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(author, dance, duration, title);
+		return Objects.hash(this.author, this.dance, this.duration, this.title);
 	}
 
 	@Override
@@ -112,8 +178,8 @@ public class SongData {
 		if (getClass() != obj.getClass())
 			return false;
 		SongData other = (SongData) obj;
-		return Objects.equals(author, other.author) && Objects.equals(dance, other.dance)
-				&& Objects.equals(duration, other.duration) && Objects.equals(title, other.title);
+		return Objects.equals(this.author, other.author) && Objects.equals(this.dance, other.dance)
+				&& Objects.equals(this.duration, other.duration) && Objects.equals(this.title, other.title);
 	}
 
 }

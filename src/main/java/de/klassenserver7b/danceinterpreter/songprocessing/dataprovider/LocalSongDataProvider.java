@@ -1,8 +1,6 @@
 
 package de.klassenserver7b.danceinterpreter.songprocessing.dataprovider;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -12,220 +10,177 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mpatric.mp3agic.ID3v2;
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.Mp3File;
-import com.mpatric.mp3agic.UnsupportedTagException;
 import com.sun.nio.file.ExtendedOpenOption;
 
 import de.klassenserver7b.danceinterpreter.Main;
+import de.klassenserver7b.danceinterpreter.loader.FileLoader;
 import de.klassenserver7b.danceinterpreter.songprocessing.DanceInterpreter;
 import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 
 /**
- * 
  * @author K7
  */
 public class LocalSongDataProvider implements SongDataProvider {
 
-	private final Logger log;
-	private int hash;
-	private int datahash;
+    private final Logger log;
+    private int hash;
+    private int datahash;
 
-	/**
-	 * 
-	 */
-	public LocalSongDataProvider() {
-		log = LoggerFactory.getLogger(this.getClass());
-		hash = 0;
-		datahash = 0;
-	}
+    /**
+     *
+     */
+    public LocalSongDataProvider() {
+        this.log = LoggerFactory.getLogger(this.getClass());
+        this.hash = 0;
+        this.datahash = 0;
+    }
 
-	/**
-	 * 
-	 */
-	@Override
-	public SongData provideSongData() {
-		return provideParameterizedData(true);
-	}
+    /**
+     *
+     */
+    @Override
+    public SongData provideSongData() {
+        boolean force = false;
+        return provideParameterizedData(getLocalSong(force), force);
+    }
 
-	private SongData provideParameterizedData(boolean checkcurrent) {
-		File f = getLocalSong(checkcurrent);
+    protected SongData provideParameterizedData(File f, boolean provideforced) {
 
-		SongData ret = null;
-		DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
+        SongData ret;
+        DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
 
-		Mp3File mp3file;
-		if (f != null) {
-			try {
-				mp3file = new Mp3File(f);
+        ret = FileLoader.getDataFromFile(f);
 
-				if (mp3file.hasId3v2Tag()) {
+        if (ret == null || (this.datahash == ret.hashCode() && !provideforced)) {
+            return null;
+        }
 
-					ID3v2 tags = mp3file.getId3v2Tag();
+        if (ret.getDance() == null) {
+            danceI.addSongtoJSON(ret, "LOCAL");
+        }
 
-					String title = tags.getTitle();
-					String author = tags.getArtist();
+        this.datahash = ret.hashCode();
+        return ret;
 
-					byte[] imageData = tags.getAlbumImage();
+    }
 
-					BufferedImage img = new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB);
+    /**
+     * Gets currently playing song by checking for locked files
+     * Asks user to select if multiple files are locked
+     * <br> <strong>HUAN</strong>
+     * <b>WARNING: </b> Works only on Windows based OS
+     *
+     * @param provideforced Whether to not forcefully refresh the song if the new locked files list's hash matches the old one
+     * @return File of the currently playing song or null if no song is playing / the hashes match
+     */
+    private File getLocalSong(boolean provideforced) {
+        List<File> blocked = getBlockedFiles();
 
-					// converting the bytes to an image
-					if (imageData != null) {
-						try {
-							img = ImageIO.read(new ByteArrayInputStream(imageData));
-						} catch (IOException e) {
-							this.log.error("Couldn't parse ID3 Cover");
-							log.error(e.getMessage(), e);
-						}
-					} else {
-						this.log.info("Song doesn't have a Cover");
-					}
+        if (blocked.isEmpty()) {
+            return null;
+        }
+        if (!provideforced && blocked.hashCode() == this.hash) {
+            return null;
+        }
 
-					Long length = mp3file.getLength();
-					String dance = danceI.getDance(title, author);
+        this.hash = blocked.hashCode();
+        if (blocked.size() == 1) {
+            return blocked.get(0);
+        }
 
-					ret = new SongData(title, author, dance, length, img);
+        ConcurrentHashMap<String, File> fileoptions = new ConcurrentHashMap<>();
 
-					if (dance == null) {
-						danceI.addSongtoJSON(ret, "LOCAL");
-					}
+        for (File f : blocked) {
+            fileoptions.put(f.getName(), f);
+        }
 
-				} else {
-					ret = new SongData("Unknown", "Unknown", "null", 0L,
-							new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB));
-				}
+        String filename = (String) JOptionPane.showInputDialog(null, "Which is the current Song?",
+                "Please select current song!", JOptionPane.QUESTION_MESSAGE, null,
+                fileoptions.keySet().toArray(new String[0]), null);
 
-			} catch (UnsupportedTagException | InvalidDataException | IOException e1) {
-				log.error(e1.getMessage(), e1);
-			}
-		}
+        if (filename == null) {
+            return null;
+        }
+        return fileoptions.get(filename);
+    }
 
-		if (ret != null && (datahash != ret.hashCode() || !checkcurrent)) {
-			datahash = ret.hashCode();
-			return ret;
-		}
-		return null;
-	}
+    /**
+     * Iterates over DanceInterpreter.getFiles(), checks whether a file is currently locked / used by another process, then returns a list of all locked files
+     *
+     * @return List of locked files
+     */
+    private List<File> getBlockedFiles() {
+        List<File> blocked = new ArrayList<>();
 
-	/**
-	 * 
-	 * @param checkcurrent
-	 * @return
-	 */
-	private File getLocalSong(boolean checkcurrent) {
-		List<File> blocked = getBlockedFiles();
+        DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
+        for (File file : danceI.getFiles()) {
 
-		boolean checked = checkcurrent;
+            FileChannel chan = null;
+            FileLock lock;
 
-		if (checkcurrent) {
-			checked = (blocked.hashCode() != hash);
-		} else {
-			checked = true;
-		}
+            try {
 
-		if (!blocked.isEmpty() && checked) {
+				/*
+				  Windows doesn't support locks on NOSHARE_READ
+				 */
+                chan = FileChannel.open(file.toPath(), ExtendedOpenOption.NOSHARE_READ);
+                lock = chan.tryLock();
+                lock.close();
 
-			this.hash = blocked.hashCode();
-			if (blocked.size() == 1) {
-				return blocked.get(0);
-			}
+            }
+			/*
+			  If file is not locked by another application chan.tryLock() will throw a NonWritableChannelException
+			  because locking is not supported on NOSHARE_READ
+			 */ catch (NonWritableChannelException e) {
 
-			ConcurrentHashMap<String, File> fileoptions = new ConcurrentHashMap<>();
+                if (chan != null) {
+                    try {
+                        chan.close();
+                    } catch (IOException e1) {
+                        this.log.error(e1.getMessage(), e1);
+                    }
+                }
 
-			for (File f : blocked) {
-				fileoptions.put(f.getName(), f);
-			}
+            }
+            /*
+             * If the file is locked FileChannel.open() throws an IOException because it can't open the file unshared
+             */ catch (IOException ex) {
+                this.log.debug("Locked - f: " + file.getName());
+                blocked.add(file);
 
-			String filename = (String) JOptionPane.showInputDialog(null, "Which is the current Song?",
-					"Please select current song!", JOptionPane.QUESTION_MESSAGE, null,
-					fileoptions.keySet().toArray(new String[0]), null);
+                if (chan != null) {
+                    try {
+                        chan.close();
+                    } catch (IOException e1) {
+                        this.log.error(e1.getMessage(), e1);
+                    }
+                }
+            }
 
-			if (filename != null) {
-				return fileoptions.get(filename);
-			}
-		}
+        }
 
-		return null;
-	}
+        return blocked;
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	private List<File> getBlockedFiles() {
-		List<File> blocked = new ArrayList<>();
+    /***
+     *
+     */
+    @Override
+    public void provideAsync() {
+        boolean force = true;
+        SongData data = provideParameterizedData(getLocalSong(force), force);
 
-		DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
-		for (File file : danceI.getFiles()) {
+        if (data != null) {
+            this.log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
 
-			FileChannel chan = null;
-			FileLock lock = null;
+            Main.Instance.getSongWindowServer().provideData(data);
 
-			try {
-
-				chan = FileChannel.open(file.toPath(), ExtendedOpenOption.NOSHARE_READ);
-				lock = chan.tryLock();
-
-			} catch (NonWritableChannelException e) {
-
-				if (chan != null) {
-					try {
-						chan.close();
-					} catch (IOException e1) {
-						log.error(e1.getMessage(), e1);
-					}
-					chan = null;
-				}
-
-				if (lock != null) {
-					try {
-						lock.close();
-					} catch (IOException e1) {
-						log.error(e1.getMessage(), e1);
-					}
-					lock = null;
-				}
-
-			} catch (IOException ex) {
-				this.log.debug("Locked - f: " + file.getName());
-				blocked.add(file);
-
-				if (chan != null) {
-					try {
-						chan.close();
-					} catch (IOException e1) {
-						log.error(e1.getMessage(), e1);
-					}
-					chan = null;
-				}
-			}
-
-		}
-
-		return blocked;
-	}
-
-	/***
-	 * 
-	 */
-	@Override
-	public void provideAsync() {
-		SongData data = provideParameterizedData(false);
-
-		if (data != null) {
-			log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
-
-			Main.Instance.getSongWindowServer().provideData(data);
-
-		}
-	}
+        }
+    }
 
 }

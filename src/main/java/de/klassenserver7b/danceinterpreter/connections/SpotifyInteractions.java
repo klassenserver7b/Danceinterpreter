@@ -48,10 +48,10 @@ public class SpotifyInteractions {
 
 	public SpotifyInteractions() {
 
-		spotifylog = LoggerFactory.getLogger("spotifylog");
+		this.spotifylog = LoggerFactory.getLogger("spotifylog");
 
-		rtkpath = new File("").getParent() + "_" + new File("").getName() + "_" + "DIRTK";
-		prefs = Preferences.userRoot()
+		this.rtkpath = new File("").getParent() + "_" + new File("").getName() + "_" + "DIRTK";
+		this.prefs = Preferences.userRoot()
 				.node(new File("").getParent() + "_" + new File("").getName() + "_" + this.getClass().getName());
 
 		if (!initialize()) {
@@ -86,23 +86,23 @@ public class SpotifyInteractions {
 			}
 
 		} catch (HttpException e) {
-			spotifylog.error(e.getMessage(), e);
+			this.spotifylog.error(e.getMessage(), e);
 		}
 
 		this.spotifyApi = new SpotifyApi.Builder().setClientId(CLIID).setProxyUrl(proxyurl).setProxyPort(proxyport)
 				.setClientSecret(CLISEC).setRedirectUri(URI.create(REDURI)).build();
 
-		rtk = prefs.get(rtkpath, "");
+		this.rtk = this.prefs.get(this.rtkpath, "");
 
-		if (rtk == null || rtk.isBlank()) {
+		if (this.rtk == null || this.rtk.isBlank()) {
 
 			sendTokenRequest(this);
 
 			return true;
 		}
 
-		if (rtk != null && !rtk.isBlank()) {
-			spotifyApi.setRefreshToken(rtk);
+		if (this.rtk != null && !this.rtk.isBlank()) {
+			this.spotifyApi.setRefreshToken(this.rtk);
 			return true;
 		}
 
@@ -111,9 +111,9 @@ public class SpotifyInteractions {
 
 	public void sendTokenRequest(SpotifyInteractions interaction) {
 
-		spotifylog.error("no usr_auth_code");
+		this.spotifylog.error("no usr_auth_code");
 
-		final AuthorizationCodeUriRequest authorizationCodeUriRequest = spotifyApi.authorizationCodeUri().scope(
+		final AuthorizationCodeUriRequest authorizationCodeUriRequest = this.spotifyApi.authorizationCodeUri().scope(
 				"app-remote-control,streaming,user-read-playback-position,user-modify-playback-state,user-read-playback-state,user-read-currently-playing")
 				.build();
 
@@ -121,12 +121,13 @@ public class SpotifyInteractions {
 
 		try {
 
-			new CodeHttpServer(interaction);
+			@SuppressWarnings("unused")
+			CodeHttpServer httpserver = new CodeHttpServer(interaction);
 
 			Desktop.getDesktop().browse(requestUri);
 
 		} catch (IOException e) {
-			spotifylog.error(e.getMessage(), e);
+			this.spotifylog.error(e.getMessage(), e);
 		}
 
 	}
@@ -144,7 +145,7 @@ public class SpotifyInteractions {
 			while (Main.exit) {
 				if (!(this.expires >= new Date().getTime() - 5000)) {
 					refreshToken();
-					spotifylog.debug("authcode_refresh");
+					this.spotifylog.debug("authcode_refresh");
 				}
 				try {
 					Thread.sleep(10000);
@@ -170,19 +171,19 @@ public class SpotifyInteractions {
 	*/
 	public void refreshToken() {
 
-		final AuthorizationCodeRefreshRequest authorizationCodeRefreshRequest = spotifyApi.authorizationCodeRefresh()
+		final AuthorizationCodeRefreshRequest authorizationCodeRefreshRequest = this.spotifyApi.authorizationCodeRefresh()
 				.build();
 
 		try {
 
 			final AuthorizationCodeCredentials authorizationCodeCredentials = authorizationCodeRefreshRequest.execute();
 
-			spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
+			this.spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
 			this.expires = new Date().getTime() + (authorizationCodeCredentials.getExpiresIn() * 1000);
-			spotifylog.debug("new DATA -> expires:" + this.expires + ", token:" + spotifyApi.getAccessToken());
+			this.spotifylog.debug("new DATA -> expires:" + this.expires + ", token:" + this.spotifyApi.getAccessToken());
 
 		} catch (IOException | SpotifyWebApiException | ParseException e) {
-			spotifylog.error(e.getMessage(), e);
+			this.spotifylog.error(e.getMessage(), e);
 		}
 	}
 
@@ -192,32 +193,32 @@ public class SpotifyInteractions {
 	 */
 	public void authorize(String code) {
 
-		spotifylog.debug("authorization started");
-		final AuthorizationCodeRequest authorizationCodeRequest = spotifyApi.authorizationCode(code).build();
+		this.spotifylog.debug("authorization started");
+		final AuthorizationCodeRequest authorizationCodeRequest = this.spotifyApi.authorizationCode(code).build();
 
 		try {
 
 			AuthorizationCodeCredentials creds = authorizationCodeRequest.execute();
 
-			spotifyApi.setAccessToken(creds.getAccessToken());
-			spotifyApi.setRefreshToken(creds.getRefreshToken());
+			this.spotifyApi.setAccessToken(creds.getAccessToken());
+			this.spotifyApi.setRefreshToken(creds.getRefreshToken());
 			this.expires = new Date().getTime() + (creds.getExpiresIn() * 1000);
 
-			prefs.put(rtkpath, creds.getRefreshToken());
+			this.prefs.put(this.rtkpath, creds.getRefreshToken());
 
-			spotifylog.debug("AUTHORIZED -> expires:" + this.expires + ", token:" + spotifyApi.getAccessToken());
+			this.spotifylog.debug("AUTHORIZED -> expires:" + this.expires + ", token:" + this.spotifyApi.getAccessToken());
 
 			refreshToken();
 			return;
 
 		} catch (ParseException | SpotifyWebApiException | IOException e) {
-			spotifylog.error(e.getMessage(), e);
-			spotifylog.error("invalid usr_auth_code");
-			final AuthorizationCodeUriRequest authorizationCodeUriRequest = spotifyApi.authorizationCodeUri().scope(
+			this.spotifylog.error(e.getMessage(), e);
+			this.spotifylog.error("invalid usr_auth_code");
+			final AuthorizationCodeUriRequest authorizationCodeUriRequest = this.spotifyApi.authorizationCodeUri().scope(
 					"app-remote-control,streaming,user-read-playback-position,user-modify-playback-state,user-read-playback-state,user-read-currently-playing")
 					.build();
 
-			spotifylog.info(
+			this.spotifylog.info(
 					"Please insert your VALID authcode into the configfile\nThis can be optained in the redirect url after accepting:\n"
 							+ authorizationCodeUriRequest.execute());
 			return;
@@ -226,7 +227,7 @@ public class SpotifyInteractions {
 	}
 
 	public SpotifyApi getSpotifyApi() {
-		return spotifyApi;
+		return this.spotifyApi;
 	}
 
 }

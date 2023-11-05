@@ -3,12 +3,12 @@ package de.klassenserver7b.danceinterpreter.songprocessing;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.prefs.Preferences;
@@ -29,386 +29,307 @@ import de.klassenserver7b.danceinterpreter.loader.PlaylistLoader;
 import de.klassenserver7b.danceinterpreter.threads.SongCheckThread;
 
 /**
-
-
  *
- 
- 
  */
 public class DanceInterpreter {
 
-	private TreeMap<String, JsonObject> dancelist = new TreeMap<>();
-	private SongCheckThread songcheckT;
+    private final TreeMap<String, JsonObject> dancelist = new TreeMap<>();
+    private SongCheckThread songcheckT;
 
-	private LinkedHashMap<File, SongData> songs;
+    private LinkedList<SongData> playlistSongs;
 
-	private final List<File> data;
+    private final List<File> localMp3Files;
 
-	private final Logger log;
+    private final Logger log;
 
-	public DanceInterpreter() {
-		this.data = new ArrayList<>();
-		this.log = LoggerFactory.getLogger("Danceinterpreter");
-	}
+    public DanceInterpreter() {
+        this.localMp3Files = new ArrayList<>();
+        this.log = LoggerFactory.getLogger("Danceinterpreter");
+    }
 
-	/**
-	 * 
-	 
-	
-	
-	*/
-	public boolean startSongCheck(AppModes appmode) {
+    /**
+     * Starts the song check thread in specified mode
+     *
+     * @return Whether file loading / starting was successful
+     */
+    public boolean startSongCheck(AppModes appmode) {
 
-		if (!initialize()) {
-			return false;
-		}
+        if (!initialize()) {
+            return false;
+        }
 
-		if (appmode == AppModes.LocalMP3) {
-			if (!loadWorkingDirectory()) {
-				return false;
-			}
-		}
+        if (appmode == AppModes.LocalMP3) {
+            if (!loadWorkingDirectory()) {
+                return false;
+            }
+        }
 
-		if (appmode == AppModes.Playlist) {
+        if (appmode == AppModes.Playlist) {
 
-			File playlist;
-			if ((playlist = new PlaylistLoader().loadPlaylistFile()) == null) {
-				log.debug("Invalid Playlist File - couldn't load playlist-file");
-				return false;
-			}
-			if ((songs = new PlaylistLoader().loadSongs(playlist)) == null) {
-				log.debug("Invalid Playlist File - couldn't load songs!");
-				return false;
-			}
-			log.debug("Playlist sucessfully loaded!");
-		}
+            File playlist;
+            if ((playlist = new PlaylistLoader().loadPlaylistFile()) == null) {
+                this.log.debug("Invalid Playlist File - couldn't load playlist-file");
+                return false;
+            }
+            if ((this.playlistSongs = new PlaylistLoader().loadSongs(playlist)) == null) {
+                this.log.debug("Invalid Playlist File - couldn't load songs!");
+                return false;
+            }
+            this.log.debug("Playlist sucessfully loaded!");
+            Main.Instance.getSongWindowServer().provideData(appmode.getDataProvider().provideSongData());
+            return true;
+        }
 
-		songcheckT = new SongCheckThread(appmode);
-		return true;
-	}
+        this.songcheckT = new SongCheckThread(appmode);
+        return true;
+    }
 
-	/**
-	 * 
-	 * @return
-	 * 
-	 * 
-	 * 
-	 */
-	private boolean loadWorkingDirectory() {
+    /**
+     * Lets the user select a working directory and loads all mp3 files in it
+     *
+     * @return Whether loading was successful
+     */
+    private boolean loadWorkingDirectory() {
 
-		String workingDirectorystr = getWorkingDirectory();
+        String workingDirectorystr = getWorkingDirectory();
 
-		if (workingDirectorystr != null) {
-			Path workingDirectory = Path.of(workingDirectorystr, "");
-			this.log.info("Working in: " + workingDirectory);
-			File f = workingDirectory.toFile();
-			File[] files = f.listFiles();
+        if (workingDirectorystr != null) {
+            Path workingDirectory = Path.of(workingDirectorystr, "");
+            this.log.info("Working in: " + workingDirectory);
+            File f = workingDirectory.toFile();
+            File[] files = f.listFiles();
 
-			if (files != null) {
-				findAllFilesInFolder(f);
-			}
-			return true;
-		}
-		return false;
-	}
+            if (files != null) {
+                findAllFilesInFolder(f);
+            }
+            return true;
+        }
+        return false;
+    }
 
-	/**
-	 * 
-	 * @param f
-	 * 
-	 * 
-	 * 
-	 */
-	private void findAllFilesInFolder(File f) {
+    /**
+     * Recursively searches for all mp3 files in a given folder and adds them to the list of local mp3 files
+     *
+     * @param f Folder
+     */
+    @SuppressWarnings("DataFlowIssue")
+    private void findAllFilesInFolder(File f) {
 
-		if (!f.isDirectory()) {
-			return;
-		}
-		for (File file : f.listFiles()) {
-			if (!file.isDirectory()) {
-				if (file.getName().endsWith(".mp3")) {
-					data.add(file);
-				}
-			} else {
-				findAllFilesInFolder(file);
-			}
-		}
+        if (f == null || !f.exists() || !f.isDirectory()) {
+            return;
+        }
 
-	}
+        for (File file : f.listFiles()) {
+            if (!file.isDirectory()) {
+                if (file.getName().endsWith(".mp3")) {
+                    this.localMp3Files.add(file);
+                }
+            } else {
+                findAllFilesInFolder(file);
+            }
+        }
 
-	/**
-	 * 
-	 
-	
-	
-	*/
-	public void shutdown() {
+    }
 
-		// if (this.songcheckT != null) {
-		// this.songcheckT.interrupt();
-		//
-		// }
-		//
-		// if (this.window != null) {
-		// JFrame mainframe = this.getWindow().getMainFrame();
-		// if (mainframe != null) {
-		// mainframe.dispose();
-		// mainframe.setVisible(false);
-		// mainframe = null;
-		// }
-		// JPanel mainpanel = this.getWindow().getMainPanel();
-		// if (mainpanel != null) {
-		// mainpanel.removeAll();
-		// mainpanel.setEnabled(false);
-		// mainpanel = null;
-		// }
-		// }
-	}
+    /**
+     * Opens file chooser to select working directory
+     *
+     * @return Path of the selected directory or null if no directory was selected
+     */
+    private String getWorkingDirectory() {
 
-	/**
-	 * 
-	 * @return
-	 * 
-	 * 
-	 * 
-	 */
-	private String getWorkingDirectory() {
+        Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
 
-		Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
+        String dir = prefs.get("Last-Path", "");
 
-		String dir = prefs.get("Last-Path", "");
+        if (dir.isBlank() || !new File(dir).exists()) {
+            dir = Main.Instance.getHomeDir();
+        }
 
-		if (dir == null || dir.equalsIgnoreCase("") || (new File(dir)) == null) {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setCurrentDirectory(new File(dir));
+        fileChooser.setDialogTitle("Select Directory");
+        fileChooser.setApproveButtonText("Select");
+        fileChooser.setMultiSelectionEnabled(false);
+        fileChooser.showOpenDialog(null);
 
-			dir = System.getenv("HOMEDRIVE") + System.getenv("HOMEPATH");
+        if (fileChooser.getSelectedFile() != null) {
+            prefs.put("Last-Path", fileChooser.getSelectedFile().getAbsolutePath());
+            return fileChooser.getSelectedFile().getAbsolutePath();
+        }
+        return null;
+    }
 
-		}
+    /**
+     * @param spotifyuri Song's URI on Spotify
+     * @return Name of dance or "unknown" if song was not found
+     */
+    public String getDance(String spotifyuri) {
 
-		JFileChooser f = new JFileChooser();
-		f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		f.setCurrentDirectory(new File(dir));
-		f.setDialogTitle("Select Directory");
-		f.setApproveButtonText("Select");
-		f.setMultiSelectionEnabled(false);
-		f.showOpenDialog(null);
+        JsonObject danceobj = this.dancelist.get(spotifyuri);
 
-		if (f.getSelectedFile() != null) {
-			prefs.put("Last-Path", f.getSelectedFile().getAbsolutePath());
-			return f.getSelectedFile().getAbsolutePath();
-		}
+        if (danceobj != null) {
+
+            String dance;
+            JsonElement elem = danceobj.get("dance");
+            if (elem != null && !elem.isJsonNull() && !(dance = elem.getAsString()).equalsIgnoreCase("")) {
+                return dance;
+            }
+			return "unknown";
+        }
 		return null;
-	}
+    }
 
-	/**
-	 * 
-	 * @param spotifyuri
-	 * @return
-	 */
-	public String getDance(String spotifyuri) {
+    /**
+     * @param title  Title of the song to search for
+     * @param author Author of the song to search for
+     * @return Name of dance or "unknown" if song was not found
+     */
+    @SuppressWarnings("unused")
+    public String getDance(String title, String author) {
 
-		JsonObject danceobj = dancelist.get(spotifyuri);
+        JsonObject danceobj = this.dancelist.get(author + " - " + title);
 
-		if (danceobj != null) {
+        if (danceobj != null) {
 
-			String dance;
-			JsonElement elem = danceobj.get("dance");
-			if (elem != null && !elem.isJsonNull() && !(dance = elem.getAsString()).equalsIgnoreCase("")) {
-				return dance;
-			} else {
-				return "unknown";
-			}
-		} else {
-			return null;
-		}
-	}
+            String dance;
+            JsonElement elem = danceobj.get("dance");
+            if (elem != null && !elem.isJsonNull() && !(dance = elem.getAsString()).isBlank()) {
+                return dance;
+            }
+			return "unknown";
+        }
+		return null;
+    }
 
-	/**
-	 * 
-	 * @param title
-	 * @param author
-	 * @return
-	 * 
-	 * 
-	 * 
-	 */
-	public String getDance(String title, String author) {
+    /**
+     * @return Whether initialization was successful
+     */
+    private boolean initialize() {
 
-		JsonObject danceobj = dancelist.get(author + " - " + title);
+        File file = new File("./resources/dancelist.json");
 
-		if (danceobj != null) {
+        if (file.exists()) {
 
-			String dance;
-			JsonElement elem = danceobj.get("dance");
-			if (elem != null && !elem.isJsonNull() && !(dance = elem.getAsString()).isBlank()) {
-				return dance;
-			} else {
-				return "unknown";
-			}
-		} else {
-			return null;
-		}
-	}
+            try {
 
-	/**
-	 * 
-	 * @return
-	 * 
-	 * 
-	 * 
-	 */
-	private boolean initialize() {
+                String jsonstring = Files.readString(Path.of(file.getPath()));
 
-		File file = new File("./resources/dancelist.json");
+                JsonElement json = JsonParser.parseString(jsonstring);
 
-		if (file.exists()) {
+                if (json != null) {
+                    JsonArray arr = json.getAsJsonObject().get("Songs").getAsJsonArray();
 
-			try {
+                    //noinspection SwitchStatementWithTooFewBranches
+                    switch (Main.Instance.getAppMode()) {
+                        case Spotify -> {
 
-				String jsonstring = Files.readString(Path.of(file.getPath()));
+                            for (JsonElement e : arr) {
 
-				JsonElement json = JsonParser.parseString(jsonstring);
+                                JsonObject obj = e.getAsJsonObject();
+                                this.dancelist.put(obj.get("SpotifyURL").getAsString(), obj);
 
-				if (json != null) {
-					JsonArray arr = json.getAsJsonObject().get("Songs").getAsJsonArray();
+                            }
 
-					switch (Main.Instance.getAppMode()) {
-					case Spotify -> {
+                        }
+                        default -> {
 
-						for (JsonElement e : arr) {
+                            for (JsonElement e : arr) {
 
-							JsonObject obj = e.getAsJsonObject();
-							dancelist.put(obj.get("SpotifyURL").getAsString(), obj);
+                                JsonObject obj = e.getAsJsonObject();
+                                String title = obj.get("title").getAsString();
+                                String artist = obj.get("artist").getAsString();
 
-						}
-						break;
+                                this.dancelist.put(artist + " - " + title, e.getAsJsonObject());
 
-					}
-					default -> {
+                            }
+                        }
+                    }
+                }
 
-						for (JsonElement e : arr) {
+                return true;
 
-							JsonObject obj = e.getAsJsonObject();
-							String title = obj.get("title").getAsString();
-							String artist = obj.get("artist").getAsString();
+            } catch (IOException e1) {
+                this.log.error(e1.getMessage(), e1);
+                return false;
 
-							dancelist.put(artist + " - " + title, e.getAsJsonObject());
+            }
 
-						}
-					}
-					}
-				}
-
-				return true;
-
-			} catch (IOException e1) {
-				log.error(e1.getMessage(), e1);
-				return false;
-
-			}
-
-		} else {
-
-			try {
-
-				file.getParentFile().mkdir();
-
-				file.createNewFile();
-
-				return true;
-			} catch (IOException e) {
-				log.error(e.getMessage(), e);
-			}
-
-		}
-
-		return false;
-
-	}
-
-	/**
-	 * 
-	 * @param songdata
-	 * @param SpotifyUri
-	 * 
-	 * 
-	 * 
-	 */
-	public void addSongtoJSON(SongData songdata, String SpotifyUri) {
-
-		JsonObject obj = new JsonObject();
-		obj.addProperty("title", songdata.getTitle());
-		obj.addProperty("artist", songdata.getAuthor());
-		obj.addProperty("dance", songdata.getDance());
-		obj.addProperty("SpotifyURL", SpotifyUri);
-
-		JsonArray arr = new JsonArray();
-		JsonObject finaldata = new JsonObject();
-
-		dancelist.values().forEach(val -> {
-
-			arr.add(val);
-
-		});
-		arr.add(obj);
-
-		finaldata.add("Songs", arr);
-
+        }
 		try {
-			BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/dancelist.json"),
-					Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
-			stream.write(finaldata.toString());
-			stream.flush();
-			stream.close();
+
+		    //noinspection ResultOfMethodCallIgnored
+		    file.getParentFile().mkdir();
+		    //noinspection ResultOfMethodCallIgnored
+		    file.createNewFile();
+
+		    return true;
 		} catch (IOException e) {
-			log.error(e.getMessage(), e);
+		    this.log.error(e.getMessage(), e);
 		}
-	}
 
-	/**
-	 * 
-	 * @return
-	 * 
-	 * 
-	 * 
-	 */
-	public TreeMap<String, JsonObject> getDancelist() {
-		return this.dancelist;
-	}
+        return false;
 
-	/**
-	 * 
-	 * @return
-	 * 
-	 * 
-	 * 
-	 */
-	public List<File> getFiles() {
-		return this.data;
-	}
+    }
 
-	/**
-	 * 
-	 * @return
-	 * 
-	 * 
-	 * 
-	 */
-	public LinkedHashMap<File, SongData> getPlaylistSongs() {
-		return this.songs;
-	}
+    /**
+     * Creates an entry in dancelist.json for a song
+     *
+     * @param songdata   SongData of the song
+     * @param SpotifyUri Song's URI on Spotify
+     */
+    public void addSongtoJSON(SongData songdata, String SpotifyUri) {
 
-	/**
-	 * 
-	 * @return
-	 * 
-	 * 
-	 * 
-	 */
-	public List<File> getSongs() {
-		return data;
-	}
+        JsonObject obj = new JsonObject();
+        obj.addProperty("title", songdata.getTitle());
+        obj.addProperty("artist", songdata.getAuthor());
+        obj.addProperty("dance", songdata.getDance());
+        obj.addProperty("SpotifyURL", SpotifyUri);
 
-	public SongCheckThread getSongcheckT() {
-		return songcheckT;
-	}
+        JsonArray arr = new JsonArray();
+        JsonObject finaldata = new JsonObject();
+
+        this.dancelist.values().forEach(arr::add);
+        arr.add(obj);
+
+        finaldata.add("Songs", arr);
+
+        try {
+            BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/dancelist.json"),
+                    StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING);
+            stream.write(finaldata.toString());
+            stream.flush();
+            stream.close();
+        } catch (IOException e) {
+            this.log.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * @return The dancelist
+     */
+    @SuppressWarnings("unused")
+    public TreeMap<String, JsonObject> getDancelist() {
+        return this.dancelist;
+    }
+
+    /**
+     * @return List of loaded local mp3 files or an empty list if AppMode is not LocalMP3
+     */
+    public List<File> getFiles() {
+        return this.localMp3Files;
+    }
+
+    /**
+     * @return List of songs in the playlist or null if AppMode is not Playlist
+     */
+    public LinkedList<SongData> getPlaylistSongs() {
+        return this.playlistSongs;
+    }
+
+    @SuppressWarnings("unused")
+    public SongCheckThread getSongcheckT() {
+        return this.songcheckT;
+    }
 }

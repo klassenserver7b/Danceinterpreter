@@ -30,7 +30,7 @@ public class HintFocusListener implements FocusListener {
 		if (e.getComponent() instanceof TextComponent) {
 			TextComponent comp = (TextComponent) e.getComponent();
 
-			if (comp.getText().equals(hint)) {
+			if (comp.getText().equals(this.hint)) {
 				comp.setText("");
 			}
 		}
@@ -38,7 +38,7 @@ public class HintFocusListener implements FocusListener {
 		if (e.getComponent() instanceof JTextComponent) {
 			JTextComponent comp = (JTextComponent) e.getComponent();
 
-			if (comp.getText().equals(hint)) {
+			if (comp.getText().equals(this.hint)) {
 				comp.setText("");
 			}
 		}
@@ -52,7 +52,7 @@ public class HintFocusListener implements FocusListener {
 			TextComponent comp = (TextComponent) e.getComponent();
 
 			if (comp.getText().isBlank()) {
-				comp.setText(hint);
+				comp.setText(this.hint);
 			}
 		}
 
@@ -60,7 +60,7 @@ public class HintFocusListener implements FocusListener {
 			JTextComponent comp = (JTextComponent) e.getComponent();
 
 			if (comp.getText().isBlank()) {
-				comp.setText(hint);
+				comp.setText(this.hint);
 			}
 		}
 
