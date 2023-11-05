@@ -53,33 +53,33 @@ public class ConfigWindow {
 	*/
 	public ConfigWindow() {
 
-		imgpath = "./pics/tech_dance2.gif";
-		log = LoggerFactory.getLogger(this.getClass());
+		this.imgpath = "./pics/tech_dance2.gif";
+		this.log = LoggerFactory.getLogger(this.getClass());
 
-		time = 0L;
-		mainframe = new JFrame();
-		mainpanel = new JPanel();
-		playlistview = false;
-		imgenabled = false;
+		this.time = 0L;
+		this.mainframe = new JFrame();
+		this.mainpanel = new JPanel();
+		this.playlistview = false;
+		this.imgenabled = false;
 
-		dropTarget = new DropTarget(mainframe, new FileDropListener());
+		this.dropTarget = new DropTarget(this.mainframe, new FileDropListener());
 
-		mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		File file = new File("./icon.png");
 
 		try {
 			BufferedImage bufferedImage = ImageIO.read(file);
-			mainframe.setIconImage(bufferedImage);
+			this.mainframe.setIconImage(bufferedImage);
 		} catch (IOException e) {
-			log.error("No Icon Found!");
+			this.log.error("No Icon Found!");
 		}
-		mainframe.setTitle("DI - Config");
+		this.mainframe.setTitle("DI - Config");
 
-		mainframe.setBounds(10, 10, 500, 281);
+		this.mainframe.setBounds(10, 10, 500, 281);
 
 		MenuGenerator mgen = new MenuGenerator(this);
 
-		mainframe.setJMenuBar(mgen.getMenuBar());
+		this.mainframe.setJMenuBar(mgen.getMenuBar());
 
 		JLabel img = new JLabel();
 
@@ -88,23 +88,23 @@ public class ConfigWindow {
 		// image = ImageIO.read(new File(imgpath));
 		// ImageIcon icon = new ImageIcon(image.getScaledInstance(mainframe.getWidth(),
 		// mainframe.getHeight(), 0));
-		img = new JLabel(new ImageIcon(imgpath));
+		img = new JLabel(new ImageIcon(this.imgpath));
 
 		// img.setIcon(icon);
 
-		mainpanel.add(img);
-		mainframe.addComponentListener(new ComponentAdapter() {
+		this.mainpanel.add(img);
+		this.mainframe.addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentResized(ComponentEvent componentEvent) {
 
-				if (System.currentTimeMillis() - 1000 <= time) {
+				if (System.currentTimeMillis() - 1000 <= ConfigWindow.this.time) {
 					return;
 				}
 
-				time = System.currentTimeMillis();
+				ConfigWindow.this.time = System.currentTimeMillis();
 
-				if (playlistview) {
+				if (ConfigWindow.this.playlistview) {
 					updateWindow(loadPlaylistView());
 				} else {
 					updateWindow();
@@ -113,40 +113,40 @@ public class ConfigWindow {
 			}
 
 		});
-		mainframe.add(mainpanel);
-		mainframe.setVisible(true);
+		this.mainframe.add(this.mainpanel);
+		this.mainframe.setVisible(true);
 
 	}
 
 	public void updateWindow() {
 
-		mainpanel.removeAll();
-		mainpanel.paintImmediately(0, 0, mainframe.getWidth(), mainframe.getHeight());
+		this.mainpanel.removeAll();
+		this.mainpanel.paintImmediately(0, 0, this.mainframe.getWidth(), this.mainframe.getHeight());
 
-		if (!playlistview && imgenabled) {
+		if (!this.playlistview && this.imgenabled) {
 			JLabel img = new JLabel();
-			img = new JLabel(new ImageIcon(imgpath));
+			img = new JLabel(new ImageIcon(this.imgpath));
 
-			mainpanel.add(img);
+			this.mainpanel.add(img);
 		}
 
-		mainpanel.paintComponents(mainframe.getGraphics());
-		mainframe.setVisible(true);
+		this.mainpanel.paintComponents(this.mainframe.getGraphics());
+		this.mainframe.setVisible(true);
 	}
 
 	public void updateWindow(List<JLabel> l) {
 
-		mainpanel.removeAll();
+		this.mainpanel.removeAll();
 		//mainpanel.paintImmediately(0, 0, mainframe.getWidth(), mainframe.getHeight());
 
-		if (!playlistview) {
+		if (!this.playlistview) {
 			JLabel img = new JLabel();
 
 			Image image;
 
 			try {
 				image = ImageIO.read(new File("./pics/splash_small.jpg"));
-				ImageIcon icon = new ImageIcon(image.getScaledInstance(mainframe.getWidth(), mainframe.getHeight(), 0));
+				ImageIcon icon = new ImageIcon(image.getScaledInstance(this.mainframe.getWidth(), this.mainframe.getHeight(), 0));
 
 				img.setIcon(icon);
 
@@ -154,16 +154,16 @@ public class ConfigWindow {
 				e.printStackTrace();
 			}
 
-			mainpanel.add(img);
+			this.mainpanel.add(img);
 		} else {
 			for (JLabel label : l) {
-				mainpanel.add(label);
+				this.mainpanel.add(label);
 			}
 		}
 
-		mainpanel.paintComponents(mainframe.getGraphics());
-		mainframe.repaint();
-		mainframe.setVisible(true);
+		this.mainpanel.paintComponents(this.mainframe.getGraphics());
+		this.mainframe.repaint();
+		this.mainframe.setVisible(true);
 	}
 
 	public List<JLabel> loadPlaylistView() {
@@ -172,7 +172,7 @@ public class ConfigWindow {
 		List<JLabel> labels = new ArrayList<>();
 
 		if (songs == null || songs.isEmpty()) {
-			playlistview = !playlistview;
+			this.playlistview = !this.playlistview;
 			return null;
 		}
 
@@ -210,21 +210,21 @@ public class ConfigWindow {
 	}
 
 	public void close() {
-		mainframe.removeAll();
-		mainframe.setEnabled(false);
-		mainframe.setVisible(false);
+		this.mainframe.removeAll();
+		this.mainframe.setEnabled(false);
+		this.mainframe.setVisible(false);
 
-		mainframe.dispose();
+		this.mainframe.dispose();
 
-		mainframe = null;
+		this.mainframe = null;
 	}
 
 	public boolean isPlaylistview() {
-		return playlistview;
+		return this.playlistview;
 	}
 
 	public boolean isImgenabled() {
-		return imgenabled;
+		return this.imgenabled;
 	}
 
 	public void setPlaylistview(boolean playlistview) {
@@ -236,11 +236,11 @@ public class ConfigWindow {
 	}
 
 	public JFrame getMainframe() {
-		return mainframe;
+		return this.mainframe;
 	}
 
 	public JPanel getMainpanel() {
-		return mainpanel;
+		return this.mainpanel;
 	}
 
 	class ClickListener implements MouseListener {
@@ -248,14 +248,14 @@ public class ConfigWindow {
 		private final int clickid;
 
 		public ClickListener(int id) {
-			clickid = id;
+			this.clickid = id;
 		}
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			PlaylistSongDataProvider pd = (PlaylistSongDataProvider) Main.Instance.getAppMode().getDataProvider();
 			pd.setDirection(0);
-			pd.setPosition(clickid + 1);
+			pd.setPosition(this.clickid + 1);
 			pd.provideAsync();
 		}
 
@@ -285,6 +285,6 @@ public class ConfigWindow {
 	}
 
 	public DropTarget getDropTarget() {
-		return dropTarget;
+		return this.dropTarget;
 	}
 }

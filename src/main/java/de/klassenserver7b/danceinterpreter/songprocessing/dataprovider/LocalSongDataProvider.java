@@ -35,9 +35,9 @@ public class LocalSongDataProvider implements SongDataProvider {
      *
      */
     public LocalSongDataProvider() {
-        log = LoggerFactory.getLogger(this.getClass());
-        hash = 0;
-        datahash = 0;
+        this.log = LoggerFactory.getLogger(this.getClass());
+        this.hash = 0;
+        this.datahash = 0;
     }
 
     /**
@@ -56,7 +56,7 @@ public class LocalSongDataProvider implements SongDataProvider {
 
         ret = FileLoader.getDataFromFile(f);
 
-        if (ret == null || (datahash == ret.hashCode() && !provideforced)) {
+        if (ret == null || (this.datahash == ret.hashCode() && !provideforced)) {
             return null;
         }
 
@@ -64,7 +64,7 @@ public class LocalSongDataProvider implements SongDataProvider {
             danceI.addSongtoJSON(ret, "LOCAL");
         }
 
-        datahash = ret.hashCode();
+        this.datahash = ret.hashCode();
         return ret;
 
     }
@@ -84,7 +84,7 @@ public class LocalSongDataProvider implements SongDataProvider {
         if (blocked.isEmpty()) {
             return null;
         }
-        if (!provideforced && blocked.hashCode() == hash) {
+        if (!provideforced && blocked.hashCode() == this.hash) {
             return null;
         }
 
@@ -142,7 +142,7 @@ public class LocalSongDataProvider implements SongDataProvider {
                     try {
                         chan.close();
                     } catch (IOException e1) {
-                        log.error(e1.getMessage(), e1);
+                        this.log.error(e1.getMessage(), e1);
                     }
                 }
 
@@ -157,7 +157,7 @@ public class LocalSongDataProvider implements SongDataProvider {
                     try {
                         chan.close();
                     } catch (IOException e1) {
-                        log.error(e1.getMessage(), e1);
+                        this.log.error(e1.getMessage(), e1);
                     }
                 }
             }
@@ -176,7 +176,7 @@ public class LocalSongDataProvider implements SongDataProvider {
         SongData data = provideParameterizedData(getLocalSong(force), force);
 
         if (data != null) {
-            log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
+            this.log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
 
             Main.Instance.getSongWindowServer().provideData(data);
 

@@ -45,11 +45,11 @@ public class SongWindowServer {
 	 * 
 	 */
 	protected SongWindowServer() {
-		registeredWindows = new ArrayList<>();
-		selectedWindow = 0;
-		settingsOverride = new SongWindowSpecs();
-		currentData = null;
-		log = LoggerFactory.getLogger(getClass());
+		this.registeredWindows = new ArrayList<>();
+		this.selectedWindow = 0;
+		this.settingsOverride = new SongWindowSpecs();
+		this.currentData = null;
+		this.log = LoggerFactory.getLogger(getClass());
 
 		initFrame();
 	}
@@ -72,35 +72,35 @@ public class SongWindowServer {
 
 	protected void initFrame() {
 
-		mainFrame = new JFrame();
+		this.mainFrame = new JFrame();
 
 		GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
 		Rectangle screenBounds = devices[0].getDefaultConfiguration().getBounds();
 
-		mainFrame.setTitle("DanceInterpreter");
-		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.mainFrame.setTitle("DanceInterpreter");
+		this.mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		mainFrame.setBounds(screenBounds);
-		mainFrame.setLayout(null);
+		this.mainFrame.setBounds(screenBounds);
+		this.mainFrame.setLayout(null);
 
-		mainFrame.getContentPane().setBackground(Color.BLACK);
+		this.mainFrame.getContentPane().setBackground(Color.BLACK);
 
 		CustomKeyListener keylis = new CustomKeyListener();
-		keylis.registerKeyListeners(new FullscreenListener(mainFrame));
+		keylis.registerKeyListeners(new FullscreenListener(this.mainFrame));
 		keylis.registerKeyListeners(new ArrowSpaceKeyListener());
 		keylis.registerKeyListeners(new NumberListener());
 		keylis.registerKeyListeners(new RefreshListener());
-		mainFrame.addKeyListener(keylis);
+		this.mainFrame.addKeyListener(keylis);
 
-		mainFrame.addComponentListener(new ComponentAdapter() {
+		this.mainFrame.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
 
-				if (selectedWindow >= registeredWindows.size()) {
+				if (SongWindowServer.this.selectedWindow >= SongWindowServer.this.registeredWindows.size()) {
 					return;
 				}
 
-				registeredWindows.get(selectedWindow).refresh();
+				SongWindowServer.this.registeredWindows.get(SongWindowServer.this.selectedWindow).refresh();
 			}
 		});
 	}
@@ -112,20 +112,20 @@ public class SongWindowServer {
 	public void provideData(SongData data) {
 
 		int mins = (int) (data.getDuration() / 60);
-		log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + mins + "min "
+		this.log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + mins + "min "
 				+ (data.getDuration() - mins * 60) + "s");
 
 		reselectWindow(data);
-		currentData = data;
-		registeredWindows.get(selectedWindow).updateData(data);
-		mainFrame.requestFocus();
+		this.currentData = data;
+		this.registeredWindows.get(this.selectedWindow).updateData(data);
+		this.mainFrame.requestFocus();
 	}
 
 	/**
 	 * 
 	 */
 	public void refresh() {
-		registeredWindows.get(selectedWindow).refresh();
+		this.registeredWindows.get(this.selectedWindow).refresh();
 	}
 
 	/**
@@ -135,18 +135,18 @@ public class SongWindowServer {
 	protected void reselectWindow(SongData data) {
 		SongWindowSpecs dataspecs = applyOverride(data.toSongWindowSpecs());
 
-		if (registeredWindows.get(selectedWindow).getWindowSpecs().equals(dataspecs)) {
+		if (this.registeredWindows.get(this.selectedWindow).getWindowSpecs().equals(dataspecs)) {
 			return;
 		}
 
-		for (int i = 0; i < registeredWindows.size(); i++) {
-			if (registeredWindows.get(i).getWindowSpecs().equals(dataspecs)) {
-				selectedWindow = i;
+		for (int i = 0; i < this.registeredWindows.size(); i++) {
+			if (this.registeredWindows.get(i).getWindowSpecs().equals(dataspecs)) {
+				this.selectedWindow = i;
 
-				mainFrame.getContentPane().removeAll();
-				registeredWindows.get(selectedWindow).onInit(mainFrame);
-				mainFrame.repaint();
-				mainFrame.setVisible(true);
+				this.mainFrame.getContentPane().removeAll();
+				this.registeredWindows.get(this.selectedWindow).onInit(this.mainFrame);
+				this.mainFrame.repaint();
+				this.mainFrame.setVisible(true);
 
 				return;
 			}
@@ -156,15 +156,15 @@ public class SongWindowServer {
 
 	protected SongWindowSpecs applyOverride(SongWindowSpecs base) {
 
-		boolean containsImage = (!settingsOverride.containsImage() ? false : base.containsImage());
+		boolean containsImage = (!this.settingsOverride.containsImage() ? false : base.containsImage());
 
-		boolean containsArtist = (!settingsOverride.containsArtist() ? false : base.containsArtist());
+		boolean containsArtist = (!this.settingsOverride.containsArtist() ? false : base.containsArtist());
 
-		boolean containsTitle = (!settingsOverride.containsTitle() ? false : base.containsTitle());
+		boolean containsTitle = (!this.settingsOverride.containsTitle() ? false : base.containsTitle());
 
-		boolean containsDance = (!settingsOverride.containsDance() ? false : base.containsDance());
+		boolean containsDance = (!this.settingsOverride.containsDance() ? false : base.containsDance());
 
-		boolean hasNext = (!settingsOverride.containsNext() ? false : base.containsNext());
+		boolean hasNext = (!this.settingsOverride.containsNext() ? false : base.containsNext());
 
 		return new SongWindowSpecs(containsImage, containsArtist, containsTitle, containsDance, hasNext);
 
@@ -175,11 +175,11 @@ public class SongWindowServer {
 	 * @param window
 	 */
 	public void registerSongWindow(FormattedSongWindow window) {
-		if (registeredWindows.contains(window)) {
+		if (this.registeredWindows.contains(window)) {
 			return;
 		}
 
-		registeredWindows.add(window);
+		this.registeredWindows.add(window);
 
 	}
 
@@ -206,16 +206,16 @@ public class SongWindowServer {
 	 * @return
 	 */
 	public FormattedSongWindow getWindow() {
-		return registeredWindows.get(selectedWindow);
+		return this.registeredWindows.get(this.selectedWindow);
 	}
 
 	public SongWindowSpecs getSettingsOverride() {
-		return settingsOverride;
+		return this.settingsOverride;
 	}
 
 	public void setSettingsOverride(SongWindowSpecs settingsOverride) {
 		this.settingsOverride = settingsOverride;
-		provideData(currentData);
+		provideData(this.currentData);
 	}
 
 }

@@ -50,76 +50,76 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 	}
 
 	private void init() {
-		textDance = new JLabel();
-		textDance.setHorizontalAlignment(SwingConstants.CENTER);
-		textDance.setVerticalAlignment(SwingConstants.TOP);
-		textDance.setForeground(Color.white);
+		this.textDance = new JLabel();
+		this.textDance.setHorizontalAlignment(SwingConstants.CENTER);
+		this.textDance.setVerticalAlignment(SwingConstants.TOP);
+		this.textDance.setForeground(Color.white);
 
-		textSong = new JLabel();
-		textSong.setHorizontalAlignment(SwingConstants.LEFT);
-		textSong.setForeground(Color.white);
+		this.textSong = new JLabel();
+		this.textSong.setHorizontalAlignment(SwingConstants.LEFT);
+		this.textSong.setForeground(Color.white);
 
-		textArtist = new JLabel();
-		textArtist.setHorizontalAlignment(SwingConstants.LEFT);
-		textArtist.setForeground(Color.white);
+		this.textArtist = new JLabel();
+		this.textArtist.setHorizontalAlignment(SwingConstants.LEFT);
+		this.textArtist.setForeground(Color.white);
 
-		imgAlbum = new JLabel();
+		this.imgAlbum = new JLabel();
 	}
 
 	@Override
 	public void initComponents() {
-		frame.add(textDance);
-		frame.add(textSong);
-		frame.add(textArtist);
-		frame.add(imgAlbum);
+		this.frame.add(this.textDance);
+		this.frame.add(this.textSong);
+		this.frame.add(this.textArtist);
+		this.frame.add(this.imgAlbum);
 	}
 
 	@Override
 	public void onResize() {
 
-		int OUTER_SPACING = frame.getWidth() / 7;
-		int INNER_SPACING = frame.getWidth() / 150;
+		int OUTER_SPACING = this.frame.getWidth() / 7;
+		int INNER_SPACING = this.frame.getWidth() / 150;
 
-		textDance.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, frame.getHeight() / 8));
-		textSong.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, frame.getHeight() / 20));
-		textArtist.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, frame.getHeight() / 25));
+		this.textDance.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, this.frame.getHeight() / 8));
+		this.textSong.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, this.frame.getHeight() / 20));
+		this.textArtist.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, this.frame.getHeight() / 25));
 
-		textDance.setBounds(0, OUTER_SPACING, frame.getWidth(), frame.getHeight() / 2 - OUTER_SPACING / 2);
+		this.textDance.setBounds(0, OUTER_SPACING, this.frame.getWidth(), this.frame.getHeight() / 2 - OUTER_SPACING / 2);
 
-		int songViewTotalWidth = Math.max(calcEstimatedWidth(textSong), calcEstimatedWidth(textArtist));
+		int songViewTotalWidth = Math.max(calcEstimatedWidth(this.textSong), calcEstimatedWidth(this.textArtist));
 
 		int songViewStart = calcSongViewStart(songViewTotalWidth);
 
 		int songViewEnd = calcSongViewEnd(songViewStart, songViewTotalWidth);
 
-		if (hasAlbumImage) {
+		if (this.hasAlbumImage) {
 
-			int imgAlbumHeight = calcEstimatedHeight(textSong) + INNER_SPACING + calcEstimatedHeight(textArtist);
+			int imgAlbumHeight = calcEstimatedHeight(this.textSong) + INNER_SPACING + calcEstimatedHeight(this.textArtist);
 
-			int imgAlbumWidth = (int) (albumImage.getWidth() * (imgAlbumHeight / (double) albumImage.getHeight()));
+			int imgAlbumWidth = (int) (this.albumImage.getWidth() * (imgAlbumHeight / (double) this.albumImage.getHeight()));
 
-			Image scaledImage = albumImage.getScaledInstance(imgAlbumWidth, imgAlbumHeight, Image.SCALE_SMOOTH);
-			imgAlbum.setIcon(new ImageIcon(scaledImage));
+			Image scaledImage = this.albumImage.getScaledInstance(imgAlbumWidth, imgAlbumHeight, Image.SCALE_SMOOTH);
+			this.imgAlbum.setIcon(new ImageIcon(scaledImage));
 
 			songViewTotalWidth += imgAlbumWidth;
 			songViewStart = calcSongViewStart(songViewTotalWidth);
 			songViewEnd = calcSongViewEnd(songViewStart, songViewTotalWidth);
 
-			imgAlbum.setBounds(songViewStart, (int) (OUTER_SPACING * 1.75), imgAlbumWidth, imgAlbumHeight);
+			this.imgAlbum.setBounds(songViewStart, (int) (OUTER_SPACING * 1.75), imgAlbumWidth, imgAlbumHeight);
 
 			songViewStart += imgAlbumWidth + INNER_SPACING;
 			songViewEnd = calcSongViewEnd(songViewStart, songViewTotalWidth);
 		}
 
-		textSong.setBounds(songViewStart, (int) (OUTER_SPACING * 1.75), songViewEnd - songViewStart,
-				calcEstimatedHeight(textSong));
+		this.textSong.setBounds(songViewStart, (int) (OUTER_SPACING * 1.75), songViewEnd - songViewStart,
+				calcEstimatedHeight(this.textSong));
 
-		textArtist.setBounds(songViewStart, textSong.getY() + textSong.getHeight() + INNER_SPACING,
-				songViewEnd - songViewStart, calcEstimatedHeight(textArtist));
+		this.textArtist.setBounds(songViewStart, this.textSong.getY() + this.textSong.getHeight() + INNER_SPACING,
+				songViewEnd - songViewStart, calcEstimatedHeight(this.textArtist));
 	}
 
 	protected int calcSongViewStart(int songViewTotalWidth) {
-		return (frame.getWidth() - songViewTotalWidth) / 2;
+		return (this.frame.getWidth() - songViewTotalWidth) / 2;
 	}
 
 	protected int calcSongViewEnd(int songViewStart, int songViewTotalWidth) {
@@ -129,9 +129,9 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 	@Override
 	public void refresh() {
 
-		textDance.setText(super.danceName);
-		textSong.setText(super.songName);
-		textArtist.setText(super.artistName);
+		this.textDance.setText(super.danceName);
+		this.textSong.setText(super.songName);
+		this.textArtist.setText(super.artistName);
 
 		this.onResize();
 	}

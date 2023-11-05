@@ -34,11 +34,11 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 
 		LinkedList<SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
 
-		if (current == null && !songs.isEmpty()) {
-			current = 0;
-			log.info("Loaded first Song");
+		if (this.current == null && !songs.isEmpty()) {
+			this.current = 0;
+			this.log.info("Loaded first Song");
 
-			return getDataFromPos(current);
+			return getDataFromPos(this.current);
 		}
 
 		return null;
@@ -50,33 +50,33 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 
 		LinkedList<SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
 
-		switch (forward) {
+		switch (this.forward) {
 
 		case 1 -> {
 
-			if (current < songs.size() - 1) {
-				current++;
+			if (this.current < songs.size() - 1) {
+				this.current++;
 			}
-			log.debug("forward");
+			this.log.debug("forward");
 		}
 
 		case -1 -> {
 
-			if (current > 0) {
-				current--;
+			if (this.current > 0) {
+				this.current--;
 			}
-			log.debug("back");
+			this.log.debug("back");
 		}
 		case 0 -> {
-			log.debug("same");
+			this.log.debug("same");
 		}
 
 		}
 
-		log.debug("current: " + current);
-		log.debug("songs.size: " + songs.size());
+		this.log.debug("current: " + this.current);
+		this.log.debug("songs.size: " + songs.size());
 
-		Main.Instance.getSongWindowServer().provideData(getDataFromPos(current));
+		Main.Instance.getSongWindowServer().provideData(getDataFromPos(this.current));
 
 	}
 
@@ -105,8 +105,8 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 			return false;
 		}
 
-		current = pos - 1;
-		forward = 0;
+		this.current = pos - 1;
+		this.forward = 0;
 
 		return true;
 

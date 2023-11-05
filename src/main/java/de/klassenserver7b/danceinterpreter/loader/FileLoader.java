@@ -23,13 +23,13 @@ public class FileLoader {
 
 	public static SongData getDataFromFile(File f) {
 
-		log.debug("Data Loading started for: " + f.toPath().toString());
-
 		if (f == null || f.isDirectory() || !f.canRead()) {
 			log.warn("Error accessing file. - f exists?: " + (f == null ? "error" : f.exists()) + " acessed_file:"
 					+ (f != null ? f.getAbsolutePath() : "f == null"));
 			return null;
 		}
+
+		log.debug("Data Loading started for: " + f.getAbsolutePath());
 
 		SongData ret = null;
 

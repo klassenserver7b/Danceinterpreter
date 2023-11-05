@@ -39,7 +39,7 @@
 						<id>enforce-maven-3</id>
 						<goals>
 							<goal>enforce</goal>
-						</goals>S
+						</goals>
 						<configuration>
 							<rules>
 								<requireMavenVersion>
@@ -79,9 +79,21 @@
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
+							<appendAssemblyId>false</appendAssemblyId>
+							<finalName>
+								${project.artifactId}-${project.version}-full
+							</finalName>
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>4.0.0-M11</version>
+				<configuration>
+					<outputDirectory>mvn-site</outputDirectory>
+				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -94,6 +106,15 @@
 					<release>17</release>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.6.0</version>
+				<configuration>
+					<show>private</show>
+					<doclint>all,-missing</doclint>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -103,6 +124,15 @@
 			<plugin>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
 				<version>3.4.5</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.6.0</version>
+				<configuration>
+					<show>private</show>
+					<doclint>all,-missing</doclint>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

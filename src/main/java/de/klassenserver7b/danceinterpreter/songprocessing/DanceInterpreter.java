@@ -68,19 +68,19 @@ public class DanceInterpreter {
 
             File playlist;
             if ((playlist = new PlaylistLoader().loadPlaylistFile()) == null) {
-                log.debug("Invalid Playlist File - couldn't load playlist-file");
+                this.log.debug("Invalid Playlist File - couldn't load playlist-file");
                 return false;
             }
-            if ((playlistSongs = new PlaylistLoader().loadSongs(playlist)) == null) {
-                log.debug("Invalid Playlist File - couldn't load songs!");
+            if ((this.playlistSongs = new PlaylistLoader().loadSongs(playlist)) == null) {
+                this.log.debug("Invalid Playlist File - couldn't load songs!");
                 return false;
             }
-            log.debug("Playlist sucessfully loaded!");
+            this.log.debug("Playlist sucessfully loaded!");
             Main.Instance.getSongWindowServer().provideData(appmode.getDataProvider().provideSongData());
             return true;
         }
 
-        songcheckT = new SongCheckThread(appmode);
+        this.songcheckT = new SongCheckThread(appmode);
         return true;
     }
 
@@ -122,7 +122,7 @@ public class DanceInterpreter {
         for (File file : f.listFiles()) {
             if (!file.isDirectory()) {
                 if (file.getName().endsWith(".mp3")) {
-                    localMp3Files.add(file);
+                    this.localMp3Files.add(file);
                 }
             } else {
                 findAllFilesInFolder(file);
@@ -167,7 +167,7 @@ public class DanceInterpreter {
      */
     public String getDance(String spotifyuri) {
 
-        JsonObject danceobj = dancelist.get(spotifyuri);
+        JsonObject danceobj = this.dancelist.get(spotifyuri);
 
         if (danceobj != null) {
 
@@ -175,12 +175,10 @@ public class DanceInterpreter {
             JsonElement elem = danceobj.get("dance");
             if (elem != null && !elem.isJsonNull() && !(dance = elem.getAsString()).equalsIgnoreCase("")) {
                 return dance;
-            } else {
-                return "unknown";
             }
-        } else {
-            return null;
+			return "unknown";
         }
+		return null;
     }
 
     /**
@@ -191,7 +189,7 @@ public class DanceInterpreter {
     @SuppressWarnings("unused")
     public String getDance(String title, String author) {
 
-        JsonObject danceobj = dancelist.get(author + " - " + title);
+        JsonObject danceobj = this.dancelist.get(author + " - " + title);
 
         if (danceobj != null) {
 
@@ -199,12 +197,10 @@ public class DanceInterpreter {
             JsonElement elem = danceobj.get("dance");
             if (elem != null && !elem.isJsonNull() && !(dance = elem.getAsString()).isBlank()) {
                 return dance;
-            } else {
-                return "unknown";
             }
-        } else {
-            return null;
+			return "unknown";
         }
+		return null;
     }
 
     /**
@@ -232,7 +228,7 @@ public class DanceInterpreter {
                             for (JsonElement e : arr) {
 
                                 JsonObject obj = e.getAsJsonObject();
-                                dancelist.put(obj.get("SpotifyURL").getAsString(), obj);
+                                this.dancelist.put(obj.get("SpotifyURL").getAsString(), obj);
 
                             }
 
@@ -245,7 +241,7 @@ public class DanceInterpreter {
                                 String title = obj.get("title").getAsString();
                                 String artist = obj.get("artist").getAsString();
 
-                                dancelist.put(artist + " - " + title, e.getAsJsonObject());
+                                this.dancelist.put(artist + " - " + title, e.getAsJsonObject());
 
                             }
                         }
@@ -255,26 +251,23 @@ public class DanceInterpreter {
                 return true;
 
             } catch (IOException e1) {
-                log.error(e1.getMessage(), e1);
+                this.log.error(e1.getMessage(), e1);
                 return false;
 
             }
 
-        } else {
-
-            try {
-
-                //noinspection ResultOfMethodCallIgnored
-                file.getParentFile().mkdir();
-                //noinspection ResultOfMethodCallIgnored
-                file.createNewFile();
-
-                return true;
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
-
         }
+		try {
+
+		    //noinspection ResultOfMethodCallIgnored
+		    file.getParentFile().mkdir();
+		    //noinspection ResultOfMethodCallIgnored
+		    file.createNewFile();
+
+		    return true;
+		} catch (IOException e) {
+		    this.log.error(e.getMessage(), e);
+		}
 
         return false;
 
@@ -297,7 +290,7 @@ public class DanceInterpreter {
         JsonArray arr = new JsonArray();
         JsonObject finaldata = new JsonObject();
 
-        dancelist.values().forEach(arr::add);
+        this.dancelist.values().forEach(arr::add);
         arr.add(obj);
 
         finaldata.add("Songs", arr);
@@ -309,7 +302,7 @@ public class DanceInterpreter {
             stream.flush();
             stream.close();
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            this.log.error(e.getMessage(), e);
         }
     }
 
@@ -337,6 +330,6 @@ public class DanceInterpreter {
 
     @SuppressWarnings("unused")
     public SongCheckThread getSongcheckT() {
-        return songcheckT;
+        return this.songcheckT;
     }
 }

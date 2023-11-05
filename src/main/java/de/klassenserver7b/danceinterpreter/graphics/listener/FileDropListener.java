@@ -32,7 +32,7 @@ public class FileDropListener implements DropTargetListener {
 	 * 
 	 */
 	public FileDropListener() {
-		log = LoggerFactory.getLogger(this.getClass());
+		this.log = LoggerFactory.getLogger(this.getClass());
 	}
 
 	@Override
@@ -87,9 +87,9 @@ public class FileDropListener implements DropTargetListener {
 			dtde.dropComplete(true);
 
 		} catch (UnsupportedFlavorException e) {
-			log.error("Drop was not a file");
+			this.log.error("Drop was not a file");
 		} catch (IOException e) {
-			log.error(e.getMessage(), e);
+			this.log.error(e.getMessage(), e);
 		}
 
 	}

@@ -26,21 +26,21 @@ public class PVector {
 	 * @return the x
 	 */
 	public double getX() {
-		return x;
+		return this.x;
 	}
 
 	/**
 	 * @return the y
 	 */
 	public double getY() {
-		return y;
+		return this.y;
 	}
 
 	/**
 	 * @return the z
 	 */
 	public double getZ() {
-		return z;
+		return this.z;
 	}
 
 	/**

@@ -36,7 +36,6 @@ public abstract class FormattedSongWindow implements TypedWindow {
 	/**
 	 * 
 	 * @param songWindowSpecs
-	 * @param withImage
 	 */
 	public FormattedSongWindow(SongWindowSpecs songWindowSpecs) {
 		this.windowSpecs = songWindowSpecs;
@@ -51,8 +50,8 @@ public abstract class FormattedSongWindow implements TypedWindow {
 
 	@Override
 	public void onInit(JFrame mainFrame) {
-		if (frame == null) {
-			frame = mainFrame;
+		if (this.frame == null) {
+			this.frame = mainFrame;
 		}
 		initComponents();
 	}
@@ -189,7 +188,7 @@ public abstract class FormattedSongWindow implements TypedWindow {
 		this.danceName = data.getDance();
 
 		this.nextData = data.getNext();
-		this.hasNextData = nextData != null;
+		this.hasNextData = this.nextData != null;
 		refresh();
 	}
 
@@ -198,6 +197,6 @@ public abstract class FormattedSongWindow implements TypedWindow {
 	 * @return
 	 */
 	public SongWindowSpecs getWindowSpecs() {
-		return windowSpecs;
+		return this.windowSpecs;
 	}
 }

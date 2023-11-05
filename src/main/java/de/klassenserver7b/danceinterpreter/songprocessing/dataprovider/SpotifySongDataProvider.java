@@ -33,8 +33,8 @@ public class SpotifySongDataProvider implements SongDataProvider {
 	
 	*/
 	public SpotifySongDataProvider() {
-		log = LoggerFactory.getLogger(this.getClass());
-		datahash = 0;
+		this.log = LoggerFactory.getLogger(this.getClass());
+		this.datahash = 0;
 	}
 
 	@Override
@@ -44,8 +44,8 @@ public class SpotifySongDataProvider implements SongDataProvider {
 		if (cutrack != null) {
 
 			SongData ret = getDatafromTrack(cutrack);
-			if (ret != null && datahash != ret.hashCode()) {
-				datahash = ret.hashCode();
+			if (ret != null && this.datahash != ret.hashCode()) {
+				this.datahash = ret.hashCode();
 				return ret;
 			}
 
@@ -81,12 +81,11 @@ public class SpotifySongDataProvider implements SongDataProvider {
 				GetTrackRequest trackreq = spotifyapi.getTrack(spotifyid).build();
 
 				return trackreq.execute();
-			} else {
-				return null;
 			}
+			return null;
 
 		} catch (ParseException | SpotifyWebApiException | IOException e1) {
-			log.error(e1.getMessage(), e1);
+			this.log.error(e1.getMessage(), e1);
 			return null;
 		}
 
@@ -125,7 +124,7 @@ public class SpotifySongDataProvider implements SongDataProvider {
 				Main.Instance.getDanceInterpreter().addSongtoJSON(new SongData(cutrack.getName(), authors, dance,
 						(long) (cutrack.getDurationMs() / 1000), imgurl), cutrack.getUri());
 			} catch (IOException e1) {
-				log.error(e1.getMessage(), e1);
+				this.log.error(e1.getMessage(), e1);
 			}
 
 		}
@@ -133,7 +132,7 @@ public class SpotifySongDataProvider implements SongDataProvider {
 		try {
 			return new SongData(cutrack.getName(), authors, dance, (long) (cutrack.getDurationMs() / 1000), imgurl);
 		} catch (IOException e) {
-			log.error(e.getMessage(), e);
+			this.log.error(e.getMessage(), e);
 			return null;
 		}
 
@@ -153,7 +152,7 @@ public class SpotifySongDataProvider implements SongDataProvider {
 			return;
 		}
 
-		log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
+		this.log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
 
 		Main.Instance.getSongWindowServer().provideData(data);
 	}

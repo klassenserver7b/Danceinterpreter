@@ -166,7 +166,7 @@ public class SongData {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(author, dance, duration, title);
+		return Objects.hash(this.author, this.dance, this.duration, this.title);
 	}
 
 	@Override
@@ -178,8 +178,8 @@ public class SongData {
 		if (getClass() != obj.getClass())
 			return false;
 		SongData other = (SongData) obj;
-		return Objects.equals(author, other.author) && Objects.equals(dance, other.dance)
-				&& Objects.equals(duration, other.duration) && Objects.equals(title, other.title);
+		return Objects.equals(this.author, other.author) && Objects.equals(this.dance, other.dance)
+				&& Objects.equals(this.duration, other.duration) && Objects.equals(this.title, other.title);
 	}
 
 }

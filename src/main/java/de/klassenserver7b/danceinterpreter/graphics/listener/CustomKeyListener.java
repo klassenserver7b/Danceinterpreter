@@ -18,7 +18,7 @@ public class CustomKeyListener implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 
-		for (CKeyListener listener : listeners) {
+		for (CKeyListener listener : this.listeners) {
 			listener.performPressedAction(e.getKeyCode(), e.getKeyLocation());
 		}
 
@@ -26,19 +26,19 @@ public class CustomKeyListener implements KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		for (CKeyListener listener : listeners) {
+		for (CKeyListener listener : this.listeners) {
 			listener.performReleasedAction(e.getKeyCode());
 		}
 	}
 
 	public void registerKeyListener(CKeyListener listener) {
-		listeners.add(listener);
+		this.listeners.add(listener);
 	}
 
 	public void registerKeyListeners(CKeyListener... keylisteners) {
 
 		for (CKeyListener l : keylisteners) {
-			listeners.add(l);
+			this.listeners.add(l);
 		}
 	}
 

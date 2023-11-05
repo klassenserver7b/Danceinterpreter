@@ -25,7 +25,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import de.klassenserver7b.danceinterpreter.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -34,6 +33,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import de.klassenserver7b.danceinterpreter.Main;
 import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 
 public class PlaylistLoader {
@@ -104,12 +104,12 @@ public class PlaylistLoader {
         switch (fileparts[fileparts.length - 1]) {
 
             case "m3u", "m3u8" -> {
-                log.info("loading m3u -> " + f.getPath());
+                this.log.info("loading m3u -> " + f.getPath());
                 songs = loadM3U(f);
             }
 
             case "xspf" -> {
-                log.info("loading xspf -> " + f.getPath());
+                this.log.info("loading xspf -> " + f.getPath());
                 songs = loadXSPF(f);
             }
             default -> songs = null;
@@ -119,7 +119,7 @@ public class PlaylistLoader {
             songs = new LinkedList<>();
         }
 
-        for (String s : dances) {
+        for (String s : this.dances) {
             songs.add(new SongData("", "", s, 0L, null));
         }
 
@@ -139,7 +139,7 @@ public class PlaylistLoader {
             reader.close();
 
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            this.log.error(e.getMessage(), e);
         }
 
         if (lines == null) {
@@ -231,7 +231,7 @@ public class PlaylistLoader {
             return Paths.get(uri).toFile();
 
         } catch (MalformedURLException | URISyntaxException e1) {
-            log.error(e1.getMessage(), e1);
+            this.log.error(e1.getMessage(), e1);
         }
 
         return null;
@@ -253,7 +253,7 @@ public class PlaylistLoader {
             return docbuild.parse(new ByteArrayInputStream(xmlstr.getBytes(StandardCharsets.UTF_8)));
 
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            log.error(e.getMessage(), e);
+            this.log.error(e.getMessage(), e);
         }
 
         return null;

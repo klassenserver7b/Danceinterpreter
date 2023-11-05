@@ -14,23 +14,23 @@ public class SongCheckThread implements Runnable {
 	private final AppModes appmode;
 
 	public SongCheckThread(AppModes mode) {
-		t = new Thread(this, "SongCheck");
-		log = LoggerFactory.getLogger(this.getClass());
-		appmode = mode;
-		t.start();
+		this.t = new Thread(this, "SongCheck");
+		this.log = LoggerFactory.getLogger(this.getClass());
+		this.appmode = mode;
+		this.t.start();
 	}
 
 	@Override
 	public void run() {
-		if (!t.isInterrupted()) {
+		if (!this.t.isInterrupted()) {
 
 			while (!Main.exit) {
 
-				SongData data = appmode.getDataProvider().provideSongData();
+				SongData data = this.appmode.getDataProvider().provideSongData();
 
 				if (data != null) {
 					int mins = (int) (data.getDuration() / 60);
-					log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + mins + "min "
+					this.log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + mins + "min "
 							+ (data.getDuration() - mins * 60) + "s");
 
 					Main.Instance.getSongWindowServer().provideData(data);
@@ -48,8 +48,8 @@ public class SongCheckThread implements Runnable {
 	}
 
 	public void interrupt() {
-		t.interrupt();
-		log.info("interrupted");
+		this.t.interrupt();
+		this.log.info("interrupted");
 	}
 
 }

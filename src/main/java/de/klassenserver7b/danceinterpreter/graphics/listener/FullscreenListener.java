@@ -28,16 +28,16 @@ public class FullscreenListener implements CKeyListener {
 			return;
 		}
 
-		frame.dispose();
+		this.frame.dispose();
 
-		if (frame.isUndecorated()) {
-			frame.setUndecorated(false);
+		if (this.frame.isUndecorated()) {
+			this.frame.setUndecorated(false);
 		} else {
-			frame.setUndecorated(true);
+			this.frame.setUndecorated(true);
 		}
 
-		frame.setVisible(true);
-		frame.repaint();
+		this.frame.setVisible(true);
+		this.frame.repaint();
 
 	}
 }

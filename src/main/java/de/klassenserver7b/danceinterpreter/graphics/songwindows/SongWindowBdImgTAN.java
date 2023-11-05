@@ -45,35 +45,35 @@ public class SongWindowBdImgTAN extends SongWindowBdImgTA {
 	}
 
 	private void init() {
-		textNextDance = new JLabel();
-		textNextDance.setHorizontalAlignment(SwingConstants.CENTER);
-		textNextDance.setVerticalAlignment(SwingConstants.CENTER);
-		textNextDance.setForeground(Color.white);
+		this.textNextDance = new JLabel();
+		this.textNextDance.setHorizontalAlignment(SwingConstants.CENTER);
+		this.textNextDance.setVerticalAlignment(SwingConstants.CENTER);
+		this.textNextDance.setForeground(Color.white);
 	}
 
 	@Override
 	public void initComponents() {
 		super.initComponents();
-		frame.add(textNextDance);
+		this.frame.add(this.textNextDance);
 	}
 
 	@Override
 	public void onResize() {
 		super.onResize();
 
-		PVector size = calcSize(textNextDance);
+		PVector size = calcSize(this.textNextDance);
 		int size_x = (int) size.getX();
 		int size_y = (int) size.getY();
 
-		textNextDance.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, frame.getHeight() / 20));
-		textNextDance.setBounds(frame.getWidth() - size_x - frame.getWidth() / 20,
-				frame.getHeight() - size_y - frame.getHeight() / 10, size_x, size_y);
+		this.textNextDance.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, this.frame.getHeight() / 20));
+		this.textNextDance.setBounds(this.frame.getWidth() - size_x - this.frame.getWidth() / 20,
+				this.frame.getHeight() - size_y - this.frame.getHeight() / 10, size_x, size_y);
 	}
 
 	@Override
 	public void refresh() {
 		super.refresh();
-		textNextDance.setText("<html><body>nächster Tanz:<br>" + nextData.getDance() + "</body></html>");
+		this.textNextDance.setText("<html><body>nächster Tanz:<br>" + this.nextData.getDance() + "</body></html>");
 		this.onResize();
 	}
 

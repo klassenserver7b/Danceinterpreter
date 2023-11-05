@@ -86,9 +86,9 @@ public class SVGIcon extends UserAgentAdapter implements Icon {
 			t.setDimensions(w, h);
 		}
 		t.transcode(in, null);
-		bufferedImage = t.getBufferedImage();
-		width = bufferedImage.getWidth();
-		height = bufferedImage.getHeight();
+		this.bufferedImage = t.getBufferedImage();
+		this.width = this.bufferedImage.getWidth();
+		this.height = this.bufferedImage.getHeight();
 	}
 
 	/**
@@ -107,6 +107,7 @@ public class SVGIcon extends UserAgentAdapter implements Icon {
 		 * @param width  the image width in pixels
 		 * @param height the image height in pixels
 		 */
+		@Override
 		public BufferedImage createImage(int width, int height) {
 			return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		}
@@ -118,23 +119,24 @@ public class SVGIcon extends UserAgentAdapter implements Icon {
 		 * @param output the output where to store the image
 		 * @throws TranscoderException if an error occured while storing the image
 		 */
+		@Override
 		public void writeImage(BufferedImage img, TranscoderOutput output) throws TranscoderException {
-			bufferedImage = img;
+			this.bufferedImage = img;
 		}
 
 		/**
 		 * Returns the BufferedImage generated from the SVG document.
 		 */
 		public BufferedImage getBufferedImage() {
-			return bufferedImage;
+			return this.bufferedImage;
 		}
 
 		/**
 		 * Set the dimensions to be used for the image.
 		 */
 		public void setDimensions(int w, int h) {
-			hints.put(KEY_WIDTH, (float) w);
-			hints.put(KEY_HEIGHT, (float) h);
+			this.hints.put(KEY_WIDTH, (float) w);
+			this.hints.put(KEY_HEIGHT, (float) h);
 		}
 	}
 
@@ -143,26 +145,29 @@ public class SVGIcon extends UserAgentAdapter implements Icon {
 	/**
 	 * Returns the icon's width.
 	 */
+	@Override
 	public int getIconWidth() {
-		return width;
+		return this.width;
 	}
 
 	/**
 	 * Returns the icon's height.
 	 */
+	@Override
 	public int getIconHeight() {
-		return height;
+		return this.height;
 	}
 
 	/**
 	 * Draw the icon at the specified location.
 	 */
+	@Override
 	public void paintIcon(Component c, Graphics g, int x, int y) {
-		g.drawImage(bufferedImage, x, y, null);
+		g.drawImage(this.bufferedImage, x, y, null);
 	}
 
 	public BufferedImage getImage() {
-		return bufferedImage;
+		return this.bufferedImage;
 	}
 
 	// UserAgent /////////////////////////////////////////////////////////////
@@ -170,7 +175,8 @@ public class SVGIcon extends UserAgentAdapter implements Icon {
 	/**
 	 * Returns the default size of this user agent.
 	 */
+	@Override
 	public Dimension2D getViewportSize() {
-		return new Dimension(width, height);
+		return new Dimension(this.width, this.height);
 	}
 }

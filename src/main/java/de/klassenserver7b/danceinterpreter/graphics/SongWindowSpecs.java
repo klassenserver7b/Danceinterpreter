@@ -21,7 +21,7 @@ public class SongWindowSpecs {
 	 * @param containsArtist
 	 * @param containsTitle
 	 * @param containsDance
-	 * @param containsNext
+	 * @param hasNext
 	 */
 	public SongWindowSpecs(boolean containsImage, boolean containsArtist, boolean containsTitle, boolean containsDance,
 			boolean hasNext) {
@@ -40,23 +40,23 @@ public class SongWindowSpecs {
 	}
 
 	public boolean containsImage() {
-		return containsImage;
+		return this.containsImage;
 	}
 
 	public boolean containsArtist() {
-		return containsArtist;
+		return this.containsArtist;
 	}
 
 	public boolean containsTitle() {
-		return containsTitle;
+		return this.containsTitle;
 	}
 
 	public boolean containsDance() {
-		return containsDance;
+		return this.containsDance;
 	}
 
 	public boolean containsNext() {
-		return containsNext;
+		return this.containsNext;
 	}
 
 	public void setContainsImage(boolean containsImage) {
@@ -81,7 +81,8 @@ public class SongWindowSpecs {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(containsArtist, containsDance, containsImage, containsNext, containsTitle);
+		return Objects.hash(this.containsArtist, this.containsDance, this.containsImage, this.containsNext,
+				this.containsTitle);
 	}
 
 	@Override
@@ -91,9 +92,9 @@ public class SongWindowSpecs {
 		if (!(obj instanceof SongWindowSpecs))
 			return false;
 		SongWindowSpecs other = (SongWindowSpecs) obj;
-		return containsArtist == other.containsArtist && containsDance == other.containsDance
-				&& containsImage == other.containsImage && containsNext == other.containsNext
-				&& containsTitle == other.containsTitle;
+		return this.containsArtist == other.containsArtist && this.containsDance == other.containsDance
+				&& this.containsImage == other.containsImage && this.containsNext == other.containsNext
+				&& this.containsTitle == other.containsTitle;
 	}
 
 }

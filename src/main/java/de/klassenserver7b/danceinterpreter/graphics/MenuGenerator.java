@@ -28,8 +28,8 @@ public class MenuGenerator {
 	 * 
 	 */
 	public MenuGenerator(ConfigWindow window) {
-		log = LoggerFactory.getLogger(getClass());
-		cfgwindow = window;
+		this.log = LoggerFactory.getLogger(getClass());
+		this.cfgwindow = window;
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class MenuGenerator {
             try {
                 prefs.clear();
             } catch (BackingStoreException e1) {
-                log.error(e1.getMessage(), e1);
+                this.log.error(e1.getMessage(), e1);
             }
 
         });
@@ -166,20 +166,20 @@ public class MenuGenerator {
 		cbI.setSelected(false);
 		cbI.addActionListener(e -> {
 
-            cfgwindow.setImgenabled(cbI.getState());
+            this.cfgwindow.setImgenabled(cbI.getState());
 
             switch (Main.Instance.getAppMode()) {
             case Playlist -> {
 
-                if (cfgwindow.isPlaylistview()) {
-                    cfgwindow.updateWindow(cfgwindow.loadPlaylistView());
+                if (this.cfgwindow.isPlaylistview()) {
+                    this.cfgwindow.updateWindow(this.cfgwindow.loadPlaylistView());
                 } else {
-                    cfgwindow.updateWindow();
+                    this.cfgwindow.updateWindow();
                 }
 
             }
             default -> {
-                cfgwindow.updateWindow();
+                this.cfgwindow.updateWindow();
             }
             }
 
@@ -195,12 +195,12 @@ public class MenuGenerator {
 		cbI.setSelected(false);
 		cbI.addActionListener(e -> {
 
-            cfgwindow.setPlaylistview(!cfgwindow.isPlaylistview());
+            this.cfgwindow.setPlaylistview(!this.cfgwindow.isPlaylistview());
 
-            if (cfgwindow.isPlaylistview()) {
-                cfgwindow.updateWindow(cfgwindow.loadPlaylistView());
+            if (this.cfgwindow.isPlaylistview()) {
+                this.cfgwindow.updateWindow(this.cfgwindow.loadPlaylistView());
             } else {
-                cfgwindow.updateWindow();
+                this.cfgwindow.updateWindow();
             }
 
         });
