@@ -21,7 +21,7 @@ public class FileLoader {
 
 	private static final Logger log = LoggerFactory.getLogger(FileLoader.class);
 
-	public SongData getDataFromFile(File f) {
+	public static SongData getDataFromFile(File f) {
 
 		log.debug("Data Loading started for: " + f.toPath().toString());
 
@@ -52,11 +52,11 @@ public class FileLoader {
 					try {
 						img = ImageIO.read(new ByteArrayInputStream(imageData));
 					} catch (IOException e) {
-						this.log.error("Couldn't parse ID3 Cover");
+						log.error("Couldn't parse ID3 Cover");
 						log.error(e.getMessage(), e);
 					}
 				} else {
-					this.log.info("Song doesn't have a Cover");
+					log.info("Song doesn't have a Cover");
 				}
 
 				Long length = mp3file.getLengthInSeconds();

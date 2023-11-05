@@ -175,7 +175,6 @@ public class Main {
 		}
 
 		this.log.debug("Danceinterpreter deactivated");
-
 		if (appMode == AppModes.Spotify) {
 			spotify.fetchthread.interrupt();
 			this.log.debug("Spotify deactivated");
@@ -187,6 +186,17 @@ public class Main {
 			this.shutdownT.interrupt();
 		}
 
+	}
+	public boolean isWinOS() {
+		String os = System.getProperty("os.name").toLowerCase();
+		return os.contains("win");
+	}
+	
+	public String getHomeDir() {
+		if(isWinOS()) {
+			return System.getenv("HOMEDRIVE") + System.getenv("HOMEPATH");
+		}
+		return System.getenv("HOME");
 	}
 
 	/**

@@ -1,6 +1,5 @@
 package de.klassenserver7b.danceinterpreter.loader;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -26,6 +25,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import de.klassenserver7b.danceinterpreter.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -57,29 +57,39 @@ public class PlaylistLoader {
         Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
         String dir = prefs.get("Last-Path", "");
 
-		if (dir == null || dir.equalsIgnoreCase("") || (new File(dir)) == null) {
+        if (dir.isBlank() || !new File(dir).exists()) {
+            if (Main.Instance.isWinOS()) {
+                dir = System.getenv("HOMEDRIVE") + System.getenv("HOMEPATH");
+            } else {
+                dir = System.getenv("HOME");
+            }
+        }
 
-			dir = System.getenv("HOMEDRIVE") + System.getenv("HOMEPATH");
+        JFileChooser fileChooser = generateFileChooser(dir);
 
-		}
+        if (fileChooser.getSelectedFile() == null) {
+            return null;
+        }
 
-		JFileChooser f = new JFileChooser();
-		f.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		f.setAcceptAllFileFilterUsed(false);
-		f.setFileFilter(new FileNameExtensionFilter("Playlist Files (*.m3u, *.m3u8, *.xspf)", "m3u", "m3u8", "xspf"));
-		f.setCurrentDirectory(new File(dir));
-		f.setDialogTitle("Select Directory");
-		f.setApproveButtonText("Select");
-		f.setMultiSelectionEnabled(false);
-		f.showOpenDialog(null);
+        prefs.put("Last-Path", fileChooser.getSelectedFile().getAbsolutePath());
+        return fileChooser.getSelectedFile();
+    }
 
-		if (f.getSelectedFile() == null) {
-			return null;
-		}
+    protected JFileChooser generateFileChooser(String defaultDir){
 
-		prefs.put("Last-Path", f.getSelectedFile().getAbsolutePath());
-		return f.getSelectedFile();
-	}
+        JFileChooser fileChooser = new JFileChooser();
+
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Playlist Files (*.m3u, *.m3u8, *.xspf)", "m3u", "m3u8", "xspf"));
+        fileChooser.setCurrentDirectory(new File(defaultDir));
+        fileChooser.setDialogTitle("Select Directory");
+        fileChooser.setApproveButtonText("Select");
+        fileChooser.setMultiSelectionEnabled(false);
+        fileChooser.showOpenDialog(null);
+
+        return fileChooser;
+    }
 
     public LinkedList<SongData> loadSongs(File f) {
 
@@ -109,9 +119,9 @@ public class PlaylistLoader {
             songs = new LinkedList<>();
         }
 
-		for (String s : dances) {
-			songs.add(new SongData("", "", s, 0L, (BufferedImage) null));
-		}
+        for (String s : dances) {
+            songs.add(new SongData("", "", s, 0L, null));
+        }
 
         return songs;
     }

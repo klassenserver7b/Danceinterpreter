@@ -137,7 +137,7 @@ public class ConfigWindow {
 	public void updateWindow(List<JLabel> l) {
 
 		mainpanel.removeAll();
-		mainpanel.paintImmediately(0, 0, mainframe.getWidth(), mainframe.getHeight());
+		//mainpanel.paintImmediately(0, 0, mainframe.getWidth(), mainframe.getHeight());
 
 		if (!playlistview) {
 			JLabel img = new JLabel();
@@ -162,6 +162,7 @@ public class ConfigWindow {
 		}
 
 		mainpanel.paintComponents(mainframe.getGraphics());
+		mainframe.repaint();
 		mainframe.setVisible(true);
 	}
 

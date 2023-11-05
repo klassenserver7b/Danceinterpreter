@@ -51,8 +51,8 @@ public class LocalSongDataProvider implements SongDataProvider {
 
     protected SongData provideParameterizedData(File f, boolean provideforced) {
 
-		SongData ret = null;
-		DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
+        SongData ret;
+        DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
 
         ret = FileLoader.getDataFromFile(f);
 
@@ -125,42 +125,42 @@ public class LocalSongDataProvider implements SongDataProvider {
 
             try {
 
-				chan = FileChannel.open(file.toPath(), ExtendedOpenOption.NOSHARE_READ);
-				lock = chan.tryLock();
+				/*
+				  Windows doesn't support locks on NOSHARE_READ
+				 */
+                chan = FileChannel.open(file.toPath(), ExtendedOpenOption.NOSHARE_READ);
+                lock = chan.tryLock();
+                lock.close();
 
-			} catch (NonWritableChannelException e) {
+            }
+			/*
+			  If file is not locked by another application chan.tryLock() will throw a NonWritableChannelException
+			  because locking is not supported on NOSHARE_READ
+			 */ catch (NonWritableChannelException e) {
 
-				if (chan != null) {
-					try {
-						chan.close();
-					} catch (IOException e1) {
-						log.error(e1.getMessage(), e1);
-					}
-					chan = null;
-				}
+                if (chan != null) {
+                    try {
+                        chan.close();
+                    } catch (IOException e1) {
+                        log.error(e1.getMessage(), e1);
+                    }
+                }
 
-				if (lock != null) {
-					try {
-						lock.close();
-					} catch (IOException e1) {
-						log.error(e1.getMessage(), e1);
-					}
-					lock = null;
-				}
+            }
+            /*
+             * If the file is locked FileChannel.open() throws an IOException because it can't open the file unshared
+             */ catch (IOException ex) {
+                this.log.debug("Locked - f: " + file.getName());
+                blocked.add(file);
 
-			} catch (IOException ex) {
-				this.log.debug("Locked - f: " + file.getName());
-				blocked.add(file);
-
-				if (chan != null) {
-					try {
-						chan.close();
-					} catch (IOException e1) {
-						log.error(e1.getMessage(), e1);
-					}
-					chan = null;
-				}
-			}
+                if (chan != null) {
+                    try {
+                        chan.close();
+                    } catch (IOException e1) {
+                        log.error(e1.getMessage(), e1);
+                    }
+                }
+            }
 
         }
 
