@@ -23,108 +23,107 @@ import de.klassenserver7b.danceinterpreter.songprocessing.DanceInterpreter;
 import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 
 /**
- * 
  * @author K7
  */
 public class LocalSongDataProvider implements SongDataProvider {
 
-	private final Logger log;
-	private int hash;
-	private int datahash;
+    private final Logger log;
+    private int hash;
+    private int datahash;
 
-	/**
-	 * 
-	 */
-	public LocalSongDataProvider() {
-		log = LoggerFactory.getLogger(this.getClass());
-		hash = 0;
-		datahash = 0;
-	}
+    /**
+     *
+     */
+    public LocalSongDataProvider() {
+        log = LoggerFactory.getLogger(this.getClass());
+        hash = 0;
+        datahash = 0;
+    }
 
-	/**
-	 * 
-	 */
-	@Override
-	public SongData provideSongData() {
-		boolean force = false;
-		return provideParameterizedData(getLocalSong(force), force);
-	}
+    /**
+     *
+     */
+    @Override
+    public SongData provideSongData() {
+        boolean force = false;
+        return provideParameterizedData(getLocalSong(force), force);
+    }
 
-	protected SongData provideParameterizedData(File f, boolean provideforced) {
+    protected SongData provideParameterizedData(File f, boolean provideforced) {
 
 		SongData ret = null;
 		DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
 
-		ret = new FileLoader().getDataFromFile(f);
+        ret = FileLoader.getDataFromFile(f);
 
-		if (ret.getDance() == null) {
-			danceI.addSongtoJSON(ret, "LOCAL");
-		}
+        if (ret == null || (datahash == ret.hashCode() && !provideforced)) {
+            return null;
+        }
 
-		if (ret == null || (datahash == ret.hashCode() && !provideforced)) {
-			return null;
-		}
+        if (ret.getDance() == null) {
+            danceI.addSongtoJSON(ret, "LOCAL");
+        }
 
-		datahash = ret.hashCode();
-		return ret;
+        datahash = ret.hashCode();
+        return ret;
 
-	}
+    }
 
-	/**
-	 * 
-	 * @param provideforced
-	 * @return
-	 */
-	private File getLocalSong(boolean provideforced) {
-		List<File> blocked = getBlockedFiles();
+    /**
+     * Gets currently playing song by checking for locked files
+     * Asks user to select if multiple files are locked
+     * <br> <strong>HUAN</strong>
+     * <b>WARNING: </b> Works only on Windows based OS
+     *
+     * @param provideforced Whether to not forcefully refresh the song if the new locked files list's hash matches the old one
+     * @return File of the currently playing song or null if no song is playing / the hashes match
+     */
+    private File getLocalSong(boolean provideforced) {
+        List<File> blocked = getBlockedFiles();
 
-		boolean checked = provideforced;
+        if (blocked.isEmpty()) {
+            return null;
+        }
+        if (!provideforced && blocked.hashCode() == hash) {
+            return null;
+        }
 
-		if (provideforced) {
-			checked = (blocked.hashCode() != hash);
-		} else {
-			checked = true;
-		}
+        this.hash = blocked.hashCode();
+        if (blocked.size() == 1) {
+            return blocked.get(0);
+        }
 
-		if (!blocked.isEmpty() && checked) {
+        ConcurrentHashMap<String, File> fileoptions = new ConcurrentHashMap<>();
 
-			this.hash = blocked.hashCode();
-			if (blocked.size() == 1) {
-				return blocked.get(0);
-			}
+        for (File f : blocked) {
+            fileoptions.put(f.getName(), f);
+        }
 
-			ConcurrentHashMap<String, File> fileoptions = new ConcurrentHashMap<>();
+        String filename = (String) JOptionPane.showInputDialog(null, "Which is the current Song?",
+                "Please select current song!", JOptionPane.QUESTION_MESSAGE, null,
+                fileoptions.keySet().toArray(new String[0]), null);
 
-			for (File f : blocked) {
-				fileoptions.put(f.getName(), f);
-			}
+        if (filename == null) {
+            return null;
+        }
+        return fileoptions.get(filename);
+    }
 
-			String filename = (String) JOptionPane.showInputDialog(null, "Which is the current Song?",
-					"Please select current song!", JOptionPane.QUESTION_MESSAGE, null,
-					fileoptions.keySet().toArray(new String[0]), null);
+    /**
+     * Iterates over DanceInterpreter.getFiles(), checks whether a file is currently locked / used by another process, then returns a list of all locked files
+     *
+     * @return List of locked files
+     */
+    private List<File> getBlockedFiles() {
+        List<File> blocked = new ArrayList<>();
 
-			if (filename != null) {
-				return fileoptions.get(filename);
-			}
-		}
+        DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
+        for (File file : danceI.getFiles()) {
 
-		return null;
-	}
+            FileChannel chan = null;
+            FileLock lock;
 
-	/**
-	 * 
-	 * @return
-	 */
-	private List<File> getBlockedFiles() {
-		List<File> blocked = new ArrayList<>();
-
-		DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
-		for (File file : danceI.getFiles()) {
-
-			FileChannel chan = null;
-			FileLock lock = null;
-
-			try {
+            try {
 
 				chan = FileChannel.open(file.toPath(), ExtendedOpenOption.NOSHARE_READ);
 				lock = chan.tryLock();
@@ -163,25 +162,25 @@ public class LocalSongDataProvider implements SongDataProvider {
 				}
 			}
 
-		}
+        }
 
-		return blocked;
-	}
+        return blocked;
+    }
 
-	/***
-	 * 
-	 */
-	@Override
-	public void provideAsync() {
-		boolean force = true;
-		SongData data = provideParameterizedData(getLocalSong(force), force);
+    /***
+     *
+     */
+    @Override
+    public void provideAsync() {
+        boolean force = true;
+        SongData data = provideParameterizedData(getLocalSong(force), force);
 
-		if (data != null) {
-			log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
+        if (data != null) {
+            log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
 
-			Main.Instance.getSongWindowServer().provideData(data);
+            Main.Instance.getSongWindowServer().provideData(data);
 
-		}
-	}
+        }
+    }
 
 }

@@ -38,27 +38,24 @@ import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 
 public class PlaylistLoader {
 
-	private final Logger log;
+    private final Logger log;
 
-	private final String[] dances = { "", "Discofox", "Cha Cha Cha", "Samba", "Langsamer Walzer", "Wiener Walzer",
-			"Rumba", "Tango", "Jive", "Quickstep", "Quickstep / Foxtrott", "Rock n' Roll", "Jive / Rock n' Roll",
-			"Salsa", "Slowfox" };
+    private final String[] dances = {"", "Discofox", "Cha Cha Cha", "Samba", "Langsamer Walzer", "Wiener Walzer",
+            "Rumba", "Tango", "Jive", "Quickstep", "Quickstep / Foxtrott", "Rock n' Roll", "Jive / Rock n' Roll",
+            "Salsa", "Slowfox"};
 
-	public PlaylistLoader() {
-		this.log = LoggerFactory.getLogger(this.getClass());
-	}
+    public PlaylistLoader() {
+        this.log = LoggerFactory.getLogger(this.getClass());
+    }
 
-	/**
-	 * 
-	 * @return
-	 * 
-	 * 
-	 * 
-	 */
-	public File loadPlaylistFile() {
-		Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
-
-		String dir = prefs.get("Last-Path", "");
+    /**
+     * Opens file chooser to select playlist file
+     *
+     * @return Path of the selected file or null if no file was selected
+     */
+    public File loadPlaylistFile() {
+        Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
+        String dir = prefs.get("Last-Path", "");
 
 		if (dir == null || dir.equalsIgnoreCase("") || (new File(dir)) == null) {
 
@@ -84,176 +81,172 @@ public class PlaylistLoader {
 		return f.getSelectedFile();
 	}
 
-	public LinkedList<SongData> loadSongs(File f) {
+    public LinkedList<SongData> loadSongs(File f) {
 
-		if (f == null || f.isDirectory() || !f.canRead()) {
-			return null;
-		}
+        if (f == null || f.isDirectory() || !f.canRead()) {
+            return null;
+        }
 
-		String[] fileparts = f.getName().split("\\.");
+        String[] fileparts = f.getName().split("\\.");
 
-		LinkedList<SongData> songs;
+        LinkedList<SongData> songs;
 
-		switch (fileparts[fileparts.length - 1]) {
+        switch (fileparts[fileparts.length - 1]) {
 
-		case "m3u", "m3u8" -> {
-			log.info("loading m3u -> " + f.getPath());
-			songs = loadM3U(f);
-		}
+            case "m3u", "m3u8" -> {
+                log.info("loading m3u -> " + f.getPath());
+                songs = loadM3U(f);
+            }
 
-		case "xspf" -> {
-			log.info("loading xspf -> " + f.getPath());
-			songs = loadXSPF(f);
-		}
+            case "xspf" -> {
+                log.info("loading xspf -> " + f.getPath());
+                songs = loadXSPF(f);
+            }
+            default -> songs = null;
+        }
 
-		default -> {
-			return null;
-		}
-		}
+        if (songs == null) {
+            songs = new LinkedList<>();
+        }
 
 		for (String s : dances) {
 			songs.add(new SongData("", "", s, 0L, (BufferedImage) null));
 		}
 
-		return songs;
-	}
+        return songs;
+    }
 
-	private LinkedList<SongData> loadM3U(File f) {
+    private LinkedList<SongData> loadM3U(File f) {
 
-		LinkedList<SongData> songs = new LinkedList<>();
-		List<String> lines = null;
+        LinkedList<SongData> songs = new LinkedList<>();
+        List<String> lines = null;
 
-		try {
+        try {
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
 
-			lines = reader.lines().toList();
-			reader.close();
+            lines = reader.lines().toList();
+            reader.close();
 
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
-		}
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
 
-		if (lines == null) {
-			return null;
-		}
+        if (lines == null) {
+            return null;
+        }
 
-		if (!lines.get(0).equalsIgnoreCase("#EXTM3U")) {
-			return null;
-		}
+        if (!lines.get(0).equalsIgnoreCase("#EXTM3U")) {
+            return null;
+        }
 
-		for (String s : lines) {
+        for (String s : lines) {
 
-			if (s.startsWith("#")) {
-				continue;
-			}
+            if (s.startsWith("#")) {
+                continue;
+            }
 
-			String filePath = new File(f.getParent()).toURI() + s;
+            String filePath = new File(f.getParent()).toURI() + s;
 
-			File songFile = getFileFromEncodedString(filePath);
+            File songFile = getFileFromEncodedString(filePath);
 
-			if (songFile != null && songFile.exists()) {
-				SongData data = new FileLoader().getDataFromFile(songFile);
+            if (songFile != null && songFile.exists()) {
+                SongData data = FileLoader.getDataFromFile(songFile);
 
-				songs.add(data);
-			}
+                songs.add(data);
+            }
 
-		}
+        }
 
-		return songs;
+        return songs;
 
-	}
+    }
 
-	private LinkedList<SongData> loadXSPF(File file) {
-		LinkedList<SongData> songs = new LinkedList<>();
+    private LinkedList<SongData> loadXSPF(File file) {
+        LinkedList<SongData> songs = new LinkedList<>();
 
-		Document doc = getXMLDoc(file);
+        Document doc = getXMLDoc(file);
 
-		List<File> files = getFilesfromXML(doc);
+        List<File> files = getFilesfromXML(doc);
 
-		if (files == null || files.isEmpty()) {
-			return null;
-		}
+        if (files == null || files.isEmpty()) {
+            return null;
+        }
 
-		for (File f : files) {
+        for (File f : files) {
 
-			SongData data = new FileLoader().getDataFromFile(f);
+            SongData data = FileLoader.getDataFromFile(f);
 
-			songs.add(data);
+            songs.add(data);
 
-		}
+        }
 
-		return songs;
+        return songs;
 
-	}
+    }
 
-	private List<File> getFilesfromXML(Document doc) {
+    private List<File> getFilesfromXML(Document doc) {
 
-		if (doc == null || !doc.hasChildNodes()) {
-			return null;
-		}
+        if (doc == null || !doc.hasChildNodes()) {
+            return null;
+        }
 
-		NodeList tracks = doc.getElementsByTagName("track");
+        NodeList tracks = doc.getElementsByTagName("track");
 
-		List<File> ret = new ArrayList<>();
+        List<File> ret = new ArrayList<>();
 
-		for (int i = 0; i < tracks.getLength(); i++) {
-			Node track = tracks.item(i);
+        for (int i = 0; i < tracks.getLength(); i++) {
+            Node track = tracks.item(i);
 
-			if (track.getNodeType() == Node.ELEMENT_NODE) {
-				Element e = (Element) track;
+            if (track.getNodeType() == Node.ELEMENT_NODE) {
+                Element e = (Element) track;
 
-				String encodedpath = e.getElementsByTagName("location").item(0).getTextContent();
-				File f = getFileFromEncodedString(encodedpath);
+                String encodedpath = e.getElementsByTagName("location").item(0).getTextContent();
+                File f = getFileFromEncodedString(encodedpath);
 
-				if (f != null && f.exists()) {
-					ret.add(f);
-				}
-			}
-		}
+                if (f != null && f.exists()) {
+                    ret.add(f);
+                }
+            }
+        }
 
-		return ret;
+        return ret;
 
-	}
+    }
 
-	protected File getFileFromEncodedString(String encodedpath) {
-		try {
+    protected File getFileFromEncodedString(String encodedpath) {
+        try {
 
-			URI uri = new URL(encodedpath).toURI();
-			File f = Paths.get(uri).toFile();
+            URI uri = new URL(encodedpath).toURI();
+            return Paths.get(uri).toFile();
 
-			if (f != null) {
-				return f;
-			}
-		} catch (MalformedURLException | URISyntaxException e1) {
-			log.error(e1.getMessage(), e1);
-		}
+        } catch (MalformedURLException | URISyntaxException e1) {
+            log.error(e1.getMessage(), e1);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private Document getXMLDoc(File f) {
+    private Document getXMLDoc(File f) {
 
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
 
-		try {
+        try {
 
-			String xmlstr = Files.readString(Path.of(f.toURI()));
+            String xmlstr = Files.readString(Path.of(f.toURI()));
 
-			if (xmlstr == null) {
-				return null;
-			}
+            if (xmlstr == null) {
+                return null;
+            }
 
-			DocumentBuilder docbuild = factory.newDocumentBuilder();
-			Document doc = docbuild.parse(new ByteArrayInputStream(xmlstr.getBytes(StandardCharsets.UTF_8)));
+            DocumentBuilder docbuild = factory.newDocumentBuilder();
+            return docbuild.parse(new ByteArrayInputStream(xmlstr.getBytes(StandardCharsets.UTF_8)));
 
-			return doc;
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            log.error(e.getMessage(), e);
+        }
 
-		} catch (ParserConfigurationException | SAXException | IOException e) {
-			log.error(e.getMessage(), e);
-		}
-
-		return null;
-	}
+        return null;
+    }
 
 }

@@ -170,10 +170,6 @@ public class Main {
 
 		this.log.info("Shutdown started");
 
-		if (danceInterpreter != null) {
-			danceInterpreter.shutdown();
-		}
-
 		if (cfgWindow != null) {
 			cfgWindow.close();
 		}

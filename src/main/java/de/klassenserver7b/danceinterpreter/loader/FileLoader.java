@@ -19,11 +19,7 @@ import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 
 public class FileLoader {
 
-	private final Logger log;
-
-	public FileLoader() {
-		log = LoggerFactory.getLogger(getClass());
-	}
+	private static final Logger log = LoggerFactory.getLogger(FileLoader.class);
 
 	public SongData getDataFromFile(File f) {
 

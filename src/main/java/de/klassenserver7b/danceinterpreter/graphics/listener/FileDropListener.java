@@ -78,7 +78,7 @@ public class FileDropListener implements DropTargetListener {
 					@SuppressWarnings("unchecked")
 					List<File> files = (List<File>) transferable.getTransferData(flavor);
 
-					Main.Instance.getSongWindowServer().provideData(new FileLoader().getDataFromFile(files.get(0)));
+					Main.Instance.getSongWindowServer().provideData(FileLoader.getDataFromFile(files.get(0)));
 
 				}
 

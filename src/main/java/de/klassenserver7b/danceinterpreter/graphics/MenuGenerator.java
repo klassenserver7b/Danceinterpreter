@@ -3,24 +3,17 @@
  */
 package de.klassenserver7b.danceinterpreter.graphics;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.klassenserver7b.danceinterpreter.AppModes;
 import de.klassenserver7b.danceinterpreter.Main;
 import de.klassenserver7b.danceinterpreter.connections.SpotifyInteractions;
 import de.klassenserver7b.danceinterpreter.graphics.icons.ExitIcon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.io.File;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 /**
  * @author K7
@@ -97,20 +90,16 @@ public class MenuGenerator {
 	private JMenuItem getSpotifyReset() {
 
 		JMenuItem spi = new JMenuItem("Reset Spotify Config");
-		spi.addActionListener(new ActionListener() {
+		spi.addActionListener(e -> {
+            Preferences prefs = Preferences.userRoot().node(new File("").getParent() + "_" + new File("").getName()
+                    + "_" + SpotifyInteractions.class.getName());
+            try {
+                prefs.clear();
+            } catch (BackingStoreException e1) {
+                log.error(e1.getMessage(), e1);
+            }
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Preferences prefs = Preferences.userRoot().node(new File("").getParent() + "_" + new File("").getName()
-						+ "_" + SpotifyInteractions.class.getName());
-				try {
-					prefs.clear();
-				} catch (BackingStoreException e1) {
-					log.error(e1.getMessage(), e1);
-				}
-
-			}
-		});
+        });
 
 		return spi;
 
@@ -120,13 +109,7 @@ public class MenuGenerator {
 		JMenuItem exitI = new JMenuItem("Exit");
 		exitI.setIcon(new ExitIcon());
 		exitI.getAccessibleContext().setAccessibleDescription("This doesn't really do anything");
-		exitI.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
+		exitI.addActionListener(e -> System.exit(0));
 		return exitI;
 	}
 
@@ -135,15 +118,7 @@ public class MenuGenerator {
 		JMenuItem label = new JMenuItem();
 
 		label.setText("Refresh SongWindow");
-		label.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				Main.Instance.getSongWindowServer().refresh();
-
-			}
-		});
+		label.addActionListener(e -> Main.Instance.getSongWindowServer().refresh());
 
 		return label;
 	}
@@ -153,19 +128,15 @@ public class MenuGenerator {
 		JCheckBoxMenuItem pictureI = new JCheckBoxMenuItem();
 		pictureI.setText("Show Thumbnails");
 		pictureI.setSelected(true);
-		pictureI.addActionListener(new ActionListener() {
+		pictureI.addActionListener(e -> {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
+            SongWindowSpecs current = Main.Instance.getSongWindowServer().getSettingsOverride();
 
-				SongWindowSpecs current = Main.Instance.getSongWindowServer().getSettingsOverride();
+            current.setContainsImage(pictureI.getState());
 
-				current.setContainsImage(pictureI.getState());
+            Main.Instance.getSongWindowServer().setSettingsOverride(current);
 
-				Main.Instance.getSongWindowServer().setSettingsOverride(current);
-
-			}
-		});
+        });
 
 		return pictureI;
 	}
@@ -175,19 +146,15 @@ public class MenuGenerator {
 		JCheckBoxMenuItem hasNextI = new JCheckBoxMenuItem();
 		hasNextI.setText("Show Next Dance");
 		hasNextI.setSelected(true);
-		hasNextI.addActionListener(new ActionListener() {
+		hasNextI.addActionListener(e -> {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
+            SongWindowSpecs current = Main.Instance.getSongWindowServer().getSettingsOverride();
 
-				SongWindowSpecs current = Main.Instance.getSongWindowServer().getSettingsOverride();
+            current.setContainsNext(hasNextI.getState());
 
-				current.setContainsNext(hasNextI.getState());
+            Main.Instance.getSongWindowServer().setSettingsOverride(current);
 
-				Main.Instance.getSongWindowServer().setSettingsOverride(current);
-
-			}
-		});
+        });
 
 		return hasNextI;
 	}
@@ -197,30 +164,26 @@ public class MenuGenerator {
 		JCheckBoxMenuItem cbI = new JCheckBoxMenuItem();
 		cbI.setText("Show Gif in ConfigWindow");
 		cbI.setSelected(false);
-		cbI.addActionListener(new ActionListener() {
+		cbI.addActionListener(e -> {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
+            cfgwindow.setImgenabled(cbI.getState());
 
-				cfgwindow.setImgenabled(cbI.getState());
+            switch (Main.Instance.getAppMode()) {
+            case Playlist -> {
 
-				switch (Main.Instance.getAppMode()) {
-				case Playlist -> {
+                if (cfgwindow.isPlaylistview()) {
+                    cfgwindow.updateWindow(cfgwindow.loadPlaylistView());
+                } else {
+                    cfgwindow.updateWindow();
+                }
 
-					if (cfgwindow.isPlaylistview()) {
-						cfgwindow.updateWindow(cfgwindow.loadPlaylistView());
-					} else {
-						cfgwindow.updateWindow();
-					}
+            }
+            default -> {
+                cfgwindow.updateWindow();
+            }
+            }
 
-				}
-				default -> {
-					cfgwindow.updateWindow();
-				}
-				}
-
-			}
-		});
+        });
 
 		return cbI;
 	}
@@ -230,21 +193,17 @@ public class MenuGenerator {
 		JCheckBoxMenuItem cbI = new JCheckBoxMenuItem();
 		cbI.setText("Enable Playlistview");
 		cbI.setSelected(false);
-		cbI.addActionListener(new ActionListener() {
+		cbI.addActionListener(e -> {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
+            cfgwindow.setPlaylistview(!cfgwindow.isPlaylistview());
 
-				cfgwindow.setPlaylistview(!cfgwindow.isPlaylistview());
+            if (cfgwindow.isPlaylistview()) {
+                cfgwindow.updateWindow(cfgwindow.loadPlaylistView());
+            } else {
+                cfgwindow.updateWindow();
+            }
 
-				if (cfgwindow.isPlaylistview()) {
-					cfgwindow.updateWindow(cfgwindow.loadPlaylistView());
-				} else {
-					cfgwindow.updateWindow();
-				}
-
-			}
-		});
+        });
 
 		return cbI;
 	}
