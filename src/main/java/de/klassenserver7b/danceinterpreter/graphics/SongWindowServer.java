@@ -83,6 +83,8 @@ public class SongWindowServer {
 		this.mainFrame.setBounds(screenBounds);
 		this.mainFrame.setLayout(null);
 
+		this.mainFrame.setAutoRequestFocus(true);
+		
 		this.mainFrame.getContentPane().setBackground(Color.BLACK);
 
 		CustomKeyListener keylis = new CustomKeyListener();
