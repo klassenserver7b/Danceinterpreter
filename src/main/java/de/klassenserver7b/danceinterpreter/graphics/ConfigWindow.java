@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.klassenserver7b.danceinterpreter.Main;
+import de.klassenserver7b.danceinterpreter.graphics.listener.CustomKeyListener;
 import de.klassenserver7b.danceinterpreter.graphics.listener.FileDropListener;
 import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 import de.klassenserver7b.danceinterpreter.songprocessing.dataprovider.PlaylistSongDataProvider;
@@ -36,8 +37,8 @@ import de.klassenserver7b.danceinterpreter.songprocessing.dataprovider.PlaylistS
 
 public class ConfigWindow {
 
-	private JFrame mainframe;
-	private JPanel mainpanel;
+	private JFrame mainFrame;
+	private JPanel mainPanel;
 	private Long time;
 	private boolean playlistview;
 	private boolean imgenabled;
@@ -57,43 +58,43 @@ public class ConfigWindow {
 		this.log = LoggerFactory.getLogger(this.getClass());
 
 		this.time = 0L;
-		this.mainframe = new JFrame();
-		this.mainpanel = new JPanel();
+		this.mainFrame = new JFrame();
+		this.mainPanel = new JPanel();
 		this.playlistview = false;
 		this.imgenabled = false;
 
-		this.dropTarget = new DropTarget(this.mainframe, new FileDropListener());
+		this.dropTarget = new DropTarget(this.mainFrame, new FileDropListener());
 
-		this.mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		File file = new File("./icon.png");
 
 		try {
 			BufferedImage bufferedImage = ImageIO.read(file);
-			this.mainframe.setIconImage(bufferedImage);
+			this.mainFrame.setIconImage(bufferedImage);
 		} catch (IOException e) {
 			this.log.error("No Icon Found!");
 		}
-		this.mainframe.setTitle("DI - Config");
+		this.mainFrame.setTitle("DI - Config");
 
-		this.mainframe.setBounds(10, 10, 500, 281);
+		this.mainFrame.setBounds(10, 10, 1280, 720);
 
 		MenuGenerator mgen = new MenuGenerator(this);
 
-		this.mainframe.setJMenuBar(mgen.getMenuBar());
+		this.mainFrame.setJMenuBar(mgen.getMenuBar());
 
 		JLabel img = new JLabel();
 
 		// Image image;
 
 		// image = ImageIO.read(new File(imgpath));
-		// ImageIcon icon = new ImageIcon(image.getScaledInstance(mainframe.getWidth(),
-		// mainframe.getHeight(), 0));
+		// ImageIcon icon = new ImageIcon(image.getScaledInstance(mainFrame.getWidth(),
+		// mainFrame.getHeight(), 0));
 		img = new JLabel(new ImageIcon(this.imgpath));
 
 		// img.setIcon(icon);
 
-		this.mainpanel.add(img);
-		this.mainframe.addComponentListener(new ComponentAdapter() {
+		this.mainPanel.add(img);
+		this.mainFrame.addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentResized(ComponentEvent componentEvent) {
@@ -113,31 +114,32 @@ public class ConfigWindow {
 			}
 
 		});
-		this.mainframe.add(this.mainpanel);
-		this.mainframe.setVisible(true);
+		this.mainFrame.add(this.mainPanel);
+		this.mainFrame.setVisible(true);
 
 	}
 
 	public void updateWindow() {
 
-		this.mainpanel.removeAll();
-		this.mainpanel.paintImmediately(0, 0, this.mainframe.getWidth(), this.mainframe.getHeight());
+		this.mainPanel.removeAll();
+		this.mainPanel.paintImmediately(0, 0, this.mainFrame.getWidth(), this.mainFrame.getHeight());
 
 		if (!this.playlistview && this.imgenabled) {
 			JLabel img = new JLabel();
 			img = new JLabel(new ImageIcon(this.imgpath));
 
-			this.mainpanel.add(img);
+			this.mainPanel.add(img);
 		}
 
-		this.mainpanel.paintComponents(this.mainframe.getGraphics());
-		this.mainframe.setVisible(true);
+		this.mainPanel.paintComponents(this.mainFrame.getGraphics());
+		this.mainFrame.setVisible(true);
 	}
 
 	public void updateWindow(List<JLabel> l) {
 
-		this.mainpanel.removeAll();
-		//mainpanel.paintImmediately(0, 0, mainframe.getWidth(), mainframe.getHeight());
+		this.mainPanel.removeAll();
+		// mainPanel.paintImmediately(0, 0, mainFrame.getWidth(),
+		// mainFrame.getHeight());
 
 		if (!this.playlistview) {
 			JLabel img = new JLabel();
@@ -146,7 +148,8 @@ public class ConfigWindow {
 
 			try {
 				image = ImageIO.read(new File("./pics/splash_small.jpg"));
-				ImageIcon icon = new ImageIcon(image.getScaledInstance(this.mainframe.getWidth(), this.mainframe.getHeight(), 0));
+				ImageIcon icon = new ImageIcon(
+						image.getScaledInstance(this.mainFrame.getWidth(), this.mainFrame.getHeight(), 0));
 
 				img.setIcon(icon);
 
@@ -154,16 +157,20 @@ public class ConfigWindow {
 				e.printStackTrace();
 			}
 
-			this.mainpanel.add(img);
+			this.mainPanel.add(img);
 		} else {
 			for (JLabel label : l) {
-				this.mainpanel.add(label);
+				this.mainPanel.add(label);
 			}
 		}
 
-		this.mainpanel.paintComponents(this.mainframe.getGraphics());
-		this.mainframe.repaint();
-		this.mainframe.setVisible(true);
+		this.mainPanel.paintComponents(this.mainFrame.getGraphics());
+		this.mainFrame.repaint();
+		this.mainFrame.setVisible(true);
+	}
+
+	public void initKeyListeners(CustomKeyListener keylis) {
+		this.mainFrame.addKeyListener(keylis);
 	}
 
 	public List<JLabel> loadPlaylistView() {
@@ -210,13 +217,13 @@ public class ConfigWindow {
 	}
 
 	public void close() {
-		this.mainframe.removeAll();
-		this.mainframe.setEnabled(false);
-		this.mainframe.setVisible(false);
+		this.mainFrame.removeAll();
+		this.mainFrame.setEnabled(false);
+		this.mainFrame.setVisible(false);
 
-		this.mainframe.dispose();
+		this.mainFrame.dispose();
 
-		this.mainframe = null;
+		this.mainFrame = null;
 	}
 
 	public boolean isPlaylistview() {
@@ -236,11 +243,11 @@ public class ConfigWindow {
 	}
 
 	public JFrame getMainframe() {
-		return this.mainframe;
+		return this.mainFrame;
 	}
 
 	public JPanel getMainpanel() {
-		return this.mainpanel;
+		return this.mainPanel;
 	}
 
 	class ClickListener implements MouseListener {

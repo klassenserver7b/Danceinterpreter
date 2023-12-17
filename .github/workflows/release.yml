@@ -1,0 +1,31 @@
+name: Java CI
+on:
+  push:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: 17
+        distribution: 'zulu'
+        cache: maven
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+    - name: Extract Maven project version
+      run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+      id: project
+    - name: Show extracted Maven project version
+      run: echo ${{ steps.project.outputs.version }}
+    - name: Upload to Release
+      if: github.event_name == 'release'
+      uses: JasonEtco/upload-to-release@master
+      with:
+        args: target/DanceInterpreter-${{ steps.project.outputs.version }}-full.jar application/java-archive
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
