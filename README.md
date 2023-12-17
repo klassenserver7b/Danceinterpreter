@@ -15,49 +15,49 @@ It's meant to be used on e.g. a Prom or other Dance events
   -  Spotify Account
   -  Internet Connection
 - For Playlist-Mode
-  - A valid m3u/m3u8/xspf file
+  - A valid m3u/m3u8/xspf file referencing **LOCAL** mp3 files
 - For Local-MP3-Mode
-  - Windows -> file locking which is not available on UNIX needed by this mode
+  - Windows only -> file locking which is not available on UNIX is needed by this mode
   - A Folder containing mp3 files / subfolders which contain mp3 files
 
 ## **How to Use**
 
-- [ ] Download Danceinterpreter.jar and logback.xml
+- [ ] Download `danceinterpreter-x.x.x-full.jar` from the [Release page](https://github.com/klassenserver7b/Danceinterpreter/releases/latest)
 - [ ] Save them to the Directory you want the Software to run in
-- [ ] See [Spotify](README.md#spotify) / [Local mp3 Files](README.md#local-mp3-Files)
+- [ ] See [Spotify](README.md#spotify) / [Local mp3 Files](README.md#local-mp3-Files) / [Playlist](README.md#playlists)
 
 
 ## Spotify
 
-1. Run `Danceinterpreter.jar`
+1. Run `danceinterpreter-x.x.x-full.jar`
 2. Select `Spotify` in the drop-down
 3. Authorize Spotify Account access in your browser
 9. Setup Finished!
 
 ## Local mp3 Files
 
-1. Run `Danceinterpreter.jar`
+**WINDOWS ONLY**
+1. Run `danceinterpreter-x.x.x-full.jar`
 5. Select `LocalMP3` in the drop-down
 6. Select the Directory the App should check for playing .mp3 files
 7. Finished!
 
 ## Playlists
 
-1. Run `Danceinterpreter.jar`
+1. Run `danceinterpreter-x.x.x-full.jar`
 5. Select `Playlist` in the drop-down
 6. Select your m3u/m3u8/xspf file
 7. Finished!
 
 ## _Usage_
-1. Run `DanceInterpreter.jar`
+1. Run `danceinterpreter-x.x.x-full.jar`
 2. Select your appmode in the drop-down
 3. Have Fun!
 
 
 ## Self compile and building
-1. Clone the project `git clone --recursive https://github.com/klassenserver7b/Danceinterpreter.git`
+1. Clone the project `git clone https://github.com/klassenserver7b/Danceinterpreter.git`
 2. `cd Danceinterpreter`
 3. Make sure you have java-jdk-17 and maven installed
-4. run 'maven clean package'
-5. you can now find your jar at ./target/Danceinterpreter-$VERSION-jar-with-dependencies.jar
-6. run it with `java -jar YOUR_JAR_FILE_NAME`
+4. run 'maven -B package'
+5. you can now find your runnable jar at ./target/Danceinterpreter-$VERSION-full.jar
