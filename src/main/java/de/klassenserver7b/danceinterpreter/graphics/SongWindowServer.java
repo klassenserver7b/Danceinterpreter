@@ -19,6 +19,7 @@ import javax.swing.JFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.klassenserver7b.danceinterpreter.Main;
 import de.klassenserver7b.danceinterpreter.graphics.listener.ArrowSpaceKeyListener;
 import de.klassenserver7b.danceinterpreter.graphics.listener.CustomKeyListener;
 import de.klassenserver7b.danceinterpreter.graphics.listener.FullscreenListener;
@@ -84,7 +85,7 @@ public class SongWindowServer {
 		this.mainFrame.setLayout(null);
 
 		this.mainFrame.setAutoRequestFocus(true);
-		
+
 		this.mainFrame.getContentPane().setBackground(Color.BLACK);
 
 		CustomKeyListener keylis = new CustomKeyListener();
@@ -105,6 +106,8 @@ public class SongWindowServer {
 				SongWindowServer.this.registeredWindows.get(SongWindowServer.this.selectedWindow).refresh();
 			}
 		});
+
+		Main.Instance.getConfigWindow().initKeyListeners(keylis);
 	}
 
 	/**
@@ -218,6 +221,13 @@ public class SongWindowServer {
 	public void setSettingsOverride(SongWindowSpecs settingsOverride) {
 		this.settingsOverride = settingsOverride;
 		provideData(this.currentData);
+	}
+
+	/**
+	 * @return the mainFrame
+	 */
+	public JFrame getMainFrame() {
+		return this.mainFrame;
 	}
 
 }
