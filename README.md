@@ -27,7 +27,7 @@ It's meant to be used on e.g. a Prom or other Dance events
 - [ ] See [Spotify](README.md#spotify) / [Local mp3 Files](README.md#local-mp3-Files) / [Playlist](README.md#playlists)
 
 
-## Spotify
+## Spotify - UNMAINTANIED
 
 1. Run `danceinterpreter-x.x.x-full.jar`
 2. Select `Spotify` in the drop-down
@@ -36,7 +36,7 @@ It's meant to be used on e.g. a Prom or other Dance events
 
 ## Local mp3 Files
 
-**WINDOWS ONLY**
+**WINDOWS ONLY** -> UNMAINTANIED since I don't use Windows anymore
 1. Run `danceinterpreter-x.x.x-full.jar`
 5. Select `LocalMP3` in the drop-down
 6. Select the Directory the App should check for playing .mp3 files
