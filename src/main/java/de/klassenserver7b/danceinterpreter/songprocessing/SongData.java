@@ -20,7 +20,7 @@ import de.klassenserver7b.danceinterpreter.graphics.SongWindowSpecs;
 public class SongData {
 
 	private String title;
-	private String author;
+	private String artist;
 	private String dance;
 	private long duration;
 	private BufferedImage img;
@@ -29,17 +29,17 @@ public class SongData {
 
 	/**
 	 * @param title
-	 * @param author
+	 * @param artist
 	 * @param dance
 	 * @param duration
 	 * @param img
 	 * @param hasNext
 	 * @param nextData
 	 */
-	public SongData(String title, String author, String dance, long duration, BufferedImage img, boolean hasNext,
+	public SongData(String title, String artist, String dance, long duration, BufferedImage img, boolean hasNext,
 			SongData nextData) {
 		this.title = title;
-		this.author = author;
+		this.artist = artist;
 		this.dance = dance;
 		this.duration = duration;
 		this.img = img;
@@ -50,42 +50,62 @@ public class SongData {
 	/**
 	 * 
 	 * @param title
-	 * @param author
+	 * @param artist
 	 * @param dance
 	 * @param duration
 	 * @param img
 	 * @param nextData
 	 */
-	public SongData(String title, String author, String dance, long duration, BufferedImage img, SongData nextData) {
-		this(title, author, dance, duration, img, nextData != null, nextData);
+	public SongData(String title, String artist, String dance, long duration, BufferedImage img, SongData nextData) {
+		this(title, artist, dance, duration, img, nextData != null, nextData);
 	}
 
 	/**
 	 * 
 	 * @param tit
-	 * @param author
+	 * @param artist
 	 * @param dance
 	 * @param dur
 	 * @param img
 	 */
-	public SongData(String tit, String author, String dance, long dur, BufferedImage img) {
-		this(tit, author, dance, dur, img, false, null);
+	public SongData(String tit, String artist, String dance, long dur, BufferedImage img) {
+		this(tit, artist, dance, dur, img, false, null);
 	}
 
 	/**
 	 * 
 	 * @param tit
-	 * @param author
+	 * @param artist
 	 * @param dance
 	 * @param dur
 	 * @param imgurl
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public SongData(String tit, String author, String dance, Long dur, String imgurl)
+	public SongData(String tit, String artist, String dance, Long dur, String imgurl)
 			throws MalformedURLException, IOException {
 
-		this(tit, author, dance, dur, ImageIO.read(new URL(imgurl)));
+		this(tit, artist, dance, dur, ImageIO.read(new URL(imgurl)));
+	}
+
+	/**
+	 * 
+	 * @param tit
+	 * @param artist
+	 * @param dance
+	 */
+	public SongData(String tit, String artist, String dance) {
+
+		this(tit, artist, dance, -1, null, false, null);
+	}
+
+	/**
+	 * 
+	 * @param dance
+	 */
+	public SongData(String dance) {
+
+		this(null, null, dance, -1, null, false, null);
 	}
 
 	/**
@@ -93,7 +113,7 @@ public class SongData {
 	 * @return
 	 */
 	public SongWindowSpecs toSongWindowSpecs() {
-		return new SongWindowSpecs(this.img != null, this.author != null, this.title != null,
+		return new SongWindowSpecs(this.img != null, this.artist != null, this.title != null,
 				(this.dance != null && !this.dance.equalsIgnoreCase("unknown")), this.hasNext);
 	}
 
@@ -101,8 +121,8 @@ public class SongData {
 		return this.title;
 	}
 
-	public String getAuthor() {
-		return this.author;
+	public String getArtist() {
+		return this.artist;
 	}
 
 	public String getDance() {
@@ -132,8 +152,8 @@ public class SongData {
 		this.title = tit;
 	}
 
-	public void setAuthor(String auth) {
-		this.author = auth;
+	public void setArtist(String auth) {
+		this.artist = auth;
 	}
 
 	public void setDance(String dance) {
@@ -166,7 +186,7 @@ public class SongData {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.author, this.dance, this.duration, this.title);
+		return Objects.hash(this.artist, this.dance, this.duration, this.title);
 	}
 
 	@Override
@@ -178,7 +198,7 @@ public class SongData {
 		if (getClass() != obj.getClass())
 			return false;
 		SongData other = (SongData) obj;
-		return Objects.equals(this.author, other.author) && Objects.equals(this.dance, other.dance)
+		return Objects.equals(this.artist, other.artist) && Objects.equals(this.dance, other.dance)
 				&& Objects.equals(this.duration, other.duration) && Objects.equals(this.title, other.title);
 	}
 

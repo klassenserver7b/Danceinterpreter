@@ -30,7 +30,7 @@ public class SongCheckThread implements Runnable {
 
 				if (data != null) {
 					int mins = (int) (data.getDuration() / 60);
-					this.log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + mins + "min "
+					this.log.info(data.getTitle() + ", " + data.getArtist() + ", " + data.getDance() + ", " + mins + "min "
 							+ (data.getDuration() - mins * 60) + "s");
 
 					Main.Instance.getSongWindowServer().provideData(data);

@@ -37,6 +37,7 @@ public class ExitIcon implements Icon {
 		g2d.drawLine(x + 5, y + this.height - 5, x + this.width - 5, y + 5);
 
 		g2d.dispose();
+	
 	}
 
 	@Override

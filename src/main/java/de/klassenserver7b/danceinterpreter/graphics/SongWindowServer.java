@@ -30,7 +30,7 @@ import de.klassenserver7b.danceinterpreter.graphics.songwindows.SongWindowBdImgT
 import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 
 /**
- * @author klassenserver7b
+ * @author K7
  *
  */
 public class SongWindowServer {
@@ -117,7 +117,7 @@ public class SongWindowServer {
 	public void provideData(SongData data) {
 
 		int mins = (int) (data.getDuration() / 60);
-		this.log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + mins + "min "
+		this.log.info(data.getTitle() + ", " + data.getArtist() + ", " + data.getDance() + ", " + mins + "min "
 				+ (data.getDuration() - mins * 60) + "s");
 
 		reselectWindow(data);

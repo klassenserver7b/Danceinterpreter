@@ -181,7 +181,7 @@ public abstract class FormattedSongWindow implements TypedWindow {
 
 		this.songName = data.getTitle();
 
-		this.artistName = data.getAuthor();
+		this.artistName = data.getArtist();
 
 		this.albumImage = data.getImage();
 

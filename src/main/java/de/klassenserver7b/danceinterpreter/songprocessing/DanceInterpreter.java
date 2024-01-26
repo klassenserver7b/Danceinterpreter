@@ -112,7 +112,7 @@ public class DanceInterpreter {
      *
      * @param f Folder
      */
-    @SuppressWarnings("DataFlowIssue")
+
     private void findAllFilesInFolder(File f) {
 
         if (f == null || !f.exists() || !f.isDirectory()) {
@@ -183,13 +183,13 @@ public class DanceInterpreter {
 
     /**
      * @param title  Title of the song to search for
-     * @param author Author of the song to search for
+     * @param artist Artist of the song to search for
      * @return Name of dance or "unknown" if song was not found
      */
     @SuppressWarnings("unused")
-    public String getDance(String title, String author) {
+    public String getDance(String title, String artist) {
 
-        JsonObject danceobj = this.dancelist.get(author + " - " + title);
+        JsonObject danceobj = this.dancelist.get(artist + " - " + title);
 
         if (danceobj != null) {
 
@@ -283,7 +283,7 @@ public class DanceInterpreter {
 
         JsonObject obj = new JsonObject();
         obj.addProperty("title", songdata.getTitle());
-        obj.addProperty("artist", songdata.getAuthor());
+        obj.addProperty("artist", songdata.getArtist());
         obj.addProperty("dance", songdata.getDance());
         obj.addProperty("SpotifyURL", SpotifyUri);
 

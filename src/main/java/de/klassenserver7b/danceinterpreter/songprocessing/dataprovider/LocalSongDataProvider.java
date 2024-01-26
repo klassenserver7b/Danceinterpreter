@@ -27,160 +27,158 @@ import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
  */
 public class LocalSongDataProvider implements SongDataProvider {
 
-    private final Logger log;
-    private int hash;
-    private int datahash;
+	private final Logger log;
+	private int hash;
+	private int datahash;
 
-    /**
-     *
-     */
-    public LocalSongDataProvider() {
-        this.log = LoggerFactory.getLogger(this.getClass());
-        this.hash = 0;
-        this.datahash = 0;
-    }
+	/**
+	 *
+	 */
+	public LocalSongDataProvider() {
+		this.log = LoggerFactory.getLogger(this.getClass());
+		this.hash = 0;
+		this.datahash = 0;
+	}
 
-    /**
-     *
-     */
-    @Override
-    public SongData provideSongData() {
-        boolean force = false;
-        return provideParameterizedData(getLocalSong(force), force);
-    }
+	/**
+	 *
+	 */
+	@Override
+	public SongData provideSongData() {
+		boolean force = false;
+		return provideParameterizedData(getLocalSong(force), force);
+	}
 
-    protected SongData provideParameterizedData(File f, boolean provideforced) {
+	protected SongData provideParameterizedData(File f, boolean provideforced) {
 
-        SongData ret;
-        DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
+		SongData ret;
+		DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
 
-        ret = FileLoader.getDataFromFile(f);
+		ret = FileLoader.getDataFromFile(f);
 
-        if (ret == null || (this.datahash == ret.hashCode() && !provideforced)) {
-            return null;
-        }
+		if (ret == null || (this.datahash == ret.hashCode() && !provideforced)) {
+			return null;
+		}
 
-        if (ret.getDance() == null) {
-            danceI.addSongtoJSON(ret, "LOCAL");
-        }
+		if (ret.getDance() == null) {
+			danceI.addSongtoJSON(ret, "LOCAL");
+		}
 
-        this.datahash = ret.hashCode();
-        return ret;
+		this.datahash = ret.hashCode();
+		return ret;
 
-    }
+	}
 
-    /**
-     * Gets currently playing song by checking for locked files
-     * Asks user to select if multiple files are locked
-     * <br> <strong>HUAN</strong>
-     * <b>WARNING: </b> Works only on Windows based OS
-     *
-     * @param provideforced Whether to not forcefully refresh the song if the new locked files list's hash matches the old one
-     * @return File of the currently playing song or null if no song is playing / the hashes match
-     */
-    private File getLocalSong(boolean provideforced) {
-        List<File> blocked = getBlockedFiles();
+	/**
+	 * Gets currently playing song by checking for locked files Asks user to select
+	 * if multiple files are locked <br>
+	 * <strong>HUAN</strong> <b>WARNING: </b> Works only on Windows based OS
+	 *
+	 * @param provideforced Whether to not forcefully refresh the song if the new
+	 *                      locked files list's hash matches the old one
+	 * @return File of the currently playing song or null if no song is playing /
+	 *         the hashes match
+	 */
+	private File getLocalSong(boolean provideforced) {
+		List<File> blocked = getBlockedFiles();
 
-        if (blocked.isEmpty()) {
-            return null;
-        }
-        if (!provideforced && blocked.hashCode() == this.hash) {
-            return null;
-        }
+		if (blocked.isEmpty()) {
+			return null;
+		}
+		if (!provideforced && blocked.hashCode() == this.hash) {
+			return null;
+		}
 
-        this.hash = blocked.hashCode();
-        if (blocked.size() == 1) {
-            return blocked.get(0);
-        }
+		this.hash = blocked.hashCode();
+		if (blocked.size() == 1) {
+			return blocked.get(0);
+		}
 
-        ConcurrentHashMap<String, File> fileoptions = new ConcurrentHashMap<>();
+		ConcurrentHashMap<String, File> fileoptions = new ConcurrentHashMap<>();
 
-        for (File f : blocked) {
-            fileoptions.put(f.getName(), f);
-        }
+		for (File f : blocked) {
+			fileoptions.put(f.getName(), f);
+		}
 
-        String filename = (String) JOptionPane.showInputDialog(null, "Which is the current Song?",
-                "Please select current song!", JOptionPane.QUESTION_MESSAGE, null,
-                fileoptions.keySet().toArray(new String[0]), null);
+		String filename = (String) JOptionPane.showInputDialog(null, "Which is the current Song?",
+				"Please select current song!", JOptionPane.QUESTION_MESSAGE, null,
+				fileoptions.keySet().toArray(new String[0]), null);
 
-        if (filename == null) {
-            return null;
-        }
-        return fileoptions.get(filename);
-    }
+		if (filename == null) {
+			return null;
+		}
+		return fileoptions.get(filename);
+	}
 
-    /**
-     * Iterates over DanceInterpreter.getFiles(), checks whether a file is currently locked / used by another process, then returns a list of all locked files
-     *
-     * @return List of locked files
-     */
-    private List<File> getBlockedFiles() {
-        List<File> blocked = new ArrayList<>();
+	/**
+	 * Iterates over DanceInterpreter.getFiles(), checks whether a file is currently
+	 * locked / used by another process, then returns a list of all locked files
+	 *
+	 * @return List of locked files
+	 */
+	private List<File> getBlockedFiles() {
+		List<File> blocked = new ArrayList<>();
 
-        DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
-        for (File file : danceI.getFiles()) {
+		DanceInterpreter danceI = Main.Instance.getDanceInterpreter();
+		for (File file : danceI.getFiles()) {
+			FileChannel chan = null;
+			FileLock lock;
 
-            FileChannel chan = null;
-            FileLock lock;
-
-            try {
+			try {
 
 				/*
-				  Windows doesn't support locks on NOSHARE_READ
+				 * Windows doesn't support locks on NOSHARE_READ
 				 */
-                chan = FileChannel.open(file.toPath(), ExtendedOpenOption.NOSHARE_READ);
-                lock = chan.tryLock();
-                lock.close();
-
-            }
+				System.err.println(file.getAbsolutePath());
+				chan = FileChannel.open(file.toPath(), ExtendedOpenOption.NOSHARE_READ);
+				lock = chan.tryLock();
+				lock.close();
+			}
 			/*
-			  If file is not locked by another application chan.tryLock() will throw a NonWritableChannelException
-			  because locking is not supported on NOSHARE_READ
-			 */ catch (NonWritableChannelException e) {
+			 * If file is not locked by another application chan.tryLock() will throw a
+			 * NonWritableChannelException because locking is not supported on NOSHARE_READ
+			 */
+			catch (NonWritableChannelException e) {
+				//
+			}
 
-                if (chan != null) {
-                    try {
-                        chan.close();
-                    } catch (IOException e1) {
-                        this.log.error(e1.getMessage(), e1);
-                    }
-                }
+			/*
+			 * If the file is locked FileChannel.open() throws an IOException because it
+			 * can't open the file unshared
+			 */
+			catch (IOException ex) {
+				this.log.debug("Locked - f: " + file.getName());
+				blocked.add(file);
+			} finally {
+				if (chan != null) {
+					try {
+						chan.close();
+					} catch (IOException e1) {
+						this.log.error(e1.getMessage(), e1);
+					}
+				}
+			}
 
-            }
-            /*
-             * If the file is locked FileChannel.open() throws an IOException because it can't open the file unshared
-             */ catch (IOException ex) {
-                this.log.debug("Locked - f: " + file.getName());
-                blocked.add(file);
+		}
 
-                if (chan != null) {
-                    try {
-                        chan.close();
-                    } catch (IOException e1) {
-                        this.log.error(e1.getMessage(), e1);
-                    }
-                }
-            }
+		return blocked;
+	}
 
-        }
+	/***
+	 *
+	 */
+	@Override
+	public void provideAsync() {
+		boolean force = true;
+		SongData data = provideParameterizedData(getLocalSong(force), force);
 
-        return blocked;
-    }
+		if (data != null) {
+			this.log.info(
+					data.getTitle() + ", " + data.getArtist() + ", " + data.getDance() + ", " + data.getDuration());
 
-    /***
-     *
-     */
-    @Override
-    public void provideAsync() {
-        boolean force = true;
-        SongData data = provideParameterizedData(getLocalSong(force), force);
+			Main.Instance.getSongWindowServer().provideData(data);
 
-        if (data != null) {
-            this.log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
-
-            Main.Instance.getSongWindowServer().provideData(data);
-
-        }
-    }
+		}
+	}
 
 }

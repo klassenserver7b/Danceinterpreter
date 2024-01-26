@@ -3,17 +3,22 @@
  */
 package de.klassenserver7b.danceinterpreter.graphics;
 
+import java.io.File;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.klassenserver7b.danceinterpreter.AppModes;
 import de.klassenserver7b.danceinterpreter.Main;
 import de.klassenserver7b.danceinterpreter.connections.SpotifyInteractions;
 import de.klassenserver7b.danceinterpreter.graphics.icons.ExitIcon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
-import java.io.File;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
 
 /**
  * @author K7
@@ -49,14 +54,14 @@ public class MenuGenerator {
 		return bar;
 	}
 
-	private JMenu getFileMenu() {
+	protected JMenu getFileMenu() {
 
 		JMenu filem = new JMenu("File");
 		filem.add(getExit());
 		return filem;
 	}
 
-	private JMenu getEditMenu() {
+	protected JMenu getEditMenu() {
 
 		JMenu editm = new JMenu("Edit");
 		editm.add(getConfigAnimationCheck());
@@ -64,6 +69,8 @@ public class MenuGenerator {
 		if (Main.Instance.getAppMode() == AppModes.Playlist) {
 			editm.addSeparator();
 			editm.add(getPlaylistViewCheck());
+			editm.add(getPlaylistViewExport());
+			editm.add(getPlaylistViewImport());
 		}
 
 		if (Main.Instance.getAppMode() == AppModes.Spotify) {
@@ -76,7 +83,7 @@ public class MenuGenerator {
 
 	}
 
-	private JMenu getSongWindowMenu() {
+	protected JMenu getSongWindowMenu() {
 
 		JMenu songwindowm = new JMenu("SongWindow");
 
@@ -87,25 +94,25 @@ public class MenuGenerator {
 		return songwindowm;
 	}
 
-	private JMenuItem getSpotifyReset() {
+	protected JMenuItem getSpotifyReset() {
 
 		JMenuItem spi = new JMenuItem("Reset Spotify Config");
 		spi.addActionListener(e -> {
-            Preferences prefs = Preferences.userRoot().node(new File("").getParent() + "_" + new File("").getName()
-                    + "_" + SpotifyInteractions.class.getName());
-            try {
-                prefs.clear();
-            } catch (BackingStoreException e1) {
-                this.log.error(e1.getMessage(), e1);
-            }
+			Preferences prefs = Preferences.userRoot().node(new File("").getParent() + "_" + new File("").getName()
+					+ "_" + SpotifyInteractions.class.getName());
+			try {
+				prefs.clear();
+			} catch (BackingStoreException e1) {
+				this.log.error(e1.getMessage(), e1);
+			}
 
-        });
+		});
 
 		return spi;
 
 	}
 
-	private JMenuItem getExit() {
+	protected JMenuItem getExit() {
 		JMenuItem exitI = new JMenuItem("Exit");
 		exitI.setIcon(new ExitIcon());
 		exitI.getAccessibleContext().setAccessibleDescription("This doesn't really do anything");
@@ -113,7 +120,7 @@ public class MenuGenerator {
 		return exitI;
 	}
 
-	private JMenuItem getRefreshWindow() {
+	protected JMenuItem getRefreshWindow() {
 
 		JMenuItem label = new JMenuItem();
 
@@ -123,87 +130,92 @@ public class MenuGenerator {
 		return label;
 	}
 
-	private JCheckBoxMenuItem getPictureCheck() {
+	protected JCheckBoxMenuItem getPictureCheck() {
 
 		JCheckBoxMenuItem pictureI = new JCheckBoxMenuItem();
 		pictureI.setText("Show Thumbnails");
 		pictureI.setSelected(true);
 		pictureI.addActionListener(e -> {
 
-            SongWindowSpecs current = Main.Instance.getSongWindowServer().getSettingsOverride();
+			SongWindowSpecs current = Main.Instance.getSongWindowServer().getSettingsOverride();
 
-            current.setContainsImage(pictureI.getState());
+			current.setContainsImage(pictureI.getState());
 
-            Main.Instance.getSongWindowServer().setSettingsOverride(current);
+			Main.Instance.getSongWindowServer().setSettingsOverride(current);
 
-        });
+		});
 
 		return pictureI;
 	}
 
-	private JCheckBoxMenuItem getNextCheck() {
+	protected JCheckBoxMenuItem getNextCheck() {
 
 		JCheckBoxMenuItem hasNextI = new JCheckBoxMenuItem();
 		hasNextI.setText("Show Next Dance");
 		hasNextI.setSelected(true);
 		hasNextI.addActionListener(e -> {
 
-            SongWindowSpecs current = Main.Instance.getSongWindowServer().getSettingsOverride();
+			SongWindowSpecs current = Main.Instance.getSongWindowServer().getSettingsOverride();
 
-            current.setContainsNext(hasNextI.getState());
+			current.setContainsNext(hasNextI.getState());
 
-            Main.Instance.getSongWindowServer().setSettingsOverride(current);
+			Main.Instance.getSongWindowServer().setSettingsOverride(current);
 
-        });
+		});
 
 		return hasNextI;
 	}
 
-	private JCheckBoxMenuItem getConfigAnimationCheck() {
+	protected JCheckBoxMenuItem getConfigAnimationCheck() {
 
 		JCheckBoxMenuItem cbI = new JCheckBoxMenuItem();
 		cbI.setText("Show Gif in ConfigWindow");
 		cbI.setSelected(false);
 		cbI.addActionListener(e -> {
 
-            this.cfgwindow.setImgenabled(cbI.getState());
+			cbI.setSelected(this.cfgwindow.setGifEnabled(cbI.getState()));
+			this.cfgwindow.updateWindow();
 
-            switch (Main.Instance.getAppMode()) {
-            case Playlist -> {
-
-                if (this.cfgwindow.isPlaylistview()) {
-                    this.cfgwindow.updateWindow(this.cfgwindow.loadPlaylistView());
-                } else {
-                    this.cfgwindow.updateWindow();
-                }
-
-            }
-            default -> {
-                this.cfgwindow.updateWindow();
-            }
-            }
-
-        });
+		});
 
 		return cbI;
 	}
 
-	private JCheckBoxMenuItem getPlaylistViewCheck() {
+	protected JMenuItem getPlaylistViewExport() {
+
+		JMenuItem cbI = new JMenuItem();
+		cbI.setText("Export Playlistview");
+		cbI.addActionListener(e -> {
+			this.cfgwindow.getPlayviewgen().save();
+
+		});
+
+		return cbI;
+	}
+
+	protected JMenuItem getPlaylistViewImport() {
+
+		JMenuItem cbI = new JMenuItem();
+		cbI.setText("Import Playlistview");
+		cbI.addActionListener(e -> {
+			this.cfgwindow.getPlayviewgen().load();
+		});
+
+		return cbI;
+	}
+
+	protected JCheckBoxMenuItem getPlaylistViewCheck() {
 
 		JCheckBoxMenuItem cbI = new JCheckBoxMenuItem();
 		cbI.setText("Enable Playlistview");
 		cbI.setSelected(false);
 		cbI.addActionListener(e -> {
 
-            this.cfgwindow.setPlaylistview(!this.cfgwindow.isPlaylistview());
+			cbI.setSelected(this.cfgwindow.setPlaylistview(cbI.getState()));
 
-            if (this.cfgwindow.isPlaylistview()) {
-                this.cfgwindow.updateWindow(this.cfgwindow.loadPlaylistView());
-            } else {
-                this.cfgwindow.updateWindow();
-            }
+			this.cfgwindow.updateWindow();
 
-        });
+		});
 
 		return cbI;
 	}
