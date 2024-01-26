@@ -25,8 +25,10 @@ import de.klassenserver7b.danceinterpreter.graphics.listener.CustomKeyListener;
 import de.klassenserver7b.danceinterpreter.graphics.listener.FullscreenListener;
 import de.klassenserver7b.danceinterpreter.graphics.listener.NumberListener;
 import de.klassenserver7b.danceinterpreter.graphics.listener.RefreshListener;
+import de.klassenserver7b.danceinterpreter.graphics.songwindows.FormattedSongWindow;
 import de.klassenserver7b.danceinterpreter.graphics.songwindows.SongWindowBdImgTA;
 import de.klassenserver7b.danceinterpreter.graphics.songwindows.SongWindowBdImgTAN;
+import de.klassenserver7b.danceinterpreter.graphics.util.SongWindowSpecs;
 import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 
 /**

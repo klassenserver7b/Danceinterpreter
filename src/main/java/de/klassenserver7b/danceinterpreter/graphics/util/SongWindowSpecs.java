@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.klassenserver7b.danceinterpreter.graphics;
+package de.klassenserver7b.danceinterpreter.graphics.util;
 
 import java.util.Objects;
 

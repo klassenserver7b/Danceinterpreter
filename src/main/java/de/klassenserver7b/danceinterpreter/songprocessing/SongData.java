@@ -8,7 +8,7 @@ import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
-import de.klassenserver7b.danceinterpreter.graphics.SongWindowSpecs;
+import de.klassenserver7b.danceinterpreter.graphics.util.SongWindowSpecs;
 
 /**
 

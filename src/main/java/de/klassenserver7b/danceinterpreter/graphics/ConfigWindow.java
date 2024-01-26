@@ -3,6 +3,8 @@ package de.klassenserver7b.danceinterpreter.graphics;
 
 import java.awt.Image;
 import java.awt.dnd.DropTarget;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
@@ -14,7 +16,9 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +26,10 @@ import org.slf4j.LoggerFactory;
 import de.klassenserver7b.danceinterpreter.Main;
 import de.klassenserver7b.danceinterpreter.graphics.listener.CustomKeyListener;
 import de.klassenserver7b.danceinterpreter.graphics.listener.FileDropListener;
+import de.klassenserver7b.danceinterpreter.graphics.util.LabelAddPanel;
+import de.klassenserver7b.danceinterpreter.graphics.util.MenuGenerator;
+import de.klassenserver7b.danceinterpreter.graphics.util.PlaylistViewGenerator;
+import de.klassenserver7b.danceinterpreter.graphics.util.SongAddPanel;
 import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 
 /**
@@ -40,10 +48,7 @@ public class ConfigWindow {
 
 	/**
 	 * 
-	 
-	
-	
-	*/
+	 */
 	public ConfigWindow() {
 
 		this.playlistViewGen = new PlaylistViewGenerator();
@@ -154,6 +159,43 @@ public class ConfigWindow {
 
 	}
 
+	protected void updateContextMenu() {
+
+		if (!this.playlistViewGen.isPlaylistViewEnabled()) {
+			mainPanel.setComponentPopupMenu(null);
+			return;
+		}
+
+		JPopupMenu context = new JPopupMenu();
+
+		JMenuItem addSong = new JMenuItem();
+		addSong.setText("Add Song");
+		addSong.addActionListener(new ActionListener() {
+
+			@SuppressWarnings("unused")
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new SongAddPanel();
+			}
+		});
+
+		JMenuItem addLabel = new JMenuItem();
+		addLabel.setText("Add Label");
+		addLabel.addActionListener(new ActionListener() {
+
+			@SuppressWarnings("unused")
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new LabelAddPanel();
+			}
+		});
+
+		context.add(addSong);
+		context.add(addLabel);
+
+		this.mainPanel.setComponentPopupMenu(context);
+	}
+
 	public void initKeyListeners(CustomKeyListener keylis) {
 		this.mainFrame.addKeyListener(keylis);
 	}
@@ -186,6 +228,9 @@ public class ConfigWindow {
 		}
 
 		this.playlistViewGen.setPlaylistViewEnabled(playlistViewEnabled);
+
+		updateContextMenu();
+
 		return playlistViewEnabled;
 	}
 

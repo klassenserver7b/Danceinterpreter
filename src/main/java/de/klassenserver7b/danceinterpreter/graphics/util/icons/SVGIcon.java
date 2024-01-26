@@ -1,4 +1,4 @@
-package de.klassenserver7b.danceinterpreter.graphics.icons;
+package de.klassenserver7b.danceinterpreter.graphics.util.icons;
 
 import java.awt.Component;
 import java.awt.Dimension;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.klassenserver7b.danceinterpreter.graphics;
+package de.klassenserver7b.danceinterpreter.graphics.util;
 
 import java.io.File;
 import java.util.prefs.BackingStoreException;
@@ -18,7 +18,8 @@ import org.slf4j.LoggerFactory;
 import de.klassenserver7b.danceinterpreter.AppModes;
 import de.klassenserver7b.danceinterpreter.Main;
 import de.klassenserver7b.danceinterpreter.connections.SpotifyInteractions;
-import de.klassenserver7b.danceinterpreter.graphics.icons.ExitIcon;
+import de.klassenserver7b.danceinterpreter.graphics.ConfigWindow;
+import de.klassenserver7b.danceinterpreter.graphics.util.icons.ExitIcon;
 
 /**
  * @author K7

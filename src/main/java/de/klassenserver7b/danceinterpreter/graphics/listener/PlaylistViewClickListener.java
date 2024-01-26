@@ -7,7 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import de.klassenserver7b.danceinterpreter.Main;
-import de.klassenserver7b.danceinterpreter.graphics.PlaylistViewGenerator;
+import de.klassenserver7b.danceinterpreter.graphics.util.PlaylistViewGenerator;
 import de.klassenserver7b.danceinterpreter.songprocessing.dataprovider.PlaylistSongDataProvider;
 
 /**

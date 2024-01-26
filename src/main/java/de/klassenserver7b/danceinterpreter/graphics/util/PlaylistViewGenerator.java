@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.klassenserver7b.danceinterpreter.graphics;
+package de.klassenserver7b.danceinterpreter.graphics.util;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -10,12 +10,14 @@ import java.awt.TrayIcon.MessageType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,13 +29,14 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 
 import de.klassenserver7b.danceinterpreter.Main;
 import de.klassenserver7b.danceinterpreter.graphics.listener.PlaylistViewClickListener;
@@ -87,9 +90,11 @@ public class PlaylistViewGenerator {
 			saveobj.add("songs", staticSongs);
 			saveobj.add("labels", staticLabels);
 
-			JsonWriter jsonWriter = new JsonWriter(new FileWriter(f, false));
-			jsonWriter.flush();
-			jsonWriter.close();
+			try (Writer writer = Files.newBufferedWriter(f.toPath(), StandardCharsets.UTF_8,
+					StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
+				Gson gson = new GsonBuilder().setPrettyPrinting().create();
+				gson.toJson(saveobj, writer);
+			}
 
 		} catch (IOException e) {
 			this.log.error(e.getMessage(), e);
@@ -277,6 +282,7 @@ public class PlaylistViewGenerator {
 
 			case "b" -> Font.BOLD;
 			case "i" -> Font.ITALIC;
+			case "bi", "ib" -> Font.ITALIC | Font.BOLD;
 			default -> Font.PLAIN;
 
 			};
@@ -311,11 +317,10 @@ public class PlaylistViewGenerator {
 		switch (opt) {
 
 		case JFileChooser.APPROVE_OPTION -> {
-
 			selectedFile = fileChooser.getSelectedFile();
 
-			if (!selectedFile.isFile()) {
-				return null;
+			if (!selectedFile.getName().endsWith(".json")) {
+				selectedFile = new File(selectedFile.getAbsolutePath() + ".json");
 			}
 
 			if (!selectedFile.exists()) {
@@ -324,9 +329,7 @@ public class PlaylistViewGenerator {
 
 		}
 		case JFileChooser.CANCEL_OPTION -> {
-
 			return null;
-
 		}
 
 		default -> {
@@ -384,6 +387,27 @@ public class PlaylistViewGenerator {
 
 		return selectedFile;
 
+	}
+
+	public void addSong(String title, String artist, String dance) {
+		JsonObject song = new JsonObject();
+
+		song.addProperty("title", title);
+		song.addProperty("artist", artist);
+		song.addProperty("dance", dance);
+		staticSongs.add(song);
+
+		Main.Instance.getConfigWindow().updateWindow();
+	}
+
+	public void addLabel(String text, String format) {
+		JsonObject song = new JsonObject();
+
+		song.addProperty("text", text);
+		song.addProperty("format", format);
+		staticLabels.add(song);
+
+		Main.Instance.getConfigWindow().updateWindow();
 	}
 
 	public SongData getStaticSong(int index) {

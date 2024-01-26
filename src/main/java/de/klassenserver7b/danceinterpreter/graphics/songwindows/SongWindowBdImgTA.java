@@ -11,8 +11,7 @@ import javax.swing.SwingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.klassenserver7b.danceinterpreter.graphics.FormattedSongWindow;
-import de.klassenserver7b.danceinterpreter.graphics.SongWindowSpecs;
+import de.klassenserver7b.danceinterpreter.graphics.util.SongWindowSpecs;
 
 /**
  * @author K7
