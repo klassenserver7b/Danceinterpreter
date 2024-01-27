@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.klassenserver7b.danceinterpreter.graphics;
+package de.klassenserver7b.danceinterpreter.graphics.listener;
 
 import java.awt.TextComponent;
 import java.awt.event.FocusEvent;

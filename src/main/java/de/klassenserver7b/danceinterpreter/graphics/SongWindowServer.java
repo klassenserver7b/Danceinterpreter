@@ -21,16 +21,19 @@ import org.slf4j.LoggerFactory;
 
 import de.klassenserver7b.danceinterpreter.Main;
 import de.klassenserver7b.danceinterpreter.graphics.listener.ArrowSpaceKeyListener;
+import de.klassenserver7b.danceinterpreter.graphics.listener.BlankListener;
 import de.klassenserver7b.danceinterpreter.graphics.listener.CustomKeyListener;
 import de.klassenserver7b.danceinterpreter.graphics.listener.FullscreenListener;
 import de.klassenserver7b.danceinterpreter.graphics.listener.NumberListener;
 import de.klassenserver7b.danceinterpreter.graphics.listener.RefreshListener;
+import de.klassenserver7b.danceinterpreter.graphics.songwindows.FormattedSongWindow;
 import de.klassenserver7b.danceinterpreter.graphics.songwindows.SongWindowBdImgTA;
 import de.klassenserver7b.danceinterpreter.graphics.songwindows.SongWindowBdImgTAN;
+import de.klassenserver7b.danceinterpreter.graphics.util.SongWindowSpecs;
 import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 
 /**
- * @author klassenserver7b
+ * @author K7
  *
  */
 public class SongWindowServer {
@@ -89,10 +92,11 @@ public class SongWindowServer {
 		this.mainFrame.getContentPane().setBackground(Color.BLACK);
 
 		CustomKeyListener keylis = new CustomKeyListener();
-		keylis.registerKeyListeners(new FullscreenListener(this.mainFrame));
-		keylis.registerKeyListeners(new ArrowSpaceKeyListener());
-		keylis.registerKeyListeners(new NumberListener());
-		keylis.registerKeyListeners(new RefreshListener());
+		keylis.registerKeyListener(new FullscreenListener(this.mainFrame));
+		keylis.registerKeyListener(new ArrowSpaceKeyListener());
+		keylis.registerKeyListener(new NumberListener());
+		keylis.registerKeyListener(new RefreshListener());
+		keylis.registerKeyListener(new BlankListener());
 		this.mainFrame.addKeyListener(keylis);
 
 		this.mainFrame.addComponentListener(new ComponentAdapter() {
@@ -117,7 +121,7 @@ public class SongWindowServer {
 	public void provideData(SongData data) {
 
 		int mins = (int) (data.getDuration() / 60);
-		this.log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + mins + "min "
+		this.log.info(data.getTitle() + ", " + data.getArtist() + ", " + data.getDance() + ", " + mins + "min "
 				+ (data.getDuration() - mins * 60) + "s");
 
 		reselectWindow(data);

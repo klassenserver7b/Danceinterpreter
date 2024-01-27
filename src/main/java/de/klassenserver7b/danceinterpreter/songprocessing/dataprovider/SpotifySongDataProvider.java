@@ -115,13 +115,13 @@ public class SpotifySongDataProvider implements SongDataProvider {
 			}
 		}
 
-		String authors = authbuild.toString().trim();
+		String artistsStr = authbuild.toString().trim();
 		String dance = Main.Instance.getDanceInterpreter().getDance(cutrack.getUri());
 
 		if (dance == null) {
 
 			try {
-				Main.Instance.getDanceInterpreter().addSongtoJSON(new SongData(cutrack.getName(), authors, dance,
+				Main.Instance.getDanceInterpreter().addSongtoJSON(new SongData(cutrack.getName(), artistsStr, dance,
 						(long) (cutrack.getDurationMs() / 1000), imgurl), cutrack.getUri());
 			} catch (IOException e1) {
 				this.log.error(e1.getMessage(), e1);
@@ -130,7 +130,7 @@ public class SpotifySongDataProvider implements SongDataProvider {
 		}
 
 		try {
-			return new SongData(cutrack.getName(), authors, dance, (long) (cutrack.getDurationMs() / 1000), imgurl);
+			return new SongData(cutrack.getName(), artistsStr, dance, (long) (cutrack.getDurationMs() / 1000), imgurl);
 		} catch (IOException e) {
 			this.log.error(e.getMessage(), e);
 			return null;
@@ -152,7 +152,7 @@ public class SpotifySongDataProvider implements SongDataProvider {
 			return;
 		}
 
-		this.log.info(data.getTitle() + ", " + data.getAuthor() + ", " + data.getDance() + ", " + data.getDuration());
+		this.log.info(data.getTitle() + ", " + data.getArtist() + ", " + data.getDance() + ", " + data.getDuration());
 
 		Main.Instance.getSongWindowServer().provideData(data);
 	}

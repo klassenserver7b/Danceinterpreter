@@ -1,24 +1,24 @@
 /**
  * 
  */
-package de.klassenserver7b.danceinterpreter.graphics;
+package de.klassenserver7b.danceinterpreter.graphics.util;
 
 /**
  * @author K7
  */
-public class PVector {
+public class DIVector {
 
 	private double x;
 	private double y;
 	private double z;
 
-	public PVector(double x, double y, double z) {
+	public DIVector(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
 
-	public PVector(double x, double y) {
+	public DIVector(double x, double y) {
 		this(x, y, 0);
 	}
 
@@ -64,8 +64,8 @@ public class PVector {
 		this.z = z;
 	}
 
-	public PVector copy() {
-		return new PVector(this.x, this.y, this.z);
+	public DIVector copy() {
+		return new DIVector(this.x, this.y, this.z);
 	}
 
 }

@@ -24,8 +24,7 @@ public class FileLoader {
 	public static SongData getDataFromFile(File f) {
 
 		if (f == null || f.isDirectory() || !f.canRead()) {
-			log.warn("Error accessing file. - f exists?: " + (f == null ? "error" : f.exists()) + " acessed_file:"
-					+ (f != null ? f.getAbsolutePath() : "f == null"));
+			log.warn("Error accessing file " + (f != null ? f.getAbsolutePath() : "null") +" - exists?: " + (f == null ? "error" : f.exists()) + ", can read?:" + (f == null ? "error" : f.canRead()));
 			return null;
 		}
 
@@ -41,7 +40,7 @@ public class FileLoader {
 
 				ID3v2 tags = mp3file.getId3v2Tag();
 				String title = tags.getTitle();
-				String author = tags.getArtist();
+				String artist = tags.getArtist();
 
 				byte[] imageData = tags.getAlbumImage();
 
@@ -69,7 +68,7 @@ public class FileLoader {
 					}
 				}
 
-				ret = new SongData(title, author, dance, length, img);
+				ret = new SongData(title, artist, dance, length, img);
 
 			} else {
 

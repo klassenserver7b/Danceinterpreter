@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import de.klassenserver7b.danceinterpreter.AppModes;
 import de.klassenserver7b.danceinterpreter.Main;
 import de.klassenserver7b.danceinterpreter.songprocessing.dataprovider.PlaylistSongDataProvider;
+import de.klassenserver7b.danceinterpreter.songprocessing.dataprovider.PlaylistSongDataProvider.Direction;
 
 /**
 **/
@@ -28,9 +29,9 @@ public class ArrowSpaceKeyListener implements CKeyListener {
 		PlaylistSongDataProvider prov = (PlaylistSongDataProvider) am.getDataProvider();
 
 		if (keycode == KeyEvent.VK_LEFT) {
-			prov.setDirection(-1);
+			prov.setDirection(Direction.BACK);
 		} else {
-			prov.setDirection(1);
+			prov.setDirection(Direction.FORWARD);
 		}
 
 		prov.provideAsync();

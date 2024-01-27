@@ -40,10 +40,6 @@ public class PlaylistLoader {
 
     private final Logger log;
 
-    private final String[] dances = {"", "Discofox", "Cha Cha Cha", "Samba", "Langsamer Walzer", "Wiener Walzer",
-            "Rumba", "Tango", "Jive", "Quickstep", "Quickstep / Foxtrott", "Rock n' Roll", "Jive / Rock n' Roll",
-            "Salsa", "Slowfox"};
-
     public PlaylistLoader() {
         this.log = LoggerFactory.getLogger(this.getClass());
     }
@@ -117,10 +113,6 @@ public class PlaylistLoader {
 
         if (songs == null) {
             songs = new LinkedList<>();
-        }
-
-        for (String s : this.dances) {
-            songs.add(new SongData("", "", s, 0L, null));
         }
 
         return songs;

@@ -16,7 +16,7 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 
 	private final Logger log;
 	private Integer current;
-	private int forward = 1;
+	private Direction direction = Direction.FORWARD;
 
 	/**
 	 * 
@@ -50,26 +50,29 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 
 		LinkedList<SongData> songs = Main.Instance.getDanceInterpreter().getPlaylistSongs();
 
-		switch (this.forward) {
+		switch (this.direction) {
 
-		case 1 -> {
+		case FORWARD -> {
 
 			if (this.current < songs.size() - 1) {
 				this.current++;
 			}
-			this.log.debug("forward");
+			this.log.debug("direction");
 		}
 
-		case -1 -> {
+		case BACK -> {
 
 			if (this.current > 0) {
 				this.current--;
 			}
 			this.log.debug("back");
 		}
-		case 0 -> {
+
+		case SAME -> {
 			this.log.debug("same");
 		}
+
+		default -> throw new IllegalArgumentException("Unexpected value: " + this.direction);
 
 		}
 
@@ -88,8 +91,8 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 		SongData next;
 
 		if (listIndex < songs.size() - 1 && (next = songs.get(listIndex + 1)) != null) {
-			if(!(next.getTitle().isBlank() && next.getAuthor().isBlank())){
-			ret.setNext(next);
+			if (!(next.getTitle().isBlank() && next.getArtist().isBlank())) {
+				ret.setNext(next);
 			}
 		}
 
@@ -106,14 +109,41 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 		}
 
 		this.current = pos - 1;
-		this.forward = 0;
+		this.direction = Direction.SAME;
 
 		return true;
 
 	}
 
-	public void setDirection(int forward) {
-		this.forward = forward;
+	/**
+	 * 
+	 * @param direction 0 ->
+	 */
+	public void setDirection(Direction direction) {
+		this.direction = direction;
+	}
+
+	public enum Direction {
+		FORWARD(1), BACK(-1), SAME(0), UNKNOWN(-1);
+
+		private final int id;
+
+		private Direction(int id) {
+			this.id = id;
+		}
+
+		public Direction byId(int id) {
+			for (Direction t : values()) {
+				if (t.getId() == id) {
+					return t;
+				}
+			}
+			return UNKNOWN;
+		}
+
+		public int getId() {
+			return id;
+		}
 	}
 
 }

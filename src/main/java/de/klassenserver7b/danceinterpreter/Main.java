@@ -1,5 +1,10 @@
 package de.klassenserver7b.danceinterpreter;
 
+import java.awt.AWTException;
+import java.awt.Image;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -35,13 +40,17 @@ public class Main {
 	private SongWindowServer songWindowServer;
 	private AppModes appMode;
 	private Thread shutdownT;
-	private final Logger log = LoggerFactory.getLogger("Main");
+	private final Logger log;
+	private TrayIcon trayIcon;
 
 	/**
 	 * 
 	 */
 	public Main() {
 		Instance = this;
+
+		log = LoggerFactory.getLogger("Main");
+		this.trayIcon = null;
 
 		if (!initalizeUILayout()) {
 			this.log.warn("LayoutInitialization failed");
@@ -55,6 +64,7 @@ public class Main {
 		}
 
 		this.cfgWindow = new ConfigWindow();
+		initSystemTray();
 
 		if (!load()) {
 			onShutdown(this.appMode);
@@ -62,7 +72,6 @@ public class Main {
 		}
 
 		startShutdownT(this.appMode);
-	
 
 	}
 
@@ -133,6 +142,27 @@ public class Main {
 		return FlatLightLaf.setup();
 	}
 
+	protected void initSystemTray() {
+		SystemTray tray = SystemTray.getSystemTray();
+
+		Image image;
+		try {
+			
+			image = Toolkit.getDefaultToolkit().createImage(getClass().getResourceAsStream("/icon.jpg").readAllBytes());
+
+			TrayIcon trayIcon = new TrayIcon(image, "Danceinterpreter");
+
+			trayIcon.setImageAutoSize(true);
+			trayIcon.setToolTip("Danceinterpreter icon");
+
+			tray.add(trayIcon);
+			this.trayIcon = trayIcon;
+			
+		} catch (AWTException | IOException e) {
+			log.error(e.getMessage(), e);
+		}
+	}
+
 	/**
 	 * 
 	 * @param appMode
@@ -187,13 +217,14 @@ public class Main {
 		}
 
 	}
+
 	public boolean isWinOS() {
 		String os = System.getProperty("os.name").toLowerCase();
 		return os.contains("win");
 	}
-	
+
 	public String getHomeDir() {
-		if(isWinOS()) {
+		if (isWinOS()) {
 			return System.getenv("HOMEDRIVE") + System.getenv("HOMEPATH");
 		}
 		return System.getenv("HOME");
@@ -241,6 +272,13 @@ public class Main {
 	 */
 	public SongWindowServer getSongWindowServer() {
 		return this.songWindowServer;
+	}
+
+	/**
+	 * @return the trayIcon
+	 */
+	public TrayIcon getTrayIcon() {
+		return this.trayIcon;
 	}
 
 }

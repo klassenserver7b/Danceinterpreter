@@ -1,9 +1,10 @@
 de.klassenserver7b.danceinterpreter
 de.klassenserver7b.danceinterpreter.connections
 de.klassenserver7b.danceinterpreter.graphics
-de.klassenserver7b.danceinterpreter.graphics.icons
 de.klassenserver7b.danceinterpreter.graphics.listener
 de.klassenserver7b.danceinterpreter.graphics.songwindows
+de.klassenserver7b.danceinterpreter.graphics.util
+de.klassenserver7b.danceinterpreter.graphics.util.icons
 de.klassenserver7b.danceinterpreter.loader
 de.klassenserver7b.danceinterpreter.songprocessing
 de.klassenserver7b.danceinterpreter.songprocessing.dataprovider

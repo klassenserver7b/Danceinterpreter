@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.klassenserver7b.danceinterpreter.graphics;
+package de.klassenserver7b.danceinterpreter.graphics.songwindows;
 
 import java.awt.Font;
 import java.awt.Graphics;
@@ -15,6 +15,9 @@ import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import de.klassenserver7b.danceinterpreter.graphics.util.DIVector;
+import de.klassenserver7b.danceinterpreter.graphics.util.SongWindowSpecs;
+import de.klassenserver7b.danceinterpreter.graphics.util.TypedWindow;
 import de.klassenserver7b.danceinterpreter.songprocessing.SongData;
 
 /**
@@ -139,17 +142,17 @@ public abstract class FormattedSongWindow implements TypedWindow {
 		return calcEstimatedHeight(comp, comp.getFont(), comp.getGraphics());
 	}
 
-	protected PVector calcSize(JLabel comp, Font font, Graphics g) {
+	protected DIVector calcSize(JLabel comp, Font font, Graphics g) {
 		double x = calcEstimatedWidth(comp, font, g);
 		double y = calcEstimatedHeight(comp, font, g);
-		return new PVector(x, y);
+		return new DIVector(x, y);
 	}
 
-	protected PVector calcSize(JLabel comp, Graphics g) {
+	protected DIVector calcSize(JLabel comp, Graphics g) {
 		return calcSize(comp, comp.getFont(), g);
 	}
 
-	protected PVector calcSize(JLabel comp) {
+	protected DIVector calcSize(JLabel comp) {
 		return calcSize(comp, comp.getFont(), comp.getGraphics());
 	}
 
@@ -181,7 +184,7 @@ public abstract class FormattedSongWindow implements TypedWindow {
 
 		this.songName = data.getTitle();
 
-		this.artistName = data.getAuthor();
+		this.artistName = data.getArtist();
 
 		this.albumImage = data.getImage();
 
