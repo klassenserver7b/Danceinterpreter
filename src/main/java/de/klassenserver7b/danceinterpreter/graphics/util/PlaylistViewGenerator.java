@@ -160,7 +160,20 @@ public class PlaylistViewGenerator {
 			return false;
 		}
 
-		for (JsonElement songElem : songsElem.getAsJsonArray()) {
+		if (!validateSongs(songsElem.getAsJsonArray())) {
+			return false;
+		}
+
+		if (!validateLabels(labelsElem.getAsJsonArray())) {
+			return false;
+		}
+
+		return true;
+	}
+
+	protected boolean validateSongs(JsonArray songsArr) {
+
+		for (JsonElement songElem : songsArr) {
 
 			if (!songElem.isJsonObject()) {
 				return false;
@@ -180,7 +193,12 @@ public class PlaylistViewGenerator {
 			}
 		}
 
-		for (JsonElement labelElem : labelsElem.getAsJsonArray()) {
+		return true;
+	}
+
+	protected boolean validateLabels(JsonArray labelsArr) {
+
+		for (JsonElement labelElem : labelsArr) {
 
 			if (!labelElem.isJsonObject()) {
 				return false;
