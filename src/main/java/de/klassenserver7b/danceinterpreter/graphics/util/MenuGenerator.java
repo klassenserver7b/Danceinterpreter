@@ -244,10 +244,11 @@ public class MenuGenerator {
 			try {
 
 				File temp = File.createTempFile("Dihelp-" + System.currentTimeMillis(), ".html");
+				temp.deleteOnExit();
 
 				Files.write(temp.toPath(), getClass().getResourceAsStream("/help.html").readAllBytes(),
 						StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
-				
+
 				Desktop.getDesktop().open(temp);
 			} catch (IOException e1) {
 				log.error(e1.getMessage(), e);

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=DanceInterpreter
+Name[de]=DanceInterpreter
+Comment=Software to present songs as slides
+Exec=/opt/danceinterpreter/danceinterpreter.sh %f
+Icon=danceinterpreter
+Terminal=false
+Type=Application
+Categories=Misc
+StartupNotify=false
+Keywords=presentation,songs

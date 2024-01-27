@@ -1,0 +1,10 @@
+Package: DanceInterpreter
+Version: [[version]]
+Section: misc
+Priority: optional
+Architecture: all
+Depends: jdk (>= 17)
+Maintainer: Klassenserver 7b <klassenserver7bwin10@gmail.com>
+Description: Tool to present songs as slides
+Distribution: development
+Depends: default-jdk | deafult-jre
