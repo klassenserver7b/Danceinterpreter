@@ -145,17 +145,20 @@ public class Main {
 	protected void initSystemTray() {
 		SystemTray tray = SystemTray.getSystemTray();
 
-		Image image = Toolkit.getDefaultToolkit().createImage(getClass().getResource("/icon.jpg"));
-
-		TrayIcon trayIcon = new TrayIcon(image, "Danceinterpreter");
-
-		trayIcon.setImageAutoSize(true);
-		trayIcon.setToolTip("Danceinterpreter icon");
-
+		Image image;
 		try {
+			
+			image = Toolkit.getDefaultToolkit().createImage(getClass().getResourceAsStream("/icon.jpg").readAllBytes());
+
+			TrayIcon trayIcon = new TrayIcon(image, "Danceinterpreter");
+
+			trayIcon.setImageAutoSize(true);
+			trayIcon.setToolTip("Danceinterpreter icon");
+
 			tray.add(trayIcon);
 			this.trayIcon = trayIcon;
-		} catch (AWTException e) {
+			
+		} catch (AWTException | IOException e) {
 			log.error(e.getMessage(), e);
 		}
 	}

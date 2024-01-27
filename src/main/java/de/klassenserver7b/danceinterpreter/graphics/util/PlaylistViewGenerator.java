@@ -11,12 +11,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Writer;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,14 +63,16 @@ public class PlaylistViewGenerator {
 
 		try {
 			loadJsonDefaults();
-		} catch (JsonSyntaxException | IOException | URISyntaxException e) {
+		} catch (JsonSyntaxException e) {
 			log.error(e.getMessage(), e);
 		}
 	}
 
-	public void loadJsonDefaults() throws JsonSyntaxException, IOException, URISyntaxException {
-		URL deffile = getClass().getResource("/defaultmenu.json");
-		JsonObject defaults = JsonParser.parseString(Files.readString(Path.of(deffile.toURI()))).getAsJsonObject();
+	public void loadJsonDefaults() throws JsonSyntaxException {
+
+		InputStream deffile = getClass().getResourceAsStream("/defaultmenu.json");
+
+		JsonObject defaults = JsonParser.parseReader(new InputStreamReader(deffile)).getAsJsonObject();
 
 		staticSongs = defaults.get("songs").getAsJsonArray();
 		staticLabels = defaults.get("labels").getAsJsonArray();
@@ -250,7 +251,7 @@ public class PlaylistViewGenerator {
 
 			songp.setSize(200, 200);
 			songp.setBorder(BorderFactory.createLineBorder(Color.black, 5, true));
-			songp.setFont(new Font("Arial", Font.ITALIC, 20));
+			songp.setFont(new Font("Arial", Font.ITALIC, 12));
 			staticSongsLables.add(songp);
 
 			JsonObject song = staticSongs.get(i).getAsJsonObject();

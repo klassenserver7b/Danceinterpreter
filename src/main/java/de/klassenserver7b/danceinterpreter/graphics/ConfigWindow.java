@@ -65,10 +65,9 @@ public class ConfigWindow {
 		this.dropTarget = new DropTarget(this.mainFrame, new FileDropListener());
 
 		this.mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		File file = new File("./icon.png");
 
 		try {
-			BufferedImage bufferedImage = ImageIO.read(file);
+			BufferedImage bufferedImage = ImageIO.read(getClass().getResourceAsStream("/icon.jpg"));
 			this.mainFrame.setIconImage(bufferedImage);
 		} catch (IOException e) {
 			this.log.error("No Icon Found!");
