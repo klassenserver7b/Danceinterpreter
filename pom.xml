@@ -195,7 +195,7 @@
 								</data>
 								<data>
 									<src>
-										/opt/danceinterpreter/danceinterpreter.sh</src>
+										${project.basedir}/src/scripts/danceinterpreter.sh</src>
 									<type>file</type>
 									<dst>
 										/opt/danceinterpreter/danceinterpreter.sh</dst>
