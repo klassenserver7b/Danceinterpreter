@@ -184,6 +184,7 @@
 							<goal>jdeb</goal>
 						</goals>
 						<configuration>
+							<deb>${project.build.directory}/${project.artifactId}-${project.version}_all.deb</deb>
 							<installDir>/opt/danceinterpreter/</installDir>
 							<dataSet>
 								<data>

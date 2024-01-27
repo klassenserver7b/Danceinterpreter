@@ -23,10 +23,24 @@ jobs:
       id: project
     - name: Show extracted Maven project version
       run: echo ${{ steps.project.outputs.version }}
-    - name: Upload to Release
+    - name: Upload Jar to Release
       if: github.event_name == 'release'
       uses: JasonEtco/upload-to-release@master
       with:
-        args: target/DanceInterpreter-${{ steps.project.outputs.version }}-full.jar application/java-archive
+        args: target/danceinterpreter-${{ steps.project.outputs.version }}-full.jar application/java-archive
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload deb to Release
+      if: github.event_name == 'release'
+      uses: JasonEtco/upload-to-release@master
+      with:
+        args: target/danceinterpreter-${{ steps.project.outputs.version }}_all.deb application/octet-stream
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload rpm to Release
+      if: github.event_name == 'release'
+      uses: JasonEtco/upload-to-release@master
+      with:
+        args: target/danceinterpreter-${{ steps.project.outputs.version }}-1.noarch.rpm application/octet-stream
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
