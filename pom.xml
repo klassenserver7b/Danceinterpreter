@@ -7,7 +7,7 @@
 
 	<groupId>de.klassenserver7b</groupId>
 	<artifactId>danceinterpreter</artifactId>
-	<version>3.6.1</version>
+	<version>3.7.0</version>
 
 	<name>DanceInterpreter</name>
 	<description>Tool to present a playlist for ballroom dancing</description>
