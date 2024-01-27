@@ -3,7 +3,11 @@
  */
 package de.klassenserver7b.danceinterpreter.graphics.util;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -51,6 +55,8 @@ public class MenuGenerator {
 
 		bar.add(getSongWindowMenu());
 
+		bar.add(getHelpMenu());
+
 		bar.setVisible(true);
 		return bar;
 	}
@@ -93,6 +99,15 @@ public class MenuGenerator {
 		songwindowm.add(getRefreshWindow());
 
 		return songwindowm;
+	}
+
+	protected JMenu getHelpMenu() {
+
+		JMenu helpm = new JMenu("Help");
+
+		helpm.add(getHelp());
+
+		return helpm;
 	}
 
 	protected JMenuItem getSpotifyReset() {
@@ -169,52 +184,74 @@ public class MenuGenerator {
 
 	protected JCheckBoxMenuItem getConfigAnimationCheck() {
 
-		JCheckBoxMenuItem cbI = new JCheckBoxMenuItem();
-		cbI.setText("Show Gif in ConfigWindow");
-		cbI.setSelected(false);
-		cbI.addActionListener(e -> {
+		JCheckBoxMenuItem cacI = new JCheckBoxMenuItem();
+		cacI.setText("Show Gif in ConfigWindow");
+		cacI.setSelected(false);
+		cacI.addActionListener(e -> {
 
-			cbI.setSelected(this.cfgwindow.setGifEnabled(cbI.getState()));
+			cacI.setSelected(this.cfgwindow.setGifEnabled(cacI.getState()));
 			this.cfgwindow.updateWindow();
 
 		});
 
-		return cbI;
+		return cacI;
 	}
 
 	protected JMenuItem getPlaylistViewExport() {
 
-		JMenuItem cbI = new JMenuItem();
-		cbI.setText("Export Playlistview");
-		cbI.addActionListener(e -> {
+		JMenuItem pveI = new JMenuItem();
+		pveI.setText("Export Playlistview");
+		pveI.addActionListener(e -> {
 			this.cfgwindow.getPlayviewgen().save();
 
 		});
 
-		return cbI;
+		return pveI;
 	}
 
 	protected JMenuItem getPlaylistViewImport() {
 
-		JMenuItem cbI = new JMenuItem();
-		cbI.setText("Import Playlistview");
-		cbI.addActionListener(e -> {
+		JMenuItem pviI = new JMenuItem();
+		pviI.setText("Import Playlistview");
+		pviI.addActionListener(e -> {
 			this.cfgwindow.getPlayviewgen().load();
 		});
 
-		return cbI;
+		return pviI;
 	}
 
 	protected JCheckBoxMenuItem getPlaylistViewCheck() {
 
-		JCheckBoxMenuItem cbI = new JCheckBoxMenuItem();
-		cbI.setText("Enable Playlistview");
-		cbI.setSelected(false);
-		cbI.addActionListener(e -> {
+		JCheckBoxMenuItem cvI = new JCheckBoxMenuItem();
+		cvI.setText("Enable Playlistview");
+		cvI.setSelected(false);
+		cvI.addActionListener(e -> {
 
-			cbI.setSelected(this.cfgwindow.setPlaylistview(cbI.getState()));
+			cvI.setSelected(this.cfgwindow.setPlaylistview(cvI.getState()));
 
 			this.cfgwindow.updateWindow();
+
+		});
+
+		return cvI;
+	}
+
+	protected JMenuItem getHelp() {
+		JMenuItem cbI = new JMenuItem();
+		cbI.setText("Get Help");
+		cbI.addActionListener(e -> {
+
+			try {
+
+				File temp = File.createTempFile("Dihelp-" + System.currentTimeMillis(), ".html");
+
+				Files.write(temp.toPath(), getClass().getResourceAsStream("/help.html").readAllBytes(),
+						StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+				
+				Desktop.getDesktop().open(temp);
+			} catch (IOException e1) {
+				log.error(e1.getMessage(), e);
+			}
 
 		});
 

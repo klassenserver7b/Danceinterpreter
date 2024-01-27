@@ -105,7 +105,7 @@ public class SongData {
 	 */
 	public SongData(String dance) {
 
-		this(null, null, dance, -1, null, false, null);
+		this("", "", dance, -1, null, false, null);
 	}
 
 	/**
