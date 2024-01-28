@@ -10,6 +10,10 @@
 	<version>3.8.5</version>
 
 	<name>DanceInterpreter</name>
+	<organization>
+		<name>Klassenserver 7b</name>
+	</organization>
+	<inceptionYear>2021</inceptionYear>
 	<description>Tool to present a playlist for ballroom dancing</description>
 	<url>https://github.com/klassenserver7b/DanceInterpreter</url>
 
@@ -127,7 +131,15 @@
 						</goals>
 						<configuration>
 							<group>Application/Misc</group>
-							 <skipSigning>true</skipSigning>
+
+							<!-- <skipSigning>true</skipSigning> -->
+							<signature>
+								<keyId>5CE28D6E4C26965B</keyId>
+								<keyringFile>${user.home}/.gnupg/pubring.kbx</keyringFile>
+								<passphrase>${gpg.passphrase}</passphrase>
+								<hashAlgorithm>SHA256</hashAlgorithm>
+								<skip>true</skip>
+							</signature>
 
 							<entries>
 								<entry>
@@ -184,7 +196,8 @@
 							<goal>jdeb</goal>
 						</goals>
 						<configuration>
-							<deb>${project.build.directory}/${project.artifactId}-${project.version}_all.deb</deb>
+							<deb>
+								${project.build.directory}/${project.artifactId}-${project.version}_all.deb</deb>
 							<installDir>/opt/danceinterpreter/</installDir>
 							<dataSet>
 								<data>
@@ -228,6 +241,48 @@
 									<dst>/usr/share/pixmaps/danceinterpreter.png</dst>
 								</data>
 							</dataSet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.akathist.maven.plugins.launch4j</groupId>
+				<artifactId>launch4j-maven-plugin</artifactId>
+				<version>2.5.0</version>
+				<executions>
+					<execution>
+						<id>danceinterpreter-exe</id>
+						<phase>install</phase>
+						<goals>
+							<goal>launch4j</goal>
+						</goals>
+						<configuration>
+							<headerType>gui</headerType>
+							<outfile>
+								${project.build.directory}/${project.artifactId}-${project.version}.exe</outfile>
+							<errTitle>Danceinterpreter - Error</errTitle>
+							<jar>
+								${project.build.directory}/${project.build.finalName}-full.jar</jar>
+							<icon>${project.basedir}/src/main/resources/icon.ico</icon>
+							<classPath>
+								<mainClass>
+									de.klassenserver7b.danceinterpreter.Main</mainClass>
+								<addDependencies>true</addDependencies>
+							</classPath>
+							<chdir>.</chdir>
+							<versionInfo>
+								<fileVersion>${project.version}.0</fileVersion>
+								<txtFileVersion>txt file version</txtFileVersion>
+								<fileDescription>${project.name}</fileDescription>
+								<copyright>${publisher}</copyright>
+								<productVersion>${project.version}.0</productVersion>
+								<txtProductVersion>
+									${project.description}</txtProductVersion>
+								<productName>${project.name}</productName>
+								<internalName>${project.artifactId}</internalName>
+								<originalFilename>
+									${launch4j.starterName}</originalFilename>
+							</versionInfo>
 						</configuration>
 					</execution>
 				</executions>

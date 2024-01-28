@@ -44,3 +44,10 @@ jobs:
         args: target/danceinterpreter-${{ steps.project.outputs.version }}-1.noarch.rpm application/octet-stream
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload exe to Release
+      if: github.event_name == 'release'
+      uses: JasonEtco/upload-to-release@master
+      with:
+        args: target/danceinterpreter-${{ steps.project.outputs.version }}.exe application/octet-stream
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
