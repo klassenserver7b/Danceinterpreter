@@ -25,10 +25,11 @@ jobs:
       run: |
         mkdir dist
         cp target/danceinterpreter-${{ steps.project.outputs.version }}* "dist/"
-    - uses: actions/upload-artifact@v2.2.4
+    - uses: actions/upload-artifact@v4
       with:
         name: bins-${{ steps.project.outputs.version }}
         path: dist
+        overwrite: true
 
   publish:
     name: Publish
@@ -40,8 +41,12 @@ jobs:
         with:
           submodules: false
 
-      - uses: actions/download-artifact@v2
-      - run: ls -al bins-*
+      - uses: actions/download-artifact@v4
+        with:
+          name: bins-${{ steps.project.outputs.version }}
+          path: dist
+      - name: Display-file-strucutre
+      - run:  ls -R
 
       - name: Calculate tag name
         run: |
