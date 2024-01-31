@@ -43,7 +43,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: bins-${{ steps.project.outputs.version }}
+          name: bins-*
           path: dist
       - name: Display-file-strucutre
         run:  ls -al dist/*
