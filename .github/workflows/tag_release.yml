@@ -1,4 +1,4 @@
-name: Release Jar
+name: Release Jar on Tag
 on:
   push:
     tags:
@@ -24,7 +24,7 @@ jobs:
       shell: bash
       run: |
         mkdir dist
-        cp "danceinterpreter-${{ steps.project.outputs.version }}*" "dist/"
+        cp target/danceinterpreter-${{ steps.project.outputs.version }}* "dist/"
     - uses: actions/upload-artifact@v2.2.4
       with:
         name: bins-${{ steps.project.outputs.version }}
