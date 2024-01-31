@@ -28,7 +28,7 @@ jobs:
         cp target/danceinterpreter-${{ steps.project.outputs.version }}* "dist/"
     - uses: actions/upload-artifact@v4
       with:
-        name: bins-${{ steps.project.outputs.version }}
+        name: bins-danceinterpreter
         path: dist
         overwrite: true
 
@@ -43,7 +43,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: bins-*
+          name: bins-danceinterpreter
           path: dist
       - name: Display-file-strucutre
         run:  ls -al dist/*
