@@ -23,10 +23,10 @@ jobs:
     - name: Show extracted Maven project version
       run: echo ${{ steps.project.outputs.version }}
     - name: Build archive
-        shell: bash
-        run: |
-          mkdir dist
-            cp "danceinterpreter-${{ steps.project.outputs.version }}*" "dist/"
+      shell: bash
+      run: |
+        mkdir dist
+        cp "danceinterpreter-${{ steps.project.outputs.version }}*" "dist/"
 
       - uses: actions/upload-artifact@v2.2.4
         with:
