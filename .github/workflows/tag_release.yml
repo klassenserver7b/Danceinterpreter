@@ -46,7 +46,7 @@ jobs:
           name: bins-danceinterpreter
           path: dist
       - name: Display-file-strucutre
-        run:  ls -R
+        run:  ls -al dist/*
 
       - name: Calculate tag name
         run: |
