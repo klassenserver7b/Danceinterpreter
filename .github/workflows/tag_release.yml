@@ -20,22 +20,19 @@ jobs:
     - name: Extract Maven project version
       run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
       id: project
-    - name: Show extracted Maven project version
-      run: echo ${{ steps.project.outputs.version }}
     - name: Build archive
       shell: bash
       run: |
         mkdir dist
         cp "danceinterpreter-${{ steps.project.outputs.version }}*" "dist/"
+    - uses: actions/upload-artifact@v2.2.4
+      with:
+        name: bins-${{ steps.project.outputs.version }}
+        path: dist
 
-      - uses: actions/upload-artifact@v2.2.4
-        with:
-          name: bins-${{ steps.project.outputs.version }}
-          path: dist
-
- publish:
+  publish:
     name: Publish
-    needs: [dist]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
