@@ -1,1 +1,0 @@
-memberSearchIndex = [{"p":"de.klassenserver7b.danceinterpreter","c":"AppTest","l":"AppTest(String)","u":"%3Cinit%3E(java.lang.String)"},{"p":"de.klassenserver7b.danceinterpreter","c":"AppTest","l":"suite()"},{"p":"de.klassenserver7b.danceinterpreter","c":"AppTest","l":"testApp()"}];updateSearchResults();

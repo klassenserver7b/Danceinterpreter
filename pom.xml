@@ -96,7 +96,7 @@
 				<artifactId>maven-site-plugin</artifactId>
 				<version>4.0.0-M13</version>
 				<configuration>
-					<outputDirectory>mvn-site</outputDirectory>
+					<outputDirectory>${project.build.directory}/mvn-site</outputDirectory>
 				</configuration>
 			</plugin>
 			<plugin>

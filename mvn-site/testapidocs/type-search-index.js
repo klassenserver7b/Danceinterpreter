@@ -1,1 +1,0 @@
-typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"de.klassenserver7b.danceinterpreter","l":"AppTest"}];updateSearchResults();
