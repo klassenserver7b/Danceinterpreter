@@ -36,10 +36,8 @@ jobs:
         java-version: '17'
         distribution: 'zulu'
         cache: maven
-    - name: Build with Maven
+    - name: Build site with Maven
       run: mvn site
-    - name: Checkout
-      uses: actions/checkout@v3
     - name: Setup Pages
       uses: actions/configure-pages@v4
     - name: Upload artifact
