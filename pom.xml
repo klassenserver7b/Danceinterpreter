@@ -12,6 +12,7 @@
 	<name>DanceInterpreter</name>
 	<organization>
 		<name>Klassenserver 7b</name>
+		<url>https://github.com/klassenserver7b</url>
 	</organization>
 	<inceptionYear>2021</inceptionYear>
 	<description>Tool to present a playlist for ballroom dancing</description>
