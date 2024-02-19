@@ -24,7 +24,7 @@ It's meant to be used on e.g. a Prom or other Dance events
 
 - [ ] Download `danceinterpreter-x.x.x-full.jar` from the [Release page](https://github.com/klassenserver7b/Danceinterpreter/releases/latest)
 - [ ] Save them to the Directory you want the Software to run in
-- [ ] See [Spotify](README.md#spotify) / [Local mp3 Files](README.md#local-mp3-Files) / [Playlist](README.md#playlists)
+- [ ] See [Spotify](README.md#spotify---unmaintanied) / [Local mp3 Files](README.md#local-mp3-Files) / [Playlist](README.md#playlists)
 
 
 ## Spotify - UNMAINTANIED
@@ -56,8 +56,8 @@ It's meant to be used on e.g. a Prom or other Dance events
 
 
 ## Self compile and building
-1. Clone the project `git clone https://github.com/klassenserver7b/Danceinterpreter.git`
-2. `cd Danceinterpreter`
-3. Make sure you have java-jdk-17 and maven installed
-4. run 'maven -B package'
-5. you can now find your runnable jar at ./target/Danceinterpreter-$VERSION-full.jar
+1. Clone the project `git clone https://github.com/klassenserver7b/Danceinterpreter.git && cd Danceinterpreter`
+2. Make sure you have java-jdk-17 and maven installed
+3. run 'maven package'
+4. If you want the .exe/.deb/.rpm run: `mvn install`
+5. You can now find your runnables in `./target/`
