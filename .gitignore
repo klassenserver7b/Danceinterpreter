@@ -7,6 +7,8 @@
 /.idea
 /pics
 /pics/*
+/.cache
+/.cache/**
 /zulujre17
 /DanceInterpreter.jar
 /DanceInterpreter.exe
