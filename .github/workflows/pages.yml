@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  update_site:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

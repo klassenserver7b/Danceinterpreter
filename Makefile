@@ -10,7 +10,7 @@ install:
 	mvn install
 	
 system-install: clean install
-	sudo zypper in -y --allow-unsigned-rpm target/danceinterpreter-*.noarch.rpm
+	sudo zypper --no-refresh in -y --allow-unsigned-rpm target/danceinterpreter-*.noarch.rpm
 	
 copy:
 	cp ./target/danceinterpreter-*-full.jar ./DanceInterpreter.jar
