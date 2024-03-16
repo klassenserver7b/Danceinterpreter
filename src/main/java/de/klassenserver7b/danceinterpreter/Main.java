@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.FlatDarculaLaf;
 
 import de.klassenserver7b.danceinterpreter.connections.SpotifyInteractions;
 import de.klassenserver7b.danceinterpreter.graphics.ConfigWindow;
@@ -42,6 +42,8 @@ public class Main {
 	private Thread shutdownT;
 	private final Logger log;
 	private TrayIcon trayIcon;
+	// private final Color backgroundColor = Color.decode("#1E1F22");
+	// private final Color textColor = Color.decode("#EAE5D6");
 
 	/**
 	 * 
@@ -139,7 +141,7 @@ public class Main {
 	 * @return
 	 */
 	protected boolean initalizeUILayout() {
-		return FlatLightLaf.setup();
+		return FlatDarculaLaf.setup();
 	}
 
 	protected void initSystemTray() {
@@ -147,7 +149,7 @@ public class Main {
 
 		Image image;
 		try {
-			
+
 			image = Toolkit.getDefaultToolkit().createImage(getClass().getResourceAsStream("/icon.jpg").readAllBytes());
 
 			TrayIcon trayIcon = new TrayIcon(image, "Danceinterpreter");
@@ -157,7 +159,7 @@ public class Main {
 
 			tray.add(trayIcon);
 			this.trayIcon = trayIcon;
-			
+
 		} catch (AWTException | IOException e) {
 			log.error(e.getMessage(), e);
 		}
