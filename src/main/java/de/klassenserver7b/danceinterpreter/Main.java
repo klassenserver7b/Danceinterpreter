@@ -1,7 +1,6 @@
 package de.klassenserver7b.danceinterpreter;
 
 import java.awt.AWTException;
-import java.awt.Color;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
@@ -16,7 +15,7 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.FlatDarculaLaf;
 
 import de.klassenserver7b.danceinterpreter.connections.SpotifyInteractions;
 import de.klassenserver7b.danceinterpreter.graphics.ConfigWindow;
@@ -43,8 +42,8 @@ public class Main {
 	private Thread shutdownT;
 	private final Logger log;
 	private TrayIcon trayIcon;
-	private final Color backgroundColor = Color.decode("#353535");
-	private final Color textColor = Color.decode("#EAE5D6");
+	// private final Color backgroundColor = Color.decode("#1E1F22");
+	// private final Color textColor = Color.decode("#EAE5D6");
 
 	/**
 	 * 
@@ -142,7 +141,7 @@ public class Main {
 	 * @return
 	 */
 	protected boolean initalizeUILayout() {
-		return FlatLightLaf.setup();
+		return FlatDarculaLaf.setup();
 	}
 
 	protected void initSystemTray() {
@@ -282,20 +281,6 @@ public class Main {
 	 */
 	public TrayIcon getTrayIcon() {
 		return this.trayIcon;
-	}
-
-	/**
-	 * @return the backgroundColor
-	 */
-	public Color getBackgroundColor() {
-		return this.backgroundColor;
-	}
-
-	/**
-	 * @return the textColor
-	 */
-	public Color getTextColor() {
-		return this.textColor;
 	}
 
 }

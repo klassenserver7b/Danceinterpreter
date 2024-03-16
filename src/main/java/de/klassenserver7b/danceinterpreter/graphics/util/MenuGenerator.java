@@ -15,9 +15,13 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 
 import de.klassenserver7b.danceinterpreter.AppModes;
 import de.klassenserver7b.danceinterpreter.Main;
@@ -51,9 +55,6 @@ public class MenuGenerator {
 
 		bar.setOpaque(true);
 
-		bar.setForeground(Main.Instance.getTextColor());
-		bar.setBackground(Main.Instance.getBackgroundColor());
-
 		bar.add(getFileMenu());
 
 		bar.add(getEditMenu());
@@ -69,7 +70,6 @@ public class MenuGenerator {
 	protected JMenu getFileMenu() {
 
 		JMenu filem = new JMenu("File");
-		filem.setBackground(Main.Instance.getBackgroundColor());
 
 		filem.add(getExit());
 
@@ -79,9 +79,12 @@ public class MenuGenerator {
 	protected JMenu getEditMenu() {
 
 		JMenu editm = new JMenu("Edit");
-		editm.setBackground(Main.Instance.getBackgroundColor());
 
 		editm.add(getConfigAnimationCheck());
+
+		editm.addSeparator();
+
+		editm.add(getDarkModeCheck());
 
 		if (Main.Instance.getAppMode() == AppModes.Playlist) {
 			editm.addSeparator();
@@ -103,7 +106,6 @@ public class MenuGenerator {
 	protected JMenu getSongWindowMenu() {
 
 		JMenu songwindowm = new JMenu("SongWindow");
-		songwindowm.setBackground(Main.Instance.getBackgroundColor());
 
 		songwindowm.add(getPictureCheck());
 		songwindowm.add(getNextCheck());
@@ -113,9 +115,8 @@ public class MenuGenerator {
 	}
 
 	protected JMenu getHelpMenu() {
-
+		
 		JMenu helpm = new JMenu("Help");
-		helpm.setBackground(Main.Instance.getBackgroundColor());
 
 		helpm.add(getHelp());
 
@@ -207,6 +208,27 @@ public class MenuGenerator {
 		});
 
 		return cacI;
+	}
+	
+	protected JCheckBoxMenuItem getDarkModeCheck() {
+
+		JCheckBoxMenuItem dmcI = new JCheckBoxMenuItem();
+		dmcI.setText("Enable DarkMode");
+		dmcI.setSelected(true);
+		dmcI.addActionListener(e -> {
+
+			if (dmcI.isSelected()) {
+				FlatDarculaLaf.setup();
+			} else {
+				FlatLightLaf.setup();
+			}
+
+			SwingUtilities.updateComponentTreeUI(Main.Instance.getConfigWindow().getMainframe());
+
+		});
+
+		return dmcI;
+
 	}
 
 	protected JMenuItem getPlaylistViewExport() {

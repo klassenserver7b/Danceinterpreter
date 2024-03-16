@@ -22,6 +22,9 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.slf4j.Logger;
@@ -226,10 +229,20 @@ public class PlaylistViewGenerator {
 		List<JLabel> labels = new LinkedList<>();
 		labels.addAll(loadSongs());
 		labels.addAll(loadStaticSongs());
-		labels.addAll(loadStaticLabels());
 
 		return labels;
 
+	}
+
+	public List<JLabel> loadStaticActionsView() {
+		if (!playlistViewEnabled) {
+			return null;
+		}
+
+		List<JLabel> labels = new LinkedList<>();
+		labels.addAll(loadStaticLabels());
+
+		return labels;
 	}
 
 	protected List<JLabel> loadSongs() {
@@ -317,9 +330,10 @@ public class PlaylistViewGenerator {
 
 		JLabel songp = new JLabel();
 		songp.setSize(200, 200);
-		songp.setBorder(BorderFactory.createLineBorder(Main.Instance.getTextColor(), 3, true));
-		songp.setForeground(Main.Instance.getTextColor());
-		songp.setBackground(Main.Instance.getBackgroundColor());
+
+		LineBorder lBorder = new LineBorder(UIManager.getColor("Label.foreground"), 3, true);
+		EmptyBorder eBorder = new EmptyBorder(2, 5, 2, 5);
+		songp.setBorder(BorderFactory.createCompoundBorder(lBorder, eBorder));
 
 		return songp;
 	}
