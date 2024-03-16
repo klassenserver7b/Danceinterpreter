@@ -3,7 +3,6 @@
  */
 package de.klassenserver7b.danceinterpreter.graphics.util;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
@@ -241,11 +240,9 @@ public class PlaylistViewGenerator {
 
 		for (int i = 0; i < songs.size(); i++) {
 
-			JLabel songp = new JLabel();
+			JLabel songp = generateGenericLabel();
 
 			songp.addMouseListener(new PlaylistViewClickListener(ClickListenerType.PLAYLIST, i, this));
-			songp.setSize(200, 200);
-			songp.setBorder(BorderFactory.createLineBorder(Color.black, 5, true));
 			songLabels.add(songp);
 
 			SongData songData = songs.get(i);
@@ -263,12 +260,9 @@ public class PlaylistViewGenerator {
 
 		for (int i = 0; i < staticSongs.size(); i++) {
 
-			JLabel songp = new JLabel();
-
+			JLabel songp = generateGenericLabel();
 			songp.addMouseListener(new PlaylistViewClickListener(ClickListenerType.STATIC_SONG, i, this));
 
-			songp.setSize(200, 200);
-			songp.setBorder(BorderFactory.createLineBorder(Color.black, 5, true));
 			songp.setFont(new Font("Arial", Font.ITALIC, 12));
 			staticSongsLables.add(songp);
 
@@ -287,12 +281,10 @@ public class PlaylistViewGenerator {
 
 		for (int i = 0; i < staticLabels.size(); i++) {
 
-			JLabel songp = new JLabel();
+			JLabel songp = generateGenericLabel();
 
 			songp.addMouseListener(new PlaylistViewClickListener(ClickListenerType.STATIC_LABEL, i, this));
 
-			songp.setSize(200, 200);
-			songp.setBorder(BorderFactory.createLineBorder(Color.black, 5, true));
 			labels.add(songp);
 
 			JsonObject label = staticLabels.get(i).getAsJsonObject();
@@ -319,6 +311,17 @@ public class PlaylistViewGenerator {
 		}
 
 		return labels;
+	}
+
+	protected JLabel generateGenericLabel() {
+
+		JLabel songp = new JLabel();
+		songp.setSize(200, 200);
+		songp.setBorder(BorderFactory.createLineBorder(Main.Instance.getTextColor(), 3, true));
+		songp.setForeground(Main.Instance.getTextColor());
+		songp.setBackground(Main.Instance.getBackgroundColor());
+
+		return songp;
 	}
 
 	protected File openSaveDialogue() throws IOException {

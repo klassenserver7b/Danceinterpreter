@@ -1,6 +1,7 @@
 package de.klassenserver7b.danceinterpreter;
 
 import java.awt.AWTException;
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
@@ -42,6 +43,8 @@ public class Main {
 	private Thread shutdownT;
 	private final Logger log;
 	private TrayIcon trayIcon;
+	private final Color backgroundColor = Color.decode("#353535");
+	private final Color textColor = Color.decode("#EAE5D6");
 
 	/**
 	 * 
@@ -147,7 +150,7 @@ public class Main {
 
 		Image image;
 		try {
-			
+
 			image = Toolkit.getDefaultToolkit().createImage(getClass().getResourceAsStream("/icon.jpg").readAllBytes());
 
 			TrayIcon trayIcon = new TrayIcon(image, "Danceinterpreter");
@@ -157,7 +160,7 @@ public class Main {
 
 			tray.add(trayIcon);
 			this.trayIcon = trayIcon;
-			
+
 		} catch (AWTException | IOException e) {
 			log.error(e.getMessage(), e);
 		}
@@ -279,6 +282,20 @@ public class Main {
 	 */
 	public TrayIcon getTrayIcon() {
 		return this.trayIcon;
+	}
+
+	/**
+	 * @return the backgroundColor
+	 */
+	public Color getBackgroundColor() {
+		return this.backgroundColor;
+	}
+
+	/**
+	 * @return the textColor
+	 */
+	public Color getTextColor() {
+		return this.textColor;
 	}
 
 }
