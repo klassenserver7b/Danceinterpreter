@@ -72,26 +72,22 @@ public class ConfigWindow {
 		} catch (IOException e) {
 			this.log.error("No Icon Found!");
 		}
+		
 		this.mainFrame.setTitle("DI - Config");
-
 		this.mainFrame.setBounds(10, 10, 1280, 720);
 
 		MenuGenerator mgen = new MenuGenerator(this);
-
 		this.mainFrame.setJMenuBar(mgen.getMenuBar());
 
 		JLabel img = new JLabel();
 
-		// Image image;
-
-		// image = ImageIO.read(new File(gifPath));
-		// ImageIcon icon = new ImageIcon(image.getScaledInstance(mainFrame.getWidth(),
-		// mainFrame.getHeight(), 0));
 		img = new JLabel(new ImageIcon(this.gifPath));
 
-		// img.setIcon(icon);
-
 		this.mainPanel.add(img);
+		
+		this.mainPanel.setBackground(Main.Instance.getBackgroundColor());
+		this.mainFrame.setBackground(Main.Instance.getBackgroundColor());
+		
 		this.mainFrame.addComponentListener(new ComponentAdapter() {
 
 			@Override

@@ -49,6 +49,11 @@ public class MenuGenerator {
 	public JMenuBar getMenuBar() {
 		JMenuBar bar = new JMenuBar();
 
+		bar.setOpaque(true);
+
+		bar.setForeground(Main.Instance.getTextColor());
+		bar.setBackground(Main.Instance.getBackgroundColor());
+
 		bar.add(getFileMenu());
 
 		bar.add(getEditMenu());
@@ -64,13 +69,18 @@ public class MenuGenerator {
 	protected JMenu getFileMenu() {
 
 		JMenu filem = new JMenu("File");
+		filem.setBackground(Main.Instance.getBackgroundColor());
+
 		filem.add(getExit());
+
 		return filem;
 	}
 
 	protected JMenu getEditMenu() {
 
 		JMenu editm = new JMenu("Edit");
+		editm.setBackground(Main.Instance.getBackgroundColor());
+
 		editm.add(getConfigAnimationCheck());
 
 		if (Main.Instance.getAppMode() == AppModes.Playlist) {
@@ -93,6 +103,7 @@ public class MenuGenerator {
 	protected JMenu getSongWindowMenu() {
 
 		JMenu songwindowm = new JMenu("SongWindow");
+		songwindowm.setBackground(Main.Instance.getBackgroundColor());
 
 		songwindowm.add(getPictureCheck());
 		songwindowm.add(getNextCheck());
@@ -104,6 +115,7 @@ public class MenuGenerator {
 	protected JMenu getHelpMenu() {
 
 		JMenu helpm = new JMenu("Help");
+		helpm.setBackground(Main.Instance.getBackgroundColor());
 
 		helpm.add(getHelp());
 
