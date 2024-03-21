@@ -19,8 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,14 +120,12 @@ public class ConfigWindow {
 
 		} else if (this.playlistViewGen.isPlaylistViewEnabled()) {
 
-			for (JLabel label : this.playlistViewGen.loadPlaylistView()) {
-				this.mainPanel.add(label);
+			for (JLabel pviewlabel : this.playlistViewGen.loadPlaylistView()) {
+				this.mainPanel.add(pviewlabel);
 			}
 
-			this.mainPanel.add(new JSeparator(SwingConstants.HORIZONTAL));
-
-			for (JLabel label : this.playlistViewGen.loadStaticActionsView()) {
-				this.mainPanel.add(label);
+			for (JLabel sactionlabel : this.playlistViewGen.loadStaticActionsView()) {
+				this.mainPanel.add(sactionlabel);
 			}
 
 		} else {
