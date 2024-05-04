@@ -83,7 +83,8 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 		this.textSong.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, this.frame.getHeight() / 20));
 		this.textArtist.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, this.frame.getHeight() / 25));
 
-		this.textDance.setBounds(0, OUTER_SPACING, this.frame.getWidth(), this.frame.getHeight() / 2 - OUTER_SPACING / 2);
+		this.textDance.setBounds(0, OUTER_SPACING, this.frame.getWidth(),
+				this.frame.getHeight() / 2 - OUTER_SPACING / 2);
 
 		int songViewTotalWidth = Math.max(calcEstimatedWidth(this.textSong), calcEstimatedWidth(this.textArtist));
 
@@ -93,9 +94,11 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 
 		if (this.hasAlbumImage) {
 
-			int imgAlbumHeight = calcEstimatedHeight(this.textSong) + INNER_SPACING + calcEstimatedHeight(this.textArtist);
+			int imgAlbumHeight = calcEstimatedHeight(this.textSong) + INNER_SPACING
+					+ calcEstimatedHeight(this.textArtist);
 
-			int imgAlbumWidth = (int) (this.albumImage.getWidth() * (imgAlbumHeight / (double) this.albumImage.getHeight()));
+			int imgAlbumWidth = (int) (this.albumImage.getWidth()
+					* (imgAlbumHeight / (double) this.albumImage.getHeight()));
 
 			Image scaledImage = this.albumImage.getScaledInstance(imgAlbumWidth, imgAlbumHeight, Image.SCALE_SMOOTH);
 			this.imgAlbum.setIcon(new ImageIcon(scaledImage));
@@ -108,6 +111,11 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 
 			songViewStart += imgAlbumWidth + INNER_SPACING;
 			songViewEnd = calcSongViewEnd(songViewStart, songViewTotalWidth);
+			
+			if (super.songName.equalsIgnoreCase("never gonna give you up")) {
+				this.imgAlbum.setIcon(new ImageIcon("./pics/rick-roll-rick-ashley.gif"));
+				this.imgAlbum.setSize(420, 498);
+			}
 		}
 
 		this.textSong.setBounds(songViewStart, (int) (OUTER_SPACING * 1.75), songViewEnd - songViewStart,
