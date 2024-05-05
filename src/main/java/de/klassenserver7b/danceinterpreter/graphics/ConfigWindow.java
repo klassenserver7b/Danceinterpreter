@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -119,14 +120,22 @@ public class ConfigWindow {
 			this.mainPanel.add(img);
 
 		} else if (this.playlistViewGen.isPlaylistViewEnabled()) {
+			
+			this.mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
+			JPanel playlistViewP = new JPanel();
 			for (JLabel pviewlabel : this.playlistViewGen.loadPlaylistView()) {
-				this.mainPanel.add(pviewlabel);
+				playlistViewP.add(pviewlabel);
 			}
+			this.mainPanel.add(playlistViewP);
+			
+			JPanel staticsP = new JPanel();
 
 			for (JLabel sactionlabel : this.playlistViewGen.loadStaticActionsView()) {
-				this.mainPanel.add(sactionlabel);
+				staticsP.add(sactionlabel);
 			}
+			
+			this.mainPanel.add(staticsP);
 
 		} else {
 
