@@ -111,10 +111,13 @@ public class SongWindowBdImgTA extends FormattedSongWindow {
 
 			songViewStart += imgAlbumWidth + INNER_SPACING;
 			songViewEnd = calcSongViewEnd(songViewStart, songViewTotalWidth);
-			
+
 			if (super.songName.equalsIgnoreCase("never gonna give you up")) {
 				this.imgAlbum.setIcon(new ImageIcon("./pics/rick-roll-rick-ashley.gif"));
 				this.imgAlbum.setSize(420, 498);
+				this.imgAlbum.setLocation((frame.getWidth() / 2) - 210, frame.getHeight() / 2);
+				this.textSong.setText("");
+				this.textArtist.setText("");
 			}
 		}
 

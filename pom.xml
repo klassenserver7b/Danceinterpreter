@@ -7,7 +7,7 @@
 
 	<groupId>de.klassenserver7b</groupId>
 	<artifactId>danceinterpreter</artifactId>
-	<version>3.10.0</version>
+	<version>3.10.1</version>
 
 	<name>DanceInterpreter</name>
 	<organization>
@@ -20,8 +20,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
 	</properties>
 
 	<licenses>
@@ -107,9 +107,6 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.13.0</version>
-				<configuration>
-					<release>17</release>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -127,7 +124,7 @@
 				<executions>
 					<execution>
 						<id>default-jar</id>
-						<phase />
+						<phase>none</phase>
 					</execution>
 				</executions>
 			</plugin>
@@ -148,6 +145,7 @@
 							<signature>
 								<keyId>5CE28D6E4C26965B</keyId>
 								<keyringFile>${user.home}/.gnupg/pubring.kbx</keyringFile>
+								<!--suppress UnresolvedMavenProperty -->
 								<passphrase>${gpg.passphrase}</passphrase>
 								<hashAlgorithm>SHA256</hashAlgorithm>
 								<skip>true</skip>
@@ -286,12 +284,14 @@
 								<fileVersion>${project.version}.0</fileVersion>
 								<txtFileVersion>txt file version</txtFileVersion>
 								<fileDescription>${project.name}</fileDescription>
+								<!--suppress UnresolvedMavenProperty -->
 								<copyright>${publisher}</copyright>
 								<productVersion>${project.version}.0</productVersion>
 								<txtProductVersion>
 									${project.description}</txtProductVersion>
 								<productName>${project.name}</productName>
 								<internalName>${project.artifactId}</internalName>
+								<!--suppress UnresolvedMavenProperty -->
 								<originalFilename>
 									${launch4j.starterName}</originalFilename>
 							</versionInfo>
@@ -336,7 +336,7 @@
 	</reporting>
 
 
-	<repositories></repositories>
+	<repositories/>
 	<dependencies>
 		<dependency>
 			<groupId>se.michaelthelin.spotify</groupId>

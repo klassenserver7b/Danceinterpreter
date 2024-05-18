@@ -200,7 +200,6 @@ public class DanceInterpreter {
 	 * @param artist Artist of the song to search for
 	 * @return Name of dance or "unknown" if song was not found
 	 */
-	@SuppressWarnings("unused")
 	public String getDance(String title, String artist) {
 
 		JsonObject danceobj = this.dancelist.get(artist + " - " + title);
@@ -323,7 +322,6 @@ public class DanceInterpreter {
 	/**
 	 * @return The dancelist
 	 */
-	@SuppressWarnings("unused")
 	public TreeMap<String, JsonObject> getDancelist() {
 		return this.dancelist;
 	}
@@ -343,7 +341,6 @@ public class DanceInterpreter {
 		return this.playlistSongs;
 	}
 
-	@SuppressWarnings("unused")
 	public SongCheckThread getSongcheckT() {
 		return this.songcheckT;
 	}
