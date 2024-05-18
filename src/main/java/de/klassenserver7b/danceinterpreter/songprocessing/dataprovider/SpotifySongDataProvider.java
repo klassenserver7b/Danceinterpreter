@@ -2,6 +2,7 @@
 package de.klassenserver7b.danceinterpreter.songprocessing.dataprovider;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
@@ -123,7 +124,7 @@ public class SpotifySongDataProvider implements SongDataProvider {
 			try {
 				Main.Instance.getDanceInterpreter().addSongtoJSON(new SongData(cutrack.getName(), artistsStr, dance,
 						(long) (cutrack.getDurationMs() / 1000), imgurl), cutrack.getUri());
-			} catch (IOException e1) {
+			} catch (IOException | URISyntaxException e1) {
 				this.log.error(e1.getMessage(), e1);
 			}
 
@@ -131,7 +132,7 @@ public class SpotifySongDataProvider implements SongDataProvider {
 
 		try {
 			return new SongData(cutrack.getName(), artistsStr, dance, (long) (cutrack.getDurationMs() / 1000), imgurl);
-		} catch (IOException e) {
+		} catch (IOException | URISyntaxException e) {
 			this.log.error(e.getMessage(), e);
 			return null;
 		}

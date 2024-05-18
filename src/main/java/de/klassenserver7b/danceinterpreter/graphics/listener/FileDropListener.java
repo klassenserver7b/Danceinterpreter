@@ -88,6 +88,7 @@ public class FileDropListener implements DropTargetListener {
 
 		} catch (UnsupportedFlavorException e) {
 			this.log.error("Drop was not a file");
+			this.log.debug(e.getMessage(), e);
 		} catch (IOException e) {
 			this.log.error(e.getMessage(), e);
 		}

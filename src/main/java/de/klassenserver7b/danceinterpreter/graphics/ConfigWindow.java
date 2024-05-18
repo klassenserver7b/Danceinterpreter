@@ -70,7 +70,7 @@ public class ConfigWindow {
 		try {
 			BufferedImage bufferedImage = ImageIO.read(getClass().getResourceAsStream("/icon.jpg"));
 			this.mainFrame.setIconImage(bufferedImage);
-		} catch (IOException e) {
+		} catch (@SuppressWarnings("unused") IOException e) {
 			this.log.error("No Icon Found!");
 		}
 
@@ -120,7 +120,7 @@ public class ConfigWindow {
 			this.mainPanel.add(img);
 
 		} else if (this.playlistViewGen.isPlaylistViewEnabled()) {
-			
+
 			this.mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
 			JPanel playlistViewP = new JPanel();
@@ -128,13 +128,13 @@ public class ConfigWindow {
 				playlistViewP.add(pviewlabel);
 			}
 			this.mainPanel.add(playlistViewP);
-			
+
 			JPanel staticsP = new JPanel();
 
 			for (JLabel sactionlabel : this.playlistViewGen.loadStaticActionsView()) {
 				staticsP.add(sactionlabel);
 			}
-			
+
 			this.mainPanel.add(staticsP);
 
 		} else {
@@ -177,7 +177,6 @@ public class ConfigWindow {
 		addSong.setText("Add Song");
 		addSong.addActionListener(new ActionListener() {
 
-			@SuppressWarnings("unused")
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new SongAddPanel();
@@ -188,7 +187,6 @@ public class ConfigWindow {
 		addLabel.setText("Add Label");
 		addLabel.addActionListener(new ActionListener() {
 
-			@SuppressWarnings("unused")
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new LabelAddPanel();

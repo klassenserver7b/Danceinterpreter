@@ -132,7 +132,7 @@ public class PlaylistSongDataProvider implements SongDataProvider {
 			this.id = id;
 		}
 
-		public Direction byId(int id) {
+		public static Direction byId(int id) {
 			for (Direction t : values()) {
 				if (t.getId() == id) {
 					return t;

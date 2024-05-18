@@ -2,8 +2,8 @@ package de.klassenserver7b.danceinterpreter.songprocessing;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Objects;
 
 import javax.imageio.ImageIO;
@@ -79,13 +79,13 @@ public class SongData {
 	 * @param dance
 	 * @param dur
 	 * @param imgurl
-	 * @throws MalformedURLException
 	 * @throws IOException
+	 * @throws URISyntaxException
 	 */
 	public SongData(String tit, String artist, String dance, Long dur, String imgurl)
-			throws MalformedURLException, IOException {
+			throws IOException, URISyntaxException {
 
-		this(tit, artist, dance, dur, ImageIO.read(new URL(imgurl)));
+		this(tit, artist, dance, dur, ImageIO.read(new URI(imgurl).toURL()));
 	}
 
 	/**
@@ -168,8 +168,14 @@ public class SongData {
 		this.img = img;
 	}
 
-	public void setImg(String imgurl) throws MalformedURLException, IOException {
-		BufferedImage buffimg = ImageIO.read(new URL(imgurl));
+	/**
+	 * 
+	 * @param imgurl
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 */
+	public void setImg(String imgurl) throws IOException, URISyntaxException {
+		BufferedImage buffimg = ImageIO.read(new URI(imgurl).toURL());
 		this.img = buffimg;
 	}
 

@@ -124,7 +124,7 @@
 				<executions>
 					<execution>
 						<id>default-jar</id>
-						<phase>package</phase>
+						<phase>none</phase>
 					</execution>
 				</executions>
 			</plugin>
