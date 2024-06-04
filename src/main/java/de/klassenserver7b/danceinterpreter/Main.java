@@ -78,6 +78,13 @@ public class Main {
 	}
 
 	/**
+	 * @param test test 
+	 */
+	protected Main(boolean test) {
+		log = LoggerFactory.getLogger(getClass());
+	}
+
+	/**
 	 * @param args
 	 * 
 	 * 
@@ -109,11 +116,7 @@ public class Main {
 	}
 
 	/**
-	 * 
 	 * @return
-	 * 
-	 * 
-	 * 
 	 */
 	protected AppModes askForAppMode() {
 
