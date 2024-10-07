@@ -13,14 +13,13 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +70,7 @@ public class ConfigWindow {
 		try {
 			BufferedImage bufferedImage = ImageIO.read(getClass().getResourceAsStream("/icon.jpg"));
 			this.mainFrame.setIconImage(bufferedImage);
-		} catch (IOException e) {
+		} catch (@SuppressWarnings("unused") IOException e) {
 			this.log.error("No Icon Found!");
 		}
 
@@ -122,15 +121,21 @@ public class ConfigWindow {
 
 		} else if (this.playlistViewGen.isPlaylistViewEnabled()) {
 
-			for (JLabel label : this.playlistViewGen.loadPlaylistView()) {
-				this.mainPanel.add(label);
+			this.mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
+			JPanel playlistViewP = new JPanel();
+			for (JLabel pviewlabel : this.playlistViewGen.loadPlaylistView()) {
+				playlistViewP.add(pviewlabel);
+			}
+			this.mainPanel.add(playlistViewP);
+
+			JPanel staticsP = new JPanel();
+
+			for (JLabel sactionlabel : this.playlistViewGen.loadStaticActionsView()) {
+				staticsP.add(sactionlabel);
 			}
 
-			this.mainPanel.add(new JSeparator(SwingConstants.HORIZONTAL));
-
-			for (JLabel label : this.playlistViewGen.loadStaticActionsView()) {
-				this.mainPanel.add(label);
-			}
+			this.mainPanel.add(staticsP);
 
 		} else {
 
@@ -172,7 +177,6 @@ public class ConfigWindow {
 		addSong.setText("Add Song");
 		addSong.addActionListener(new ActionListener() {
 
-			@SuppressWarnings("unused")
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new SongAddPanel();
@@ -183,7 +187,6 @@ public class ConfigWindow {
 		addLabel.setText("Add Label");
 		addLabel.addActionListener(new ActionListener() {
 
-			@SuppressWarnings("unused")
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new LabelAddPanel();

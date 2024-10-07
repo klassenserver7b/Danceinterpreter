@@ -83,7 +83,7 @@ public class PlaylistViewClickListener implements MouseListener {
 			this.id = id;
 		}
 
-		public ClickListenerType byId(int id) {
+		public static ClickListenerType byId(int id) {
 			for (ClickListenerType t : values()) {
 				if (t.getId() == id) {
 					return t;

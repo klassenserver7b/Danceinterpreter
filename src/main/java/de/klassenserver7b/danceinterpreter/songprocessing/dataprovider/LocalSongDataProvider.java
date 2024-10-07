@@ -138,7 +138,7 @@ public class LocalSongDataProvider implements SongDataProvider {
 			 * If file is not locked by another application chan.tryLock() will throw a
 			 * NonWritableChannelException because locking is not supported on NOSHARE_READ
 			 */
-			catch (NonWritableChannelException e) {
+			catch (@SuppressWarnings("unused") NonWritableChannelException e) {
 				//
 			}
 
@@ -146,7 +146,7 @@ public class LocalSongDataProvider implements SongDataProvider {
 			 * If the file is locked FileChannel.open() throws an IOException because it
 			 * can't open the file unshared
 			 */
-			catch (IOException ex) {
+			catch (@SuppressWarnings("unused") IOException ex) {
 				this.log.debug("Locked - f: " + file.getName());
 				blocked.add(file);
 			} finally {
