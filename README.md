@@ -4,7 +4,11 @@
 [![Build Status](https://jitci.com/gh/klassenserver7b/Danceinterpreter/svg)](https://jitci.com/gh/klassenserver7b/Danceinterpreter)
 [![Latest Release](https://jitpack.io/v/Klassenserver7b/Danceinterpreter.svg)](https://jitpack.io/#Klassenserver7b/Danceinterpreter)
 
+# !DISCONTINUED! see [danceinterpreter-rs](https://github.com/klassenserver7b/danceinterpreter-rs)
 
+## -----------------------------------------------------------------------------------------------------------------------------------
+
+# General
 This tool provides information about a currently playing song and displays them.
 -> These information are "Title", "Author", "Cover" and "Dance"
 It's meant to be used on e.g. a Prom or other Dance events
